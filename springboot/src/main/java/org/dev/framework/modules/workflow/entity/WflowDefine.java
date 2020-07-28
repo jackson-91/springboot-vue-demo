@@ -34,4 +34,8 @@ public class WflowDefine {
     private String engineVersion;
 
     private Integer appVersione;
+
+    private String bpmnfile;
+
+    private String pngfile;
 }

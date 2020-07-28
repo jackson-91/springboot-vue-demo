@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.generator.config.GlobalConfig;
 import com.baomidou.mybatisplus.generator.config.PackageConfig;
 import com.baomidou.mybatisplus.generator.config.StrategyConfig;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
+import org.dev.framework.core.entity.TenantEntity;
 
 
 /**
@@ -37,7 +38,7 @@ public class GeneratorServiceEntity {
                 .setDriverName("com.mysql.cj.jdbc.Driver");
         StrategyConfig strategyConfig = new StrategyConfig();
         strategyConfig
-                .setSuperEntityClass("org.dev.framework.core.entity.TenantEntity")//自定义实体父类
+                .setSuperEntityClass(TenantEntity.class)//自定义实体父类
                 .setSuperEntityColumns("tenant_id","is_del","create_time","create_by","update_time","update_by","memo")
                 .setLogicDeleteFieldName("is_del")
                 .setCapitalMode(true)
