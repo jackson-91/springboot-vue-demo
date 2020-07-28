@@ -18,7 +18,7 @@
              href="javascript:"
              title="download as SVG image">SVG image</a>
         </li>
-        <li>
+        <li style="display:none">
           <a ref="deployBpm"
              href="javascript:"
              title="部署流程">部署</a>
@@ -59,8 +59,8 @@ export default {
      */
     createNewDiagram () {
       const bpmnXmlStr = '<?xml version="1.0" encoding="UTF-8"?>\n' +
-        '<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:normal="http://flowable.org/bpmn/normal" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd" id="sample-diagram" targetNamespace="http://bpmn.io/schema/bpmn">\n' +
-        '  <bpmn2:process id="Process_1" isExecutable="false">\n' +
+        '<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:activiti="http://activiti.org/bpmn" xmlns:normal="http://flowable.org/bpmn/normal" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd" id="sample-diagram" targetNamespace="http://bpmn.io/schema/bpmn">\n' +
+        '  <bpmn2:process id="test_process"  >\n' +
         '    <bpmn2:startEvent id="StartEvent_1"/>\n' +
         '  </bpmn2:process>\n' +
         '  <bpmndi:BPMNDiagram id="BPMNDiagram_1">\n' +
@@ -93,7 +93,10 @@ export default {
     // 下载为SVG格式,done是个函数，调用的时候传入的
     deployBpm (done) {
       // 把传入的done再传给bpmn原型的saveSVG函数调用
-      // this.bpmnModeler.saveSVG(done)
+      // this.bpmnModeler.saveSVG(done) 
+      debugger
+      var lll = this.bpmnModeler;
+      console.log(done);
     },
     // 当图发生改变的时候会调用这个函数，这个data就是图的xml
     setEncoded (link, name, data) {
@@ -147,6 +150,7 @@ export default {
     // 获取a标签dom节点
     const downloadLink = this.$refs.saveDiagram
     const downloadSvgLink = this.$refs.saveSvg
+    const deployBpmLink = this.$refs.deployBpm
     // 给图绑定事件，当图有发生改变就会触发这个事件
     this.bpmnModeler.on('commandStack.changed', function () {
       _this.saveSVG(function (err, svg) {
@@ -156,6 +160,10 @@ export default {
       _this.saveDiagram(function (err, xml) {
         console.log('xiazaixml---' + xml)
         _this.setEncoded(downloadLink, 'diagram.bpmn', err ? null : xml)
+      })
+      _this.deployBpm(function (err, xml) {
+        console.log('xiazaixml---' + xml)
+        _this.setEncoded(deployBpmLink, 'diagram.bpmn', err ? null : xml)
       })
     })
 
@@ -213,5 +221,15 @@ export default {
       }
     }
   }
+}
+.group-label {
+  font-weight: normal !important;
+  display: inline-block;
+  vertical-align: middle;
+  color: #666;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  transition: margin 0.218s linear;
+  font-style: italic;
 }
 </style>

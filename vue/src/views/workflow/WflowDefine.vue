@@ -72,7 +72,7 @@
     </el-row>
     <!--新增编辑页面-->
     <CustomForm :show.sync="showForm"
-                title="用户编辑"
+                title="流程定义编辑"
                 :control="wflowDefineControl"
                 :model="wflowDefineForm"
                 :rules="wflowDefineRules"
@@ -127,6 +127,7 @@ export default {
       buttonGroups: [
         { index: 0, label: '查询', method: 'showCondition', icon: 'el-icon-search' },
         { index: 2, label: '部署测试流程', method: 'deploy', params: false, icon: 'el-icon-s-promotion' },
+        { index: 1, label: '发起测试流程', method: 'startProcess', icon: 'el-icon-video-play' },
         { index: 1, label: '新建', method: 'add', icon: 'el-icon-plus' },
         { index: 5, label: '删除', method: 'delete', icon: 'el-icon-delete' },
         { index: 6, label: '刷新', method: 'searchData', icon: 'el-icon-refresh' }
@@ -213,7 +214,29 @@ export default {
       this.wflowDefineControl[1].readonly = false
       this.showForm = true
     },
-
+    /**
+     * 开启流程
+     */
+    startProcess () {
+      if (this.$refs.multipleTable.selection.length != 1) {
+        this.$message.warning("请选择一条流程定义");
+        return;
+      }
+      this.$http.get('/api/wflowDefine/start-process-test', {
+        params: {
+          processInstanceId: this.$refs.multipleTable.selection[0].id
+        }
+      }).then(res => {
+        if (res.code == '0') {
+          this.$message.success(res.msg)
+          this.searchData()
+        } else {
+          this.$message.error(res.msg)
+        }
+      }).catch(err => {
+        console.log(err.message)
+      })
+    },
     /**
      * 选择事件
      */
@@ -260,14 +283,19 @@ export default {
     saveForm (from) {
       const newData = JSON.parse(JSON.stringify(from))
       this.wflowDefineForm = newData
-      this.$http.post('/api/wflowDefine/save', this.wflowDefineForm).then(res => {
-        this.searchData()
+      this.$http.post('/api/wflowDefine/deploy', this.wflowDefineForm).then(res => {
+        if (res.code == '0') {
+          this.$message.success(res.msg)
+          this.searchData()
+        } else {
+          this.$message.error(res.msg)
+        }
       }).catch(err => {
         console.log(err.message)
       })
     },
     /**
-     * 删除用户
+     * 删除流程定义
      */
     handleDelClick (row) {
       // 设置账号栏位不可编辑
@@ -295,7 +323,7 @@ export default {
       })
     },
     /**
-     * 删除用户
+     * 删除流程定义
      */
     handleViewClick (row) {
       this.showView = true
@@ -312,7 +340,12 @@ export default {
       this.$http.post('/api/wflowDefine/deploy', {}).then(res => {
         if (res.code == '0') {
           this.$message.success(res.msg)
-          this.searchData()
+          if (res.code == '0') {
+            this.$message.success(res.msg)
+            this.searchData()
+          } else {
+            this.$message.error(res.msg)
+          }
         } else {
           this.$message.error(res.msg)
         }
@@ -321,7 +354,7 @@ export default {
       })
     },
     /**
-     * 删除用户
+     * 删除流程定义
      */
     delete () {
       if (this.$refs.multipleTable.selection.length <= 0) {

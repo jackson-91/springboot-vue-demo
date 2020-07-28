@@ -21,10 +21,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javax.print.DocFlavor;
+import java.util.*;
 
 @RestController
 @RequestMapping("wflowTask")
@@ -144,13 +142,13 @@ public class WflowTaskController {
      * @return
      */
     @GetMapping("/start")
-    public ResponseResult startProcess() {
+    public ResponseResult startProcess(@RequestParam("processInstanceId") String processInstanceId) {
         //得到processEngine对象
         ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
         //得到RuntimeService方法
         RuntimeService runtimeService = processEngine.getRuntimeService();
         Authentication.setAuthenticatedUserId(JwtUtil.CurrentUserName());
-        ProcessInstance processInstance = runtimeService.startProcessInstanceById("purchaseorder:4:0caf690d-c96a-11ea-a628-fa94c28bc5f4", "xxx");
+        ProcessInstance processInstance = runtimeService.startProcessInstanceById(processInstanceId, UUID.randomUUID().toString());
         System.out.println(processInstance.getId());
         System.out.println(processInstance.getDeploymentId());
         System.out.println(processInstance.getActivityId());

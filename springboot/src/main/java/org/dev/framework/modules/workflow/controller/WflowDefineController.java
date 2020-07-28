@@ -6,15 +6,20 @@ import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.ProcessEngines;
 import org.activiti.engine.RepositoryService;
+import org.activiti.engine.RuntimeService;
+import org.activiti.engine.impl.identity.Authentication;
 import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.repository.ProcessDefinition;
+import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.image.ProcessDiagramGenerator;
 import org.activiti.image.impl.DefaultProcessDiagramGenerator;
 import org.apache.commons.io.FileUtils;
 import org.dev.framework.common.PaginAtion;
 import org.dev.framework.common.ResponseResult;
 import org.dev.framework.modules.workflow.entity.WflowDefine;
+import org.dev.framework.security.jwt.JwtUtil;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,12 +27,16 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 
 @RestController
 @RequestMapping("wflowDefine")
 @Slf4j
 public class WflowDefineController {
+    @Value("${springboot_vue.upload.local-upload-path}")
+    private String upload_path;
+
     /**
      * 流程定义查询
      *
@@ -108,26 +117,61 @@ public class WflowDefineController {
     @Transactional
     public ResponseResult deploy(@RequestBody WflowDefine wflowDefine) {
         try {
+            //获取文件流
+            File fileBpmn = new File(upload_path + wflowDefine.getBpmnfile());
+            InputStream BpmnInputStream = null;
+            try {
+                BpmnInputStream = new FileInputStream(fileBpmn);
+            } catch (IOException e) {
+
+            }
+            File fileSvg = new File(upload_path + wflowDefine.getBpmnfile());
+            InputStream SvgInputStream = null;
+            try {
+                SvgInputStream = new FileInputStream(fileSvg);
+            } catch (IOException e) {
+
+            }
             //1.创建ProcessEngine对象
             ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
 
             //2.得到RepositoryService实例
             RepositoryService repositoryService = processEngine.getRepositoryService();
 
+
             //3.进行部署
             Deployment deployment = repositoryService.createDeployment()//创建Deployment对象
-                    .name("订单审批")
-                    .key("PURCHASEORDER.bpmn")
-                    .category("purchase")
+                    .name(wflowDefine.getName())
+                    .key(wflowDefine.getKey())
+                    .category(wflowDefine.getCategory())
                     .tenantId("000000")
-                    .addClasspathResource("process/PURCHASEORDER.bpmn")//添加bpmn文件
-                    .addClasspathResource("process/PURCHASEORDER.bpmn.png")//添加png文件
+                    .addInputStream(fileBpmn.getName(), BpmnInputStream)//添加bpmn文件
+                    .addInputStream(fileSvg.getName(), SvgInputStream)//添加png文件
                     .deploy();//部署
             log.info("name---" + deployment.getName());
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseResult.error();
+            return ResponseResult.error(e.getMessage());
         }
+        return ResponseResult.success();
+    }
+
+    /**
+     * 启动流程
+     *
+     * @return
+     */
+    @GetMapping("/start-process-test")
+    public ResponseResult startProcess(@RequestParam("processInstanceId") String processInstanceId) {
+        //得到processEngine对象
+        ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
+        //得到RuntimeService方法
+        RuntimeService runtimeService = processEngine.getRuntimeService();
+        Authentication.setAuthenticatedUserId(JwtUtil.CurrentUserName());
+        ProcessInstance processInstance = runtimeService.startProcessInstanceById(processInstanceId, UUID.randomUUID().toString());
+        System.out.println(processInstance.getId());
+        System.out.println(processInstance.getDeploymentId());
+        System.out.println(processInstance.getActivityId());
         return ResponseResult.success();
     }
 
@@ -147,7 +191,7 @@ public class WflowDefineController {
         try {
             imageStream = processDiagramGenerator.generateDiagram(bpmnModel, "宋体", "微软雅黑", "黑体");
             response.setContentType("image/svg+xml;charset=UTF-8");
-            response.addHeader("Accept-Ranges","bytes");
+            response.addHeader("Accept-Ranges", "bytes");
             // 输出资源内容到相应对象
             byte[] b = new byte[1024];
             int len;
@@ -163,4 +207,6 @@ public class WflowDefineController {
 
         }
     }
+
+
 }

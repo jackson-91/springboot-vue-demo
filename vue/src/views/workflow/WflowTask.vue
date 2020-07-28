@@ -116,7 +116,6 @@ export default {
       showSearch: false,
       buttonGroups: [
         { index: 0, label: '查询', method: 'showCondition', icon: 'el-icon-search' },
-        { index: 1, label: '发起测试流程', method: 'startProcess', icon: 'el-icon-video-play' },
         { index: 1, label: '同意', method: 'pass', icon: 'el-icon-check' },
         { index: 2, label: '拒绝', method: 'reject', params: false, icon: 'el-icon-close' },
         { index: 6, label: '刷新', method: 'searchData', icon: 'el-icon-refresh' }
@@ -206,16 +205,6 @@ export default {
       return params
     },
     /**
-     * 开启流程
-     */
-    startProcess () {
-      this.$http.get('/api/wflowTask/start', {}).then(res => {
-        this.searchData()
-      }).catch(err => {
-        console.log(err.message)
-      })
-    },
-    /**
      * 审批通过
      */
     pass () {
@@ -225,8 +214,11 @@ export default {
       })
       this.$http.post('/api/wflowTask/complete', idArray).then(res => {
         if (res.code == '0') {
+          this.$message.success(res.msg)
           this.searchData()
-        } else { this.$message.error(res.msg) }
+        } else {
+          this.$message.error(res.msg)
+        }
       }).catch(err => {
         console.log(err.message)
       })
@@ -241,8 +233,11 @@ export default {
       })
       this.$http.post('/api/wflowTask/reject', idArray).then(res => {
         if (res.code == '0') {
+          this.$message.success(res.msg)
           this.searchData()
-        } else { this.$message.error(res.msg) }
+        } else {
+          this.$message.error(res.msg)
+        }
       }).catch(err => {
         console.log(err.message)
       })
@@ -294,7 +289,12 @@ export default {
       const newData = JSON.parse(JSON.stringify(from))
       this.userForm = newData
       this.$http.post('/api/wflowDefine/save', this.userForm).then(res => {
-        this.searchData()
+        if (res.code == '0') {
+          this.$message.success(res.msg)
+          this.searchData()
+        } else {
+          this.$message.error(res.msg)
+        }
       }).catch(err => {
         console.log(err.message)
       })

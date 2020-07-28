@@ -134,7 +134,10 @@
                    :headers="importHeaders"
                    action="/api/sysUpload/upload"
                    name="multipartfiles"
+                   :id="item.field"
                    :on-change="handleChange"
+                   :on-success="handleSuccess"
+                   :data="setData(item)"
                    :file-list="formModel[item.field]['fileList']">
           <el-button size="small"
                      type="primary"
@@ -221,8 +224,24 @@ export default {
     }
   },
   methods: {
+    /**
+     * 设置上传参数 主要用于回传绑定对应的文件
+     */
+    setData (field) {
+      return { "extension": field.field };
+    },
+    /**
+     * 文件改变
+     */
     handleChange (file, fileList) {
       this.fileList = fileList.slice(-3)
+    },
+    /**
+     * 文件上传成功
+     */
+    handleSuccess (response, file, fileList) {
+      let field = response.msg;
+      this.formModel[field] = response.data[0].url;
     },
     /**
      * dialog 关闭事件

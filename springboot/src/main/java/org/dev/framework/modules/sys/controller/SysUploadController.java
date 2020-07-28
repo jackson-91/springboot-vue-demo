@@ -10,6 +10,7 @@ import org.dev.framework.modules.sys.service.SysUploadService;
 import org.dev.framework.modules.sys.service.SysUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -55,7 +56,7 @@ public class SysUploadController {
      * @return
      */
     @PostMapping(value = "/upload")
-    public ResponseResult uploading(@RequestParam("multipartfiles") MultipartFile[] multipartfiles) {
+    public ResponseResult uploading(@RequestParam("multipartfiles") MultipartFile[] multipartfiles, @RequestParam(value = "extension", required = false) Object extension) {
         Date now = new Date();
         String dirName = sdf.format(now);
         String upload_dir = upload_path + "/" + dirName;
@@ -66,8 +67,8 @@ public class SysUploadController {
         }
         for (MultipartFile file : multipartfiles) {
             String fileName = UUID.randomUUID().toString();
-            fileName = fileName + "." + this.lastName(file);
-            try (FileOutputStream out = new FileOutputStream(upload_path + "/" + fileName)) {
+            fileName = fileName + this.lastName(file);
+            try (FileOutputStream out = new FileOutputStream(upload_dir + "/" + fileName)) {
                 out.write(file.getBytes());
             } catch (Exception e) {
                 e.printStackTrace();
@@ -75,7 +76,7 @@ public class SysUploadController {
                 return ResponseResult.error("uploading failure");
             }
             //写入日志
-            String url = dirName + "/" + fileName;
+            String url = "/" + dirName + "/" + fileName;
             SysUpload sysUpload = new SysUpload();
             sysUpload.setName(file.getOriginalFilename());
             sysUpload.setUrl(url);
@@ -83,7 +84,11 @@ public class SysUploadController {
         }
         this.sysUploadService.saveBatch(sysUploadList);
         log.info("文件上传成功!");
-        return ResponseResult.success();
+        if (ObjectUtils.isEmpty(extension)) {
+            return ResponseResult.success(sysUploadList);
+        } else {
+            return ResponseResult.success(0, extension.toString(), sysUploadList);
+        }
     }
 
     /**
