@@ -35,6 +35,56 @@ public class WflowTaskController {
     TaskService taskService;
 
     /**
+     * 待签收任务
+     *
+     * @param wflowTask
+     * @param pagination
+     * @return
+     */
+    @GetMapping("/claim-list")
+    public ResponseResult<IPage<WflowTask>> claimList(WflowTask wflowTask, PaginAtion pagination) {
+        IPage page = pagination.getPage();
+        int firstResult = (pagination.getCurrent() - 1) * pagination.getSize();
+        int maxResults = pagination.getCurrent() * pagination.getSize();
+        //获取ProcessEngine对象 默认配置文件名称：activiti.cfg.xml 并且configuration的Bean实例ID为processEngineConfiguration
+        ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
+        //获取一个TaskService对象
+        TaskService taskService = processEngine.getTaskService();
+        //查询代办业务 createTaskQuery 查询任务 taskCandidateOrAssigned 查询任务执行者 processDefinitionKey：查询流程
+        /**
+         * taskCandidateOrAssigned匹配规则:1.Assigned 2.配置bpmn文件中定义的值
+         * taskAssignee匹配规则:1.Assigned
+         */
+        List<WflowTask> wflowTasks = new ArrayList<>();
+        List<Task> list = taskService.createTaskQuery().taskCandidateUser(SpringSecurityUtils.CurrentUser().getLoginName())
+                .orderByTaskDueDate().desc().listPage(firstResult, maxResults);
+
+        long count = taskService.createTaskQuery().taskCandidateUser(SpringSecurityUtils.CurrentUser().getLoginName()).count();
+        for (Task task : list) {
+            WflowTask wflowTask1 = new WflowTask();
+            BeanUtils.copyProperties(task, wflowTask1);
+            wflowTasks.add(wflowTask1);
+        }
+        page.setRecords(wflowTasks);
+        page.setTotal(count);
+        return ResponseResult.success(page);
+    }
+
+    /**
+     * 签收任务
+     *
+     * @param idArray
+     * @return
+     */
+    @PostMapping("/claim")
+    public ResponseResult claim(@RequestBody List<String> idArray) {
+        for (String taskid : idArray) {
+            taskService.claim(taskid, SpringSecurityUtils.CurrentUser().getLoginName());
+        }
+        return ResponseResult.success();
+    }
+
+    /**
      * 待签核流程
      *
      * @param wflowTask
@@ -106,6 +156,36 @@ public class WflowTaskController {
         return ResponseResult.success(page);
     }
 
+
+    /**
+     * 完成流程
+     *
+     * @param idArray
+     * @return
+     */
+    @PostMapping("/complete")
+    public ResponseResult completeProcess(@RequestBody List<String> idArray) {
+        for (String taskid : idArray) {
+            taskService.complete(taskid);
+        }
+        return ResponseResult.success();
+    }
+
+
+    /**
+     * 拒绝流程
+     *
+     * @param idArray
+     * @return
+     */
+    @PostMapping("/reject")
+    public ResponseResult reject(@RequestBody List<String> idArray) {
+        for (String taskid : idArray) {
+            taskService.deleteTask(taskid, " 测试拒绝愿意i你");
+        }
+        return ResponseResult.success();
+    }
+
     /**
      * 类型转换
      *
@@ -152,35 +232,6 @@ public class WflowTaskController {
         System.out.println(processInstance.getId());
         System.out.println(processInstance.getDeploymentId());
         System.out.println(processInstance.getActivityId());
-        return ResponseResult.success();
-    }
-
-    /**
-     * 完成流程
-     *
-     * @param idArray
-     * @return
-     */
-    @PostMapping("/complete")
-    public ResponseResult completeProcess(@RequestBody List<String> idArray) {
-        for (String taskid : idArray) {
-            taskService.complete(taskid);
-        }
-        return ResponseResult.success();
-    }
-
-
-    /**
-     * 拒绝流程
-     *
-     * @param idArray
-     * @return
-     */
-    @PostMapping("/reject")
-    public ResponseResult reject(@RequestBody List<String> idArray) {
-        for (String taskid : idArray) {
-            taskService.deleteTask(taskid, " 测试拒绝愿意i你");
-        }
         return ResponseResult.success();
     }
 

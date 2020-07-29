@@ -112,7 +112,7 @@ spring:
       history-level: full
       db-history-used: true
       #流程定义文件存放目录,要具体到某个目录
-      process-definition-location-prefix: classpath:/process/
+      #process-definition-location-prefix: classpath:/process/
       #process-definition-location-suffixes: #流程文件格式
       #  - **.bpmn20.xml
       #  - **.bpmn
