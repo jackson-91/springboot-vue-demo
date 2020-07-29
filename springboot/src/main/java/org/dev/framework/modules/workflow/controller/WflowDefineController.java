@@ -2,6 +2,7 @@ package org.dev.framework.modules.workflow.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import lombok.extern.slf4j.Slf4j;
+import org.activiti.bpmn.converter.BpmnXMLConverter;
 import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.ProcessEngines;
@@ -9,7 +10,9 @@ import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.impl.identity.Authentication;
 import org.activiti.engine.repository.Deployment;
+import org.activiti.engine.repository.Model;
 import org.activiti.engine.repository.ProcessDefinition;
+import org.activiti.engine.repository.ProcessDefinitionQuery;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.image.ProcessDiagramGenerator;
 import org.activiti.image.impl.DefaultProcessDiagramGenerator;
@@ -19,13 +22,18 @@ import org.dev.framework.common.ResponseResult;
 import org.dev.framework.modules.workflow.entity.WflowDefine;
 import org.dev.framework.security.jwt.JwtUtil;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -108,8 +116,76 @@ public class WflowDefineController {
     }
 
     /**
-     * 部署流程
+     * 导出流程
      *
+     * @param processInstanceId
+     * @return
+     */
+    @GetMapping("export")
+    public void export(@RequestParam("definitionId") String processInstanceId, HttpServletResponse response) {
+        BufferedOutputStream bos = null;
+        try {
+
+            try {
+                RepositoryService repositoryService = ProcessEngines.getDefaultProcessEngine().getRepositoryService();
+                //
+                ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery().processDefinitionId(processInstanceId).singleResult();
+                InputStream inputStream = repositoryService
+                        .getProcessModel(processInstanceId);
+                ByteArrayOutputStream swapStream = new ByteArrayOutputStream();
+                byte[] bpmnBytes = new byte[1024]; //buff用于存放循环读取的临时数据
+                int rc = 0;
+                while ((rc = inputStream.read(bpmnBytes, 0, 100)) > 0) {
+                    swapStream.write(bpmnBytes, 0, rc);
+                }
+                byte[] in_b = swapStream.toByteArray(); //in_b为转换之后的结果
+                log.info("------" +new String(in_b));
+                // 封装输出流
+                bos = new BufferedOutputStream(response.getOutputStream());
+                bos.write(in_b);// 写入流
+
+                String filename = processDefinition.getName() + ".bpmn";
+                response.setContentType("application/x-msdownload;");
+                response.setHeader("Content-Disposition",
+                        "attachment; filename=" + filename);
+                response.flushBuffer();
+
+            } finally {
+                bos.flush();
+                bos.close();
+            }
+
+        } catch (Exception e) {
+            System.out.println("导出文件失败");
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 获取流程定义的xml
+     *
+     * @param processInstanceId
+     * @return
+     */
+    @GetMapping("bpmnXml")
+    public ResponseResult bpmnXml(@RequestParam("definitionId") String processInstanceId) {
+        RepositoryService repositoryService = ProcessEngines.getDefaultProcessEngine().getRepositoryService();
+
+        //获取BpmnModel对象
+        BpmnModel bpmnModel = repositoryService.getBpmnModel(processInstanceId);
+        //创建转换对象
+
+        BpmnXMLConverter converter = new BpmnXMLConverter();
+        //把bpmnModel对象转换成字符
+        byte[] bytes = converter.convertToXML(bpmnModel);
+        String xmlContenxt = new String(bytes);
+        log.info(xmlContenxt);
+        return ResponseResult.success(xmlContenxt);
+    }
+
+    /**
+     * 部署流程
+     * 根据文件部署
      * @param wflowDefine
      * @return
      */
@@ -157,12 +233,60 @@ public class WflowDefineController {
     }
 
     /**
+     * 部署流程
+     * 根据XML部署
+     * @param wflowDefine
+     * @return
+     */
+    @PostMapping("deployByXML")
+    @Transactional
+    public ResponseResult deployByXML(@RequestBody WflowDefine wflowDefine) {
+
+
+        try {
+            //获取流程XML
+            if (StringUtils.isEmpty(wflowDefine.getBpmnXML())) {
+                return ResponseResult.error("流程节点为空,无法部署");
+            }
+            XMLInputFactory factory = XMLInputFactory.newFactory();
+            Reader reader = new StringReader(wflowDefine.getBpmnXML());
+            XMLStreamReader streamReader = factory.createXMLStreamReader(reader);
+            BpmnXMLConverter converter = new BpmnXMLConverter();
+            BpmnModel bpmnModel = converter.convertToBpmnModel(streamReader);
+
+
+            //1.创建ProcessEngine对象
+            ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
+
+            //2.得到RepositoryService实例
+            RepositoryService repositoryService = processEngine.getRepositoryService();
+            //3.获取原先流程
+            ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery().processDefinitionId(wflowDefine.getId()).singleResult();
+            //4.进行部署
+            Deployment deployment = repositoryService.createDeployment()//创建Deployment对象
+                    .name(wflowDefine.getName())
+                    .key(wflowDefine.getKey())
+                    .category(wflowDefine.getCategory())
+                    .tenantId("000000")
+                    .addBpmnModel(processDefinition.getResourceName(), bpmnModel)
+                    .deploy();//部署
+            log.info("name---" + deployment.getName());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseResult.error(e.getMessage());
+        }
+        return ResponseResult.success();
+    }
+
+
+
+    /**
      * 启动流程
      *
      * @return
      */
     @GetMapping("/start-process-test")
-    public ResponseResult startProcess(@RequestParam("processInstanceId") String processInstanceId) {
+    public ResponseResult startProcess(@RequestParam("definitionId") String processInstanceId) {
         //得到processEngine对象
         ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
         //得到RuntimeService方法

@@ -8,18 +8,6 @@
            class="panel"></div>
       <ul class="buttons">
         <li>
-          <el-upload :show-file-list="false"
-                     action=""
-                     :auto-upload="false"
-                     :on-change="handleOpenFile"
-                     class="import">
-            <a slot="trigger"
-               ref="import"
-               href="javascript:"
-               title="import BPMN diagram">导入 BPMN diagram</a>
-          </el-upload>
-        </li>
-        <li>
           <a ref="saveDiagram"
              href="javascript:"
              title="download BPMN diagram">下载 BPMN diagram</a>
@@ -29,8 +17,9 @@
              href="javascript:"
              title="download as SVG image">下载 SVG image</a>
         </li>
-        <li style="display:none"> 
-          <a ref="deployBpm" class="active"
+        <li>
+          <a ref="deployBpm"
+             class="active"
              @click="deployBpm"
              title="部署流程">部署</a>
         </li>
@@ -50,10 +39,17 @@ import propertiesProviderModule from 'bpmn-js-properties-panel-activiti/lib/prov
 //import propertiesProviderModule from 'bpmn-js-properties-panel/lib/provider/camunda'
 import camundaModdleDescriptor from 'activiti-bpmn-moddle/resources/activiti'
 //import camundaModdleDescriptor from 'camunda-bpmn-moddle/resources/camunda'
-import customTranslate from '../../plugins/translate/customTranslate'
+import customTranslate from '../plugins/translate/customTranslate'
 // import activitiExtensionModule from 'activiti-bpmn-moddle/lib'
 // import activitiModdle from 'activiti-bpmn-moddle/resources/activiti'
 export default {
+  props: {
+    // 流程定义ID
+    definitionId: {
+      type: String,
+      require: true
+    },
+  },
   data () {
     return {
       // bpmn建模器
@@ -61,33 +57,47 @@ export default {
       container: null,
       canvas: null,
       xmlStr: null,
-      processName: ''
+      processName: '',
+      processDefinitionId: null
     }
+  },
+  watch: {
+    // 监听show,visible 随着show变化而变化
+    definitionId: {
+      immediate: true,
+      handler (definitionId) {
+        this.processDefinitionId = definitionId;
+        this.$http.get('/api/wflowDefine/bpmnXml', {
+          params: {
+            definitionId: this.processDefinitionId
+          }
+        }).then(res => {
+          if (res.code == '0') {
+            const bpmnXmlStr = res.data;
+            this.xmlStr = bpmnXmlStr;
+            // 将字符串转换成图显示出来
+            this.bpmnModeler.importXML(bpmnXmlStr, function (err) {
+              if (err) {
+                console.error(err)
+                 this.$message.error(err)
+              }
+            })
+          } else {
+            this.$message.error(res.msg)
+          }
+        }).catch(err => {
+          console.log(err.message)
+        })
+      }
+    },
   },
   methods: {
     /**
      * 设置默认模板
      */
     createNewDiagram () {
-      const bpmnXmlStr = '<?xml version="1.0" encoding="UTF-8"?>\n' +
-        '<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:activiti="http://activiti.org/bpmn" xmlns:normal="http://flowable.org/bpmn/normal" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd" id="sample-diagram" targetNamespace="http://bpmn.io/schema/bpmn">\n' +
-        '  <bpmn2:process id="test_process"  >\n' +
-        '    <bpmn2:startEvent id="StartEvent_1"/>\n' +
-        '  </bpmn2:process>\n' +
-        '  <bpmndi:BPMNDiagram id="BPMNDiagram_1">\n' +
-        '    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_1">\n' +
-        '      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">\n' +
-        '        <dc:Bounds height="36.0" width="36.0" x="412.0" y="240.0"/>\n' +
-        '      </bpmndi:BPMNShape>\n' +
-        '    </bpmndi:BPMNPlane>\n' +
-        '  </bpmndi:BPMNDiagram>\n' +
-        '</bpmn2:definitions>'
-      // 将字符串转换成图显示出来
-      this.bpmnModeler.importXML(bpmnXmlStr, function (err) {
-        if (err) {
-          console.error(err)
-        }
-      })
+
+
     },
     // 下载为SVG格式,done是个函数，调用的时候传入的
     saveSVG (done) {
@@ -106,6 +116,19 @@ export default {
       // 把传入的done再传给bpmn原型的saveSVG函数调用
       // this.bpmnModeler.saveSVG(done)  
       console.log(this.xmlStr);
+      this.$http.post('/api/wflowDefine/deployByXML', {
+        id: this.processDefinitionId,
+        bpmnXML: this.xmlStr
+      }).then(res => {
+        if (res.code == '0') {
+          this.$message.success(res.msg)
+          this.ok();
+        } else {
+          this.$message.error(res.msg)
+        }
+      }).catch(err => {
+        console.log(err.message)
+      })
     },
     // 上传文件
     handleOpenFile (file) {
@@ -134,6 +157,9 @@ export default {
         link.href = 'data:application/bpmn20-xml;charset=UTF-8,' + encodedData
         link.download = name
       }
+    },
+    ok () {
+      this.$emit('ok')
     }
   },
   mounted () {
@@ -208,7 +234,7 @@ export default {
 .containers {
   position: absolute;
   background-color: #ffffff;
-  width: 85%;
+  width: 95%;
   height: 85%;
 }
 .canvas {

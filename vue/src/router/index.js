@@ -32,6 +32,7 @@ const routes = [
       { path: '/sysjob', component: resolve => require(['../views/system/SysJob.vue'], resolve), meta: { requestLogin: true, permissions: true } },
       { path: '/wflowdesign', component: resolve => require(['../views/workflow/WflowDesign.vue'], resolve), meta: { requestLogin: false, permissions: false } },
       { path: '/wflowdefine', component: resolve => require(['../views/workflow/WflowDefine.vue'], resolve), meta: { requestLogin: false, permissions: false } },
+      { path: '/wflowclaim', component: resolve => require(['../views/workflow/WflowClaim.vue'], resolve), meta: { requestLogin: false, permissions: false } },
       { path: '/wflowtask', component: resolve => require(['../views/workflow/WflowTask.vue'], resolve), meta: { requestLogin: false, permissions: false } },
       { path: '/wflowhistory', component: resolve => require(['../views/workflow/WflowHistory.vue'], resolve), meta: { requestLogin: false, permissions: false } },
       { path: '/401', component: resolve => require(['../views/error/401.vue'], resolve) },

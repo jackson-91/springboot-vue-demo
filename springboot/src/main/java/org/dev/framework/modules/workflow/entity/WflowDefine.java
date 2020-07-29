@@ -38,4 +38,6 @@ public class WflowDefine {
     private String bpmnfile;
 
     private String pngfile;
+
+    private String bpmnXML;
 }

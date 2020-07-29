@@ -47,17 +47,11 @@
                            width="300">
             <template slot-scope="scope">
               <el-button type="text"
-                         @click="handleDelClick(scope.row)"
-                         size="small">删除</el-button>
+                         @click="handleEditClick(scope.row)"
+                         size="small">业务单据</el-button>
               <el-button type="text"
-                         @click="handleLoadBpmnClick(scope.row)"
-                         size="small">导出流程文件</el-button>
-              <el-button type="text"
-                         @click="handleDesginBpmnClick(scope.row)"
-                         size="small">流程设计</el-button>
-              <el-button type="text"
-                         @click="handleViewClick(scope.row)"
-                         size="small">流程图</el-button>
+                         @click="handleViewProcessClick(scope.row)"
+                         size="small">查看流程图</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -76,17 +70,9 @@
         </el-pagination>
       </el-col>
     </el-row>
-    <!--新增编辑页面-->
-    <CustomForm :show.sync="showForm"
-                title="流程定义编辑"
-                :control="wflowDefineControl"
-                :model="wflowDefineForm"
-                :rules="wflowDefineRules"
-                @ok="saveForm"
-                @hidden="showForm=false" />
     <!--列自定义-->
     <CustomTableCols :defaultCols="defaultColumns"
-                     customName="wflowDefine"
+                     customName="wlfowTask"
                      @changeColumns="changeColumns" />
     <!--查询条件-->
     <Search :show.sync="showSearch"
@@ -98,32 +84,20 @@
     <el-dialog title="流程图"
                :visible.sync="showView">
       <img :src="imgSrc"
-           style="margin-top: -100px;margin-bottom: 30px;">
+           style="margin-top: -150px;margin-bottom: 30px;" />
+      <br />
     </el-dialog>
-    <!--流程图设计-->
-    <el-drawer title="流程设计"
-               :visible.sync="showDesign"
-               :with-header="true"
-               size="85%">
-      <BpmnDesign :definitionId="definitionId"
-                  @ok="saveBpmn"></BpmnDesign>
-    </el-drawer>
   </div>
 
 </template>
 
 <script>
-
-import CustomForm from '../../components/CustomForm'
 import CustomTableCols from '../../components/CustomTableCols'
 import Search from '../../components/Search'
-import BpmnDesign from '../../components/BpmnDesign'
 export default {
   components: {
     CustomTableCols,
-    Search,
-    CustomForm,
-    BpmnDesign
+    Search
   },
   data () {
     return {
@@ -142,57 +116,65 @@ export default {
       showSearch: false,
       buttonGroups: [
         { index: 0, label: '查询', method: 'showCondition', icon: 'el-icon-search' },
-        { index: 2, label: '部署测试流程', method: 'deploy', params: false, icon: 'el-icon-s-promotion' },
-        { index: 1, label: '发起测试流程', method: 'startProcess', icon: 'el-icon-video-play' },
-        { index: 1, label: '新建', method: 'add', icon: 'el-icon-plus' },
-        { index: 5, label: '删除', method: 'delete', icon: 'el-icon-delete' },
+        { index: 1, label: '签收任务', method: 'claim', icon: 'el-icon-check' }, 
         { index: 6, label: '刷新', method: 'searchData', icon: 'el-icon-refresh' }
       ],
       tableColumns: [],
       defaultColumns: [
-        { label: '流程定义id', prop: 'id', show: true, fixed: false, sortable: false, width: 200 },
-        { label: '流程名称', prop: 'name', show: true, fixed: false, sortable: false, width: 200 },
-        { label: '流程key', prop: 'key', show: true, fixed: false, sortable: false },
+        { label: '任务id', prop: 'id', show: true, fixed: false, sortable: false, width: 200 },
+        { label: '当前签核节点', prop: 'name', show: true, fixed: false, sortable: false, width: 200 },
+        { label: '当前签核人', prop: 'assignee', show: true, fixed: false, sortable: false },
         { label: '流程分类', prop: 'category', show: true, fixed: false, sortable: false },
-        { label: '部署ID', prop: 'deploymentId', show: true, fixed: false, sortable: false },
-        { label: '描述', prop: 'description', show: true, fixed: false, sortable: false },
-        { label: '版本', prop: 'version', show: true, fixed: false, sortable: false }
+        { label: '业务单据 ', prop: 'businessKey', show: true, fixed: false, sortable: false },
+        { label: '描述', prop: 'description', show: true, fixed: false, sortable: false }
       ],
       showForm: false,
-      wflowDefineForm: { id: '', name: '', key: '', category: '', description: '', bpmnfile: { fileList: [] }, pngfile: { fileList: [] } },
-      wflowDefineControl: [
+      userForm: { id: '', loginName: '', nickName: '', passWord: '', cmfPassWord: '', mobilePhone: '', qq: '', email: '', isEnable: '' },
+      userControl: [
         { label: 'ID', field: 'id', type: 'hidden', show: false, readonly: true },
-        { label: '流程名称', field: 'name', type: 'input', show: true, readonly: true },
-        { label: '流程key', field: 'key', type: 'input', show: true, readonly: false },
-        { label: '流程分类', field: 'category', type: 'password', show: true, readonly: false },
-        { label: '流程描述', field: 'description', type: 'password', show: true, readonly: false },
-        { label: '流程BPM文件', field: 'bpmnfile', type: 'upload', show: true },
-        { label: '流程PNG文件', field: 'pngfile', type: 'upload', show: true }
+        { label: '账号', field: 'loginName', type: 'input', show: true, readonly: true },
+        { label: '昵称', field: 'nickName', type: 'input', show: true, readonly: false },
+        { label: '密码', field: 'passWord', type: 'password', show: true, readonly: false },
+        { label: '密码确认', field: 'cmfPassWord', type: 'password', show: true, readonly: false },
+        { label: '手机', field: 'mobilePhone', type: 'input', show: true, readonly: false },
+        { label: 'QQ', field: 'qq', type: 'input', show: true },
+        { label: '邮箱', field: 'email', type: 'input', show: true }
       ],
-      wflowDefineRules: {
-        name: [
-          { required: true, message: '请输入流程名称', trigger: 'blur' }
+      userRules: {
+        loginName: [
+          { required: true, message: '请输入账号', trigger: 'blur' },
+          { min: 3, max: 20, message: '长度在 3 到 20 个字符', trigger: 'blur' }
         ],
-        bpmnfile: [
-          { required: true, message: '请上传bpmn文件', trigger: 'blur' }
+        nickName: [
+          { required: true, message: '请输入昵称', trigger: 'blur' },
+          { min: 1, max: 50, message: '长度在 3 到 50 个字符', trigger: 'blur' }
         ],
-        pngfile: [
-          { required: true, message: '请上传流程png文件', trigger: 'blur' }
+        passWord: [
+          { required: true, message: '请输入密码', trigger: 'blur' },
+          { min: 3, max: 20, message: '长度在 3 到 20 个字符', trigger: 'blur' }
+        ],
+        cmfPassWord: [
+          { required: true, message: '请输入密码', trigger: 'blur' },
+          { min: 3, max: 20, message: '长度在 3 到 20 个字符', trigger: 'blur' }
+        ],
+        mobilePhone: [
+          { required: true, message: '请输入手机号', trigger: 'blur' }
+        ],
+        email: [
+          { required: true, message: '请输入邮箱', trigger: 'blur' }
         ]
       },
       multipleSelection: [],
       visible: false,
       showView: false,
-      imgSrc: '',
-      definitionId: null,
-      showDesign: false,
+      imgSrc: ''
     }
   },
 
   methods: {
     searchData () {
       this.$http
-        .get('/api/wflowDefine/list', {
+        .get('/api/wflowTask/claim-list', {
           params: this._handerParams()
         })
         .then(res => {
@@ -222,29 +204,33 @@ export default {
       return params
     },
     /**
-     * 新增修改数据
+     * 审批通过
      */
-    add () {
-      // 设置账号栏位可编辑
-      for (const item in this.wflowDefineForm) {
-        this.wflowDefineForm[item] = ''
-      }
-      this.wflowDefineControl[1].readonly = false
-      this.showForm = true
+    claim () {
+      const idArray = []
+      this.$refs.multipleTable.selection.forEach(element => {
+        idArray.push(element.id)
+      })
+      this.$http.post('/api/wflowTask/claim', idArray).then(res => {
+        if (res.code == '0') {
+          this.$message.success(res.msg)
+          this.searchData()
+        } else {
+          this.$message.error(res.msg)
+        }
+      }).catch(err => {
+        console.log(err.message)
+      })
     },
     /**
-     * 开启流程
+     * 审批通过
      */
-    startProcess () {
-      if (this.$refs.multipleTable.selection.length != 1) {
-        this.$message.warning("请选择一条流程定义");
-        return;
-      }
-      this.$http.get('/api/wflowDefine/start-process-test', {
-        params: {
-          definitionId: this.$refs.multipleTable.selection[0].id
-        }
-      }).then(res => {
+    reject () {
+      const idArray = []
+      this.$refs.multipleTable.selection.forEach(element => {
+        idArray.push(element.id)
+      })
+      this.$http.post('/api/wflowTask/reject', idArray).then(res => {
         if (res.code == '0') {
           this.$message.success(res.msg)
           this.searchData()
@@ -300,8 +286,8 @@ export default {
      */
     saveForm (from) {
       const newData = JSON.parse(JSON.stringify(from))
-      this.wflowDefineForm = newData
-      this.$http.post('/api/wflowDefine/deploy', this.wflowDefineForm).then(res => {
+      this.userForm = newData
+      this.$http.post('/api/wflowDefine/save', this.userForm).then(res => {
         if (res.code == '0') {
           this.$message.success(res.msg)
           this.searchData()
@@ -313,11 +299,7 @@ export default {
       })
     },
     /**
-     * 保存BPM
-     */
-    saveBpmn () { this.showDesign = false; this.searchData(); },
-    /**
-     * 删除流程定义
+     * 删除用户
      */
     handleDelClick (row) {
       // 设置账号栏位不可编辑
@@ -345,24 +327,12 @@ export default {
       })
     },
     /**
-     * 查看流程定义
-     */
-    handleViewClick (row) {
+   * 查看流程图
+   */
+    handleViewProcessClick (row) {
+      // 设置账号栏位不可编辑
       this.showView = true
-      this.imgSrc = '/api/wflowDefine/view?definitionId=' + row.id
-    },
-    /**
-     * 导出BPMN
-     */
-    handleLoadBpmnClick (row) {
-      window.open('/api/wflowDefine/export?definitionId=' + row.id);
-    },
-    /**
-     * 导出BPMN
-     */
-    handleDesginBpmnClick (row) {
-      this.showDesign = true;
-      this.definitionId = row.id;
+      this.imgSrc = '/api/wflowChart/traceprocess?processInstanceId=' + row.processInstanceId
     },
     /**
      * 隐藏编辑表单
@@ -375,12 +345,7 @@ export default {
       this.$http.post('/api/wflowDefine/deploy', {}).then(res => {
         if (res.code == '0') {
           this.$message.success(res.msg)
-          if (res.code == '0') {
-            this.$message.success(res.msg)
-            this.searchData()
-          } else {
-            this.$message.error(res.msg)
-          }
+          this.searchData()
         } else {
           this.$message.error(res.msg)
         }
@@ -389,7 +354,7 @@ export default {
       })
     },
     /**
-     * 删除流程定义
+     * 删除用户
      */
     delete () {
       if (this.$refs.multipleTable.selection.length <= 0) {
