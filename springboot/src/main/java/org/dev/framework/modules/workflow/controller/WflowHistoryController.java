@@ -6,10 +6,7 @@ import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.bpmn.model.FlowNode;
 import org.activiti.bpmn.model.SequenceFlow;
 import org.activiti.engine.*;
-import org.activiti.engine.history.HistoricActivityInstance;
-import org.activiti.engine.history.HistoricActivityInstanceQuery;
-import org.activiti.engine.history.HistoricProcessInstance;
-import org.activiti.engine.history.HistoricTaskInstance;
+import org.activiti.engine.history.*;
 import org.activiti.engine.impl.RepositoryServiceImpl;
 import org.activiti.engine.impl.cfg.ProcessEngineConfigurationImpl;
 import org.activiti.engine.impl.context.Context;
@@ -42,6 +39,8 @@ import java.util.stream.Collectors;
 @RequestMapping("wflowHistory")
 @Slf4j
 public class WflowHistoryController {
+
+
 
     /**
      * 签核历史查询
@@ -100,7 +99,7 @@ public class WflowHistoryController {
         //获取指定流程实例的任务
         //historicActivityInstanceQuery.processInstanceId("2501");
         //获取任务列表
-        List<HistoricActivityInstance> list = historicActivityInstanceQuery.listPage(firstResult, maxResults);
+        List<HistoricActivityInstance> list = historicActivityInstanceQuery.finished().listPage(firstResult, maxResults);
         //
         Long count = historicActivityInstanceQuery.count();
         //

@@ -126,6 +126,7 @@ export default {
   Initiator: '创建者',
   'This maps to the process definition key.': '编号映射到流程定义键',
   'This maps to the task definition key.': '编号映射到任务定义键',
+  'Element must have an unique id.':'元素必须具有惟一的id。',
   'Candidate Starter Configuration': '候选人启动器配置',
   'Candidate Starter Groups': '候选人启动组',
   'Specify more than one group as a comma separated list.': '多个用户组使用逗号隔开',

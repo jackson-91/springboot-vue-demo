@@ -72,7 +72,7 @@
     </el-row>
     <!--列自定义-->
     <CustomTableCols :defaultCols="defaultColumns"
-                     customName="wflowHistroy"
+                     customName="wflowHisInstance"
                      @changeColumns="changeColumns" />
     <!--查询条件-->
     <Search :show.sync="showSearch"
@@ -121,12 +121,13 @@ export default {
       tableColumns: [],
       defaultColumns: [
         { label: '任务id', prop: 'id', show: true, fixed: false, sortable: false, width: 200 },
-        { label: '签核节点', prop: 'activityName', show: true, fixed: false, sortable: false, width: 200 },
-        { label: '签核类型', prop: 'activityType', show: true, fixed: false, sortable: false },
-        { label: '签核人', prop: 'assignee', show: true, fixed: false, sortable: false },
+        { label: '流程名称', prop: 'processDefinitionName', show: true, fixed: false, sortable: false, width: 200 },
+        { label: '业务单据', prop: 'businessKey', show: true, fixed: false, sortable: false },
+        { label: '发起人', prop: 'startUserId', show: true, fixed: false, sortable: false },
+        { label: '任务名称', prop: 'name', show: true, fixed: false, sortable: false },
         { label: '开始时间', prop: 'startTime', show: true, fixed: false, sortable: false },
         { label: '结束时间', prop: 'endTime', show: true, fixed: false, sortable: false },
-        { label: '拒绝理由', prop: 'deleteReason', show: true, fixed: false, sortable: false }
+        { label: '描述', prop: 'description', show: true, fixed: false, sortable: false }
       ],
       showForm: false,
       multipleSelection: [],
@@ -138,7 +139,7 @@ export default {
   methods: {
     searchData () {
       this.$http
-        .get('/api/wflowHistory/list', {
+        .get('/api/wflowInstance/list', {
           params: this._handerParams()
         })
         .then(res => {
@@ -166,7 +167,18 @@ export default {
         key: this.searchForm.key
       }
       return params
-    }, 
+    },
+    /**
+     * 新增修改数据
+     */
+    addAndEdit () {
+      // 设置账号栏位可编辑
+      for (const item in this.userForm) {
+        this.userForm[item] = ''
+      }
+      this.userControl[1].readonly = false
+      this.showForm = true
+    },
 
     /**
      * 选择事件
@@ -208,7 +220,46 @@ export default {
       this.searchData()
     },
 
-
+    /**
+     * 保存表单
+     */
+    saveForm (from) {
+      const newData = JSON.parse(JSON.stringify(from))
+      this.userForm = newData
+      this.$http.post('/api/wflowDefine/save', this.userForm).then(res => {
+        this.searchData()
+      }).catch(err => {
+        console.log(err.message)
+      })
+    },
+    /**
+     * 删除用户
+     */
+    handleDelClick (row) {
+      // 设置账号栏位不可编辑
+      this.$confirm('此操作将永久删除该流程定义, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        const idArray = []
+        this.$refs.multipleTable.selection.forEach(element => {
+          idArray.push(element.deploymentId)
+        })
+        this.$http.post('/api/wflowDefine/delete', idArray).then(res => {
+          if (res.code == '0') {
+            this.$message.success(res.msg)
+            this.searchData()
+          } else {
+            this.$message.error(res.msg)
+          }
+        }).catch(err => {
+          console.log(err.message)
+        })
+      }).catch(() => {
+        this.$message.info('已取消删除')
+      })
+    },
     /**
      * 修改数据
      */
@@ -232,7 +283,44 @@ export default {
       this.showView = true
       this.imgSrc = '/api/wflowChart/traceprocess?processInstanceId=' + row.processInstanceId
     },
-
+    /**
+     * 隐藏编辑表单
+     */
+    hidForm (val) {
+      console.log('hiddiv' + val)
+      this.showForm = val
+    },
+    /**
+     * 删除用户
+     */
+    delete () {
+      if (this.$refs.multipleTable.selection.length <= 0) {
+        this.$message.warning('请选择要操作的数据')
+        return
+      }
+      this.$confirm('此操作将永久删除选择的流程定义, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        const idArray = []
+        this.$refs.multipleTable.selection.forEach(element => {
+          idArray.push(element.deploymentId)
+        })
+        this.$http.post('/api/wflowDefine/delete', idArray).then(res => {
+          if (res.code == '0') {
+            this.$message.success(res.msg)
+            this.searchData()
+          } else {
+            this.$message.error(res.msg)
+          }
+        }).catch(err => {
+          console.log(err.message)
+        })
+      }).catch(() => {
+        this.$message.info('已取消删除')
+      })
+    },
     /**
      * 自定义列修改
      */

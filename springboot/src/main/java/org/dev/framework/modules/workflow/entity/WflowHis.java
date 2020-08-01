@@ -6,6 +6,9 @@ import org.activiti.engine.task.DelegationState;
 import java.util.Date;
 import java.util.Map;
 
+/**
+ * 历史活动
+ */
 @Data
 public class WflowHis {
     private String id;
@@ -40,7 +43,7 @@ public class WflowHis {
 
     private Long durationInMillis;
 
-    private Date time ;
+    private Date time;
 
     /**/
 
@@ -72,6 +75,6 @@ public class WflowHis {
 
     private String BusinessKey;
 
-    private String deleteReason ;
-    private Long workTimeInMillis ;
+    private String deleteReason;
+    private Long workTimeInMillis;
 }

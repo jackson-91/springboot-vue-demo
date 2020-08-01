@@ -64,6 +64,12 @@ public class SysMenu extends TenantEntity {
      */
     private Integer sortNo;
 
+    public Integer getSortNo() {
+        if (null == sortNo) {
+            sortNo = Integer.valueOf("0");
+        }
+        return sortNo;
+    }
 
     /**
      * 子菜单

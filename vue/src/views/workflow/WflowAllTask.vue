@@ -72,7 +72,7 @@
     </el-row>
     <!--列自定义-->
     <CustomTableCols :defaultCols="defaultColumns"
-                     customName="wflowHistroy"
+                     customName="wlfowAllTask"
                      @changeColumns="changeColumns" />
     <!--查询条件-->
     <Search :show.sync="showSearch"
@@ -121,15 +121,15 @@ export default {
       tableColumns: [],
       defaultColumns: [
         { label: '任务id', prop: 'id', show: true, fixed: false, sortable: false, width: 200 },
-        { label: '签核节点', prop: 'activityName', show: true, fixed: false, sortable: false, width: 200 },
-        { label: '签核类型', prop: 'activityType', show: true, fixed: false, sortable: false },
-        { label: '签核人', prop: 'assignee', show: true, fixed: false, sortable: false },
-        { label: '开始时间', prop: 'startTime', show: true, fixed: false, sortable: false },
-        { label: '结束时间', prop: 'endTime', show: true, fixed: false, sortable: false },
-        { label: '拒绝理由', prop: 'deleteReason', show: true, fixed: false, sortable: false }
+        { label: '当前签核节点', prop: 'name', show: true, fixed: false, sortable: false, width: 200 },
+        { label: '当前签核人', prop: 'assignee', show: true, fixed: false, sortable: false },
+        { label: '流程分类', prop: 'category', show: true, fixed: false, sortable: false },
+        { label: '业务单据 ', prop: 'businessKey', show: true, fixed: false, sortable: false },
+        { label: '描述', prop: 'description', show: true, fixed: false, sortable: false }
       ],
       showForm: false,
       multipleSelection: [],
+      visible: false,
       showView: false,
       imgSrc: ''
     }
@@ -138,7 +138,7 @@ export default {
   methods: {
     searchData () {
       this.$http
-        .get('/api/wflowHistory/list', {
+        .get('/api/wflowTask/all-list', {
           params: this._handerParams()
         })
         .then(res => {
@@ -166,7 +166,7 @@ export default {
         key: this.searchForm.key
       }
       return params
-    }, 
+    },
 
     /**
      * 选择事件
@@ -210,23 +210,8 @@ export default {
 
 
     /**
-     * 修改数据
-     */
-    handleEditClick (row) {
-      // 设置账号栏位不可编辑 processInstanceId
-      this.$http.get('/api/wflowHistory/list2', { params: { processInstanceId: row.processInstanceId } }).then(res => {
-        if (res.code == '0') {
-          console.log(res.data);
-        } else {
-          this.$message.error(res.msg)
-        }
-      }).catch(err => {
-        console.log(err.message)
-      })
-    },
-    /**
-     * 查看流程图
-     */
+   * 查看流程图
+   */
     handleViewProcessClick (row) {
       // 设置账号栏位不可编辑
       this.showView = true

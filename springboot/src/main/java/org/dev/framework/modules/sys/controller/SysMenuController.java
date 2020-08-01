@@ -17,10 +17,7 @@ import org.dev.framework.security.jwt.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -97,7 +94,7 @@ public class SysMenuController {
             }
         }
 
-        List<SysMenu> rootMenus = sysMenuList.stream().filter(x -> x.getParentId() == 1).collect(Collectors.toList());
+        List<SysMenu> rootMenus = sysMenuList.stream().filter(x -> x.getParentId() == 1).sorted(Comparator.comparing(SysMenu::getSortNo)).collect(Collectors.toList());
         List<SysMenu> menus = new ArrayList<>();
         for (SysMenu sysMenu : rootMenus) {
             sysMenu.setType(PermissionsType.menu);
@@ -327,7 +324,9 @@ public class SysMenuController {
      * @param sysMenus
      */
     private void recursiveMenu(SysMenu sysMenu, List<SysMenu> sysMenus) {
-        List<SysMenu> sysMenuList = sysMenus.stream().filter(x -> x.getParentId().equals(sysMenu.getId())).collect(Collectors.toList());
+        List<SysMenu> sysMenuList = sysMenus.stream().filter(x -> x.getParentId().equals(sysMenu.getId()))
+                .sorted(Comparator.comparing(SysMenu::getSortNo))
+                .collect(Collectors.toList());
         if (sysMenuList != null && sysMenuList.size() > 0) {
             for (SysMenu sysMenu1 : sysMenuList) {
                 this.recursiveMenu(sysMenu1, sysMenus);
@@ -344,7 +343,9 @@ public class SysMenuController {
      * @param sysMenus
      */
     private void recursiveMenuId(SysMenu sysMenu, List<SysMenu> sysMenus, List<Long> idArray) {
-        List<SysMenu> sysMenuList = sysMenus.stream().filter(x -> x.getParentId().equals(sysMenu.getId())).collect(Collectors.toList());
+        List<SysMenu> sysMenuList = sysMenus.stream().filter(x -> x.getParentId().equals(sysMenu.getId()))
+                .sorted(Comparator.comparing(SysMenu::getSortNo))
+                .collect(Collectors.toList());
         if (sysMenuList != null && sysMenuList.size() > 0) {
             for (SysMenu sysMenu1 : sysMenuList) {
                 this.recursiveMenuId(sysMenu1, sysMenus, idArray);
@@ -363,8 +364,12 @@ public class SysMenuController {
      * @param sysMenus
      */
     private void recursiveMenu(SysMenu sysMenu, List<SysMenu> sysMenus, List<SysFunc> sysFuncs) {
-        List<SysMenu> sysMenuList = sysMenus.stream().filter(x -> x.getParentId().equals(sysMenu.getId())).collect(Collectors.toList());
-        List<SysFunc> sysFuncs1 = sysFuncs.stream().filter(x -> x.getMenuId().equals(sysMenu.getId())).collect(Collectors.toList());
+        List<SysMenu> sysMenuList = sysMenus.stream().filter(x -> x.getParentId().equals(sysMenu.getId()))
+                .sorted(Comparator.comparing(SysMenu::getSortNo))
+                .collect(Collectors.toList());
+        List<SysFunc> sysFuncs1 = sysFuncs.stream().filter(x -> x.getMenuId().equals(sysMenu.getId()))
+                .sorted(Comparator.comparing(SysFunc::getSortNo))
+                .collect(Collectors.toList());
         if (sysMenuList != null && sysMenuList.size() > 0) {
             for (SysMenu sysMenu1 : sysMenuList) {
                 sysMenu1.setType(PermissionsType.menu);

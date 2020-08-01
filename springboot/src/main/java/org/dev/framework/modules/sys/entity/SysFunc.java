@@ -7,7 +7,7 @@ import org.dev.framework.core.entity.TenantEntity;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author hlt
@@ -48,5 +48,10 @@ public class SysFunc extends TenantEntity {
      */
     private Integer sortNo;
 
-
+    public Integer getSortNo() {
+        if (null == sortNo) {
+            sortNo = Integer.valueOf("0");
+        }
+        return sortNo;
+    }
 }

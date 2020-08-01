@@ -2,6 +2,7 @@ package org.dev.framework.security.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.dev.framework.common.ResponseResult;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
@@ -26,6 +27,7 @@ public class MyAccessDeniedHandler implements AccessDeniedHandler {
         httpServletResponse.setContentType("application/json;charset=utf-8");
         //拿到witer
         PrintWriter out = httpServletResponse.getWriter();
+        httpServletResponse.setStatus(HttpStatus.FORBIDDEN.value());
         ResponseResult<String> responseResult = ResponseResult.error("权限不足");
         responseResult.setCode(403);
         out.write(new ObjectMapper().writeValueAsString(responseResult));

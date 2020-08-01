@@ -34,7 +34,9 @@ const routes = [
       { path: '/wflowdefine', component: resolve => require(['../views/workflow/WflowDefine.vue'], resolve), meta: { requestLogin: false, permissions: false } },
       { path: '/wflowclaim', component: resolve => require(['../views/workflow/WflowClaim.vue'], resolve), meta: { requestLogin: false, permissions: false } },
       { path: '/wflowtask', component: resolve => require(['../views/workflow/WflowTask.vue'], resolve), meta: { requestLogin: false, permissions: false } },
+      { path: '/wflowalltask', component: resolve => require(['../views/workflow/WflowAllTask.vue'], resolve), meta: { requestLogin: false, permissions: false } },
       { path: '/wflowhistory', component: resolve => require(['../views/workflow/WflowHistory.vue'], resolve), meta: { requestLogin: false, permissions: false } },
+      { path: '/wflowhisinstance', component: resolve => require(['../views/workflow/WflowHisInstance.vue'], resolve), meta: { requestLogin: false, permissions: false } },
       { path: '/401', component: resolve => require(['../views/error/401.vue'], resolve) },
       { path: '/404', name: 'notFound', component: resolve => require(['../views/error/404.vue'], resolve) },
       { path: '*', redirect: '/404' }

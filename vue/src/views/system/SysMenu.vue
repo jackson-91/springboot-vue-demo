@@ -187,7 +187,7 @@ export default {
         { label: '菜单地址', field: 'menuUrl', type: 'input', show: true, readonly: false },
         { label: '菜单图标', field: 'menuIcon', type: 'icon-select', show: true, readonly: false, options: [{ value: '' }] },
         { label: '父级菜单', field: 'parentId', type: 'input', show: true, readonly: true },
-        { label: '菜单排序', field: 'sortNo', type: 'input', show: true, readonly: false }
+        { label: '菜单排序', field: 'sortNo', type: 'number', show: true, readonly: false, min: 0 }
       ],
       menuRules: {
         menuCode: [
@@ -210,7 +210,7 @@ export default {
         { label: '功能名称', field: 'funcName', type: 'input', show: true, readonly: false },
         { label: '功能地址', field: 'funcUrl', type: 'input', show: true, readonly: false },
         { label: '功能描述', field: 'funcDesc', type: 'input', show: true, readonly: false },
-        { label: '排序', field: 'sortNo', type: 'input', show: true, readonly: false }
+        { label: '排序', field: 'sortNo', type: 'number', show: true, readonly: false }
       ],
       funcRules: {
         menuCode: [

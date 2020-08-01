@@ -2,6 +2,7 @@ package org.dev.framework.security.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.dev.framework.common.ResponseResult;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
@@ -26,6 +27,7 @@ public class MyAuthenticationEntryPointHandler implements AuthenticationEntryPoi
         httpServletResponse.setContentType("application/json;charset=utf-8");
         //拿到witer
         PrintWriter out = httpServletResponse.getWriter();
+        httpServletResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
         ResponseResult<String> responseResult = new ResponseResult<>();
         responseResult.setCode(401);
         responseResult.setMsg("尚未登录,请先登录");

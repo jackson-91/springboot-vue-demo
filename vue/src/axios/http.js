@@ -27,7 +27,9 @@ axios.interceptors.request.use(
         config.headers.Authorization = 'Bearer ' + store.state.token
       }
     }
-    showLoading()
+    if (config.url.indexOf('/sysUserColumn/get') <= 0) {
+      showLoading()
+    }
     return config
   },
   error => {
@@ -50,6 +52,7 @@ axios.interceptors.response.use(
       }
     }
     hideLoading()
+    //后台返回的分页信息都是字符串 需要在这个地方进行转换 转换为数字
     if (response.data) {
       if (response.data.data) {
         if (response.data.data.current) {

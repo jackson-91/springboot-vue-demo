@@ -2,6 +2,7 @@ package org.dev.framework.security.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.dev.framework.common.ResponseResult;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -26,6 +27,8 @@ public class MyAuthenticationFailureHandler implements AuthenticationFailureHand
         httpServletResponse.setContentType("application/json;charset=utf-8");
         //拿到witer
         PrintWriter out = httpServletResponse.getWriter();
+
+        httpServletResponse.setStatus(HttpStatus.FORBIDDEN.value());
         ResponseResult<String> responseResult = new ResponseResult<>();
         responseResult.setCode(403);
         if (e instanceof LockedException) {
