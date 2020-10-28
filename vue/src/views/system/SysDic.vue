@@ -658,6 +658,7 @@ export default {
       }
       this.dicItemControl[1].readonly = true
       this.showItemForm = true
+      this.dicItemForm.id = row.id;
       this.dicItemForm.dicItemCode = row.dicItemCode
       this.dicItemForm.dicItemName = row.dicItemName
       this.dicItemForm.dicId = row.dicId

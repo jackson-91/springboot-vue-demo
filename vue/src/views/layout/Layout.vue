@@ -23,6 +23,12 @@
       <!--右侧主体-->
       <el-main>
         <el-card>
+          <el-breadcrumb separator-class="el-icon-arrow-right">
+            <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+            <el-breadcrumb-item>活动管理</el-breadcrumb-item>
+            <el-breadcrumb-item>活动列表</el-breadcrumb-item>
+            <el-breadcrumb-item>活动详情</el-breadcrumb-item>
+          </el-breadcrumb>
           <router-view></router-view>
         </el-card>
       </el-main>
@@ -90,7 +96,7 @@ export default {
   }
 }
 .el-aside {
-  background-color:white;
+  background-color: white;
   .el-menu {
     border-right: none;
     text-align: left;
@@ -108,10 +114,13 @@ export default {
   text-align: center;
   letter-spacing: 0.2em;
   cursor: pointer;
-  border-top:solid 1px #cccccc;
-  border-bottom:solid 1px #cccccc;
+  border-top: solid 1px #cccccc;
+  border-bottom: solid 1px #cccccc;
 }
 .el-tabs__header {
   background-color: red !important;
+}
+.el-breadcrumb{
+  height: 20px;
 }
 </style>

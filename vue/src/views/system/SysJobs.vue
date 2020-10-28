@@ -47,11 +47,11 @@
                            width="300">
             <template slot-scope="scope">
               <el-button type="text"
-                         @click="handleEditClick(scope.row)"
-                         size="small">业务单据</el-button>
+                         @click="handleDelClick(scope.row)"
+                         size="small">删除</el-button>
               <el-button type="text"
-                         @click="handleViewProcessClick(scope.row)"
-                         size="small">查看流程图</el-button>
+                         @click="handleEditClick(scope.row)"
+                         size="small">编辑</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -72,21 +72,22 @@
     </el-row>
     <!--列自定义-->
     <CustomTableCols :defaultCols="defaultColumns"
-                     customName="wlfowClaim"
+                     customName="sysJobs"
                      @changeColumns="changeColumns" />
     <!--查询条件-->
     <Search :show.sync="showSearch"
             :condition="searchCondition"
             :form="searchForm"
             @ok="setCondition"
-            @hidden="hidCondition" />
-    <!--流程图-->
-    <el-dialog title="流程图"
-               :visible.sync="showView">
-      <img :src="imgSrc"
-           style="margin-top: -150px;margin-bottom: 30px;" />
-      <br />
-    </el-dialog>
+            @hidden="showSearch=false" />
+    <!--新增编辑页面-->
+    <CustomForm :show.sync="showForm"
+                title="职务编辑"
+                :control="jobsControl"
+                :model="jobsForm"
+                :rules="jobsRules"
+                @ok="saveForm"
+                @hidden="showForm=false" />
   </div>
 
 </template>
@@ -94,87 +95,106 @@
 <script>
 import CustomTableCols from '../../components/CustomTableCols'
 import Search from '../../components/Search'
+import CustomForm from '../../components/CustomForm'
 export default {
   components: {
     CustomTableCols,
-    Search
+    Search,
+    CustomForm,
   },
   data () {
     return {
       initData: {},
       tableData: [],
+      optionsArray: [],
       tableHeight: '400px',
       current: 1,
       size: 10,
       total: 0,
       pageSizeOptions: [10, 20, 50, 100],
-      searchForm: { name: '', key: '' },
+      searchForm: { code: '', name: '' },
       searchCondition: [
-        { index: 0, label: '流程名称', field: 'name', type: 'input', show: true },
-        { index: 1, label: '流程key', field: 'key', type: 'input', show: true }
+        { index: 0, label: '职务编码', field: 'workNo', type: 'input', show: true },
+        { index: 1, label: '职务名称', field: 'name', type: 'input', show: true },
       ],
       showSearch: false,
       buttonGroups: [
         { index: 0, label: '查询', method: 'showCondition', icon: 'el-icon-search' },
-        { index: 1, label: '签收任务', method: 'claim', icon: 'el-icon-check' }, 
+        { index: 1, label: '新建', method: 'addAndEdit', icon: 'el-icon-plus' },
+        // { index: 2, label: '失效', method: 'enablejob', params: false, icon: 'el-icon-delete' },
+        { index: 5, label: '删除', method: 'delete', icon: 'el-icon-delete' },
         { index: 6, label: '刷新', method: 'searchData', icon: 'el-icon-refresh' }
       ],
       tableColumns: [],
       defaultColumns: [
-        { label: '任务id', prop: 'id', show: true, fixed: false, sortable: false, width: 200 },
-        { label: '当前签核节点', prop: 'name', show: true, fixed: false, sortable: false, width: 200 },
-        { label: '当前签核人', prop: 'assignee', show: true, fixed: false, sortable: false },
-        { label: '流程分类', prop: 'category', show: true, fixed: false, sortable: false },
-        { label: '业务单据 ', prop: 'businessKey', show: true, fixed: false, sortable: false },
-        { label: '描述', prop: 'description', show: true, fixed: false, sortable: false }
+        { label: '职务编码', prop: 'code', show: true, fixed: false, sortable: false, width: 200 },
+        { label: '职务名称', prop: 'name', show: true, fixed: false, sortable: false, width: 200 },
+        { label: '职务级别', prop: 'level', show: true, fixed: false, sortable: false, width: 200 },
+        // { label: '是否有效', prop: 'isActive', show: true, fixed: false, sortable: false },
+        { label: '创建时间', prop: 'createTime', show: true, fixed: false, sortable: false }
       ],
       showForm: false,
-      userForm: { id: '', loginName: '', nickName: '', passWord: '', cmfPassWord: '', mobilePhone: '', qq: '', email: '', isEnable: '' },
-      userControl: [
+      jobsForm: {
+        id: '', code: '', name: '', level: ''
+      },
+      jobsControl: [
         { label: 'ID', field: 'id', type: 'hidden', show: false, readonly: true },
-        { label: '账号', field: 'loginName', type: 'input', show: true, readonly: true },
-        { label: '昵称', field: 'nickName', type: 'input', show: true, readonly: false },
-        { label: '密码', field: 'passWord', type: 'password', show: true, readonly: false },
-        { label: '密码确认', field: 'cmfPassWord', type: 'password', show: true, readonly: false },
-        { label: '手机', field: 'mobilePhone', type: 'input', show: true, readonly: false },
-        { label: 'QQ', field: 'qq', type: 'input', show: true },
-        { label: '邮箱', field: 'email', type: 'input', show: true }
+        { label: '职务编码', field: 'code', type: 'input', show: true, readonly: true },
+        { label: '职务名称', field: 'name', type: 'input', show: true, readonly: false },
+        { label: '职务级别', field: 'level', type: 'select', show: true, readonly: false, options: null }
       ],
-      userRules: {
-        loginName: [
-          { required: true, message: '请输入账号', trigger: 'blur' },
-          { min: 3, max: 20, message: '长度在 3 到 20 个字符', trigger: 'blur' }
+      jobsRules: {
+        code: [
+          { required: true, message: '请输入职务编码', trigger: 'blur' },
+          { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }
         ],
-        nickName: [
-          { required: true, message: '请输入昵称', trigger: 'blur' },
+        name: [
+          { required: true, message: '请输入职务名称', trigger: 'blur' },
           { min: 1, max: 50, message: '长度在 3 到 50 个字符', trigger: 'blur' }
         ],
-        passWord: [
-          { required: true, message: '请输入密码', trigger: 'blur' },
-          { min: 3, max: 20, message: '长度在 3 到 20 个字符', trigger: 'blur' }
-        ],
-        cmfPassWord: [
-          { required: true, message: '请输入密码', trigger: 'blur' },
-          { min: 3, max: 20, message: '长度在 3 到 20 个字符', trigger: 'blur' }
-        ],
-        mobilePhone: [
-          { required: true, message: '请输入手机号', trigger: 'blur' }
-        ],
-        email: [
-          { required: true, message: '请输入邮箱', trigger: 'blur' }
-        ]
       },
       multipleSelection: [],
       visible: false,
-      showView: false,
-      imgSrc: '../../assets/img/loading.gif'
+      jobsId: null,
     }
   },
 
   methods: {
+    /**
+     * 
+     */
+    getJobsLevels () {
+      this.$http
+        .get('/api/sysDicItem/item-list-bydiccode', {
+          params: {
+            dicCode: 'JOBS_LEVEL'
+          }
+        })
+        .then(res => {
+          if (res.code == 0) {
+            if (res.data) {
+              let that = this;
+              res.data.forEach(item => {
+                that.optionsArray.push({
+                  label: item.dicItemName,
+                  value: item.dicItemValue
+                });
+              });
+            }
+          } else {
+            this.$message.error(res.msg)
+          }
+        })
+        .catch(err => {
+          console.log(err.message)
+        })
+    },
+    /**
+     * 数据查询
+     */
     searchData () {
       this.$http
-        .get('/api/wflowTask/claim-list', {
+        .get('/api/sysJobs/list', {
           params: this._handerParams()
         })
         .then(res => {
@@ -198,39 +218,37 @@ export default {
       const params = {
         current: this.current,
         size: this.size,
+        code: this.searchForm.code,
         name: this.searchForm.name,
-        key: this.searchForm.key
       }
       return params
     },
     /**
-     * 审批通过
+     * 新增修改数据
      */
-    claim () {
-      const idArray = []
-      this.$refs.multipleTable.selection.forEach(element => {
-        idArray.push(element.id)
-      })
-      this.$http.post('/api/wflowTask/claim', idArray).then(res => {
-        if (res.code == '0') {
-          this.$message.success(res.msg)
-          this.searchData()
-        } else {
-          this.$message.error(res.msg)
-        }
-      }).catch(err => {
-        console.log(err.message)
-      })
+    addAndEdit () {
+      // 设置账号栏位可编辑
+      for (const item in this.jobsForm) {
+        this.jobsForm[item] = ''
+      }
+      this.jobsControl[1].readonly = false
+      this.jobsControl[3].options = this.optionsArray
+      this.showForm = true
     },
     /**
-     * 审批通过
+     * 是否启用/禁用员工
      */
-    reject () {
+    enablejob (isEnable) {
+      console.log(this.multipleSelection)
+      if (this.$refs.multipleTable.selection.length <= 0) {
+        this.$message.warning('请选择要操作的职务')
+        return
+      }
       const idArray = []
       this.$refs.multipleTable.selection.forEach(element => {
         idArray.push(element.id)
       })
-      this.$http.post('/api/wflowTask/reject', idArray).then(res => {
+      this.$http.post('/api/sysJobs/enable?enable=' + isEnable, idArray).then(res => {
         if (res.code == '0') {
           this.$message.success(res.msg)
           this.searchData()
@@ -241,6 +259,7 @@ export default {
         console.log(err.message)
       })
     },
+
     /**
      * 选择事件
      */
@@ -266,13 +285,6 @@ export default {
       console.log(this.showSearch)
     },
     /**
-     * 隐藏查询条件
-     */
-    hidCondition (val) {
-      console.log('hiddiv' + val)
-      this.showSearch = val
-    },
-    /**
      * 设置查询条件
      */
     setCondition (from) {
@@ -286,10 +298,11 @@ export default {
      */
     saveForm (from) {
       const newData = JSON.parse(JSON.stringify(from))
-      this.userForm = newData
-      this.$http.post('/api/wflowDefine/save', this.userForm).then(res => {
+      this.jobsForm = newData
+      this.$http.post('/api/sysJobs/save', this.jobsForm).then(res => {
         if (res.code == '0') {
           this.$message.success(res.msg)
+          this.showForm = false
           this.searchData()
         } else {
           this.$message.error(res.msg)
@@ -299,20 +312,20 @@ export default {
       })
     },
     /**
-     * 删除用户
+     * 删除员工
      */
     handleDelClick (row) {
       // 设置账号栏位不可编辑
-      this.$confirm('此操作将永久删除该流程定义, 是否继续?', '提示', {
+      this.$confirm('此操作将永久删除该职务, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
         const idArray = []
         this.$refs.multipleTable.selection.forEach(element => {
-          idArray.push(element.deploymentId)
+          idArray.push(element.id)
         })
-        this.$http.post('/api/wflowDefine/delete', idArray).then(res => {
+        this.$http.post('/api/sysJobs/delete', idArray).then(res => {
           if (res.code == '0') {
             this.$message.success(res.msg)
             this.searchData()
@@ -326,51 +339,43 @@ export default {
         this.$message.info('已取消删除')
       })
     },
+
     /**
-   * 查看流程图
-   */
-    handleViewProcessClick (row) {
-      // 设置账号栏位不可编辑
-      this.showView = true
-      this.imgSrc = '/api/wflowChart/traceprocess?processInstanceId=' + row.processInstanceId
-    },
-    /**
-     * 隐藏编辑表单
+     * 修改数据
      */
-    hidForm (val) {
-      console.log('hiddiv' + val)
-      this.showForm = val
+    handleEditClick (row) {
+      // 设置账号栏位不可编辑
+      for (const item in this.jobsForm) {
+        this.jobsForm[item] = ''
+      }
+      this.jobsControl[1].readonly = true
+      this.showForm = true
+      this.jobsForm.name = row.name
+      this.jobsForm.code = row.code
+      this.jobsForm.level = row.level;
+      this.jobsControl[3].options = this.optionsArray
     },
-    deploy () {
-      this.$http.post('/api/wflowDefine/deploy', {}).then(res => {
-        if (res.code == '0') {
-          this.$message.success(res.msg)
-          this.searchData()
-        } else {
-          this.$message.error(res.msg)
-        }
-      }).catch(err => {
-        console.log(err.message)
-      })
-    },
+
+
+
     /**
-     * 删除用户
+     * 删除员工
      */
     delete () {
       if (this.$refs.multipleTable.selection.length <= 0) {
-        this.$message.warning('请选择要操作的数据')
+        this.$message.warning('请选择要操作的职务')
         return
       }
-      this.$confirm('此操作将永久删除选择的流程定义, 是否继续?', '提示', {
+      this.$confirm('此操作将永久删除选择的职务, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
         const idArray = []
         this.$refs.multipleTable.selection.forEach(element => {
-          idArray.push(element.deploymentId)
+          idArray.push(element.id)
         })
-        this.$http.post('/api/wflowDefine/delete', idArray).then(res => {
+        this.$http.post('/api/sysJobs/delete', idArray).then(res => {
           if (res.code == '0') {
             this.$message.success(res.msg)
             this.searchData()
@@ -415,7 +420,8 @@ export default {
     this.tableHeight = document.documentElement.clientHeight - 240
     //
     this.tableColumns = this.defaultColumns
-    this.searchData()
+    this.searchData();
+    this.getJobsLevels();
   }
 }
 </script>

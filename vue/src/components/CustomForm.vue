@@ -49,6 +49,15 @@
                      :disabled="option.disabled">
           </el-option>
         </el-select>
+        <!--下拉树形选择-->
+        <SelectTree v-if="item.type==='tree-select'"
+                    v-model="formModel[item.field]"
+                    :props="item.props"
+                    :options="item.options"
+                    :value="formModel[item.field]"
+                    :clearable="item.isClearable"
+                    :accordion="item.isAccordion"
+                    @getValue="getValue(item.field,$event)" />
         <!--图表选择下拉框-->
         <el-popover v-if="item.type==='icon-select'"
                     placement="bottom"
@@ -127,6 +136,7 @@
         <el-date-picker v-if="item.type==='date'"
                         v-model="formModel[item.field]"
                         type="date"
+                        value-format="yyyy-MM-dd"
                         placeholder="选择日期">
         </el-date-picker>
         <!--文件上传-->
@@ -158,7 +168,12 @@
 </template>
 
 <script>
+
+import SelectTree from './SelectTree'
 export default {
+  components: {
+    SelectTree
+  },
   data () {
     return {
       visible: false,
@@ -250,6 +265,10 @@ export default {
       this.visible = false
       this.$emit('hidden', this.visible)
     },
+
+    getValue (field, value) {
+      this.formModel[field] = value;
+    },
     /**
      * 隐藏dialog查询框
      * 回调父页面 修改显示隐藏值
@@ -295,5 +314,18 @@ export default {
     padding: 10px;
     cursor: pointer;
   }
+}
+.el-date-editor.el-input,
+.el-date-editor.el-input__inner {
+  width: 200px !important;
+}
+.el-select .el-select--small input {
+  width: 200px !important;
+}
+.el-input--small .el-input__inner {
+  width: 200px !important;
+}
+.el-select {
+  width: 200px;
 }
 </style>>

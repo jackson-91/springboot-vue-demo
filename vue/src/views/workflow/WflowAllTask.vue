@@ -131,7 +131,7 @@ export default {
       multipleSelection: [],
       visible: false,
       showView: false,
-      imgSrc: ''
+      imgSrc: '../../assets/img/loading.gif'
     }
   },
 

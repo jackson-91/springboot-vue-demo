@@ -15,21 +15,14 @@
       <el-col :span="24">
         <el-table :data="tableData"
                   border
-                  stripe
+                  row-key="id"
+                  style="width: 100%;margin-bottom: 20px;"
+                  default-expand-all
                   highlight-current-row
                   ref="multipleTable"
                   :height="tableHeight"
                   @row-click="handleRowClick"
-                  style="width: 100%">
-          <el-table-column type="selection"
-                           width="55">
-          </el-table-column>
-          <el-table-column type="index"
-                           width="65"
-                           label="序号"
-                           align="center"
-                           fixed
-                           :show-overflow-tooltip="true"></el-table-column>
+                  :tree-props="{children: 'children', hasChildren: 'hasChildren'}">
           <template v-for="(el,i) in tableColumns">
             <el-table-column :label="el.label"
                              header-align="center"
@@ -46,12 +39,15 @@
                            label="操作"
                            width="300">
             <template slot-scope="scope">
+              <!-- <el-button @click="handleAuthVClick(scope.row)"
+                         type="text"
+                         size="small">权限查看</el-button> -->
+              <el-button type="text"
+                         @click="handleDelClick(scope.row)"
+                         size="small">删除</el-button>
               <el-button type="text"
                          @click="handleEditClick(scope.row)"
-                         size="small">业务单据</el-button>
-              <el-button type="text"
-                         @click="handleViewProcessClick(scope.row)"
-                         size="small">查看流程图</el-button>
+                         size="small">编辑</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -72,21 +68,22 @@
     </el-row>
     <!--列自定义-->
     <CustomTableCols :defaultCols="defaultColumns"
-                     customName="wlfowClaim"
+                     customName="employe"
                      @changeColumns="changeColumns" />
     <!--查询条件-->
     <Search :show.sync="showSearch"
             :condition="searchCondition"
             :form="searchForm"
             @ok="setCondition"
-            @hidden="hidCondition" />
-    <!--流程图-->
-    <el-dialog title="流程图"
-               :visible.sync="showView">
-      <img :src="imgSrc"
-           style="margin-top: -150px;margin-bottom: 30px;" />
-      <br />
-    </el-dialog>
+            @hidden="showSearch=false" />
+    <!--新增编辑页面-->
+    <CustomForm :show.sync="showForm"
+                title="部门编辑"
+                :control="deptControl"
+                :model="deptForm"
+                :rules="deptRules"
+                @ok="saveForm"
+                @hidden="showForm=false" />
   </div>
 
 </template>
@@ -94,13 +91,20 @@
 <script>
 import CustomTableCols from '../../components/CustomTableCols'
 import Search from '../../components/Search'
+import CustomForm from '../../components/CustomForm'
 export default {
   components: {
     CustomTableCols,
-    Search
+    Search,
+    CustomForm,
   },
   data () {
     return {
+      deptArray: [],
+      defaultProps: {
+        children: 'children',
+        label: 'label'
+      },
       initData: {},
       tableData: [],
       tableHeight: '400px',
@@ -108,78 +112,100 @@ export default {
       size: 10,
       total: 0,
       pageSizeOptions: [10, 20, 50, 100],
-      searchForm: { name: '', key: '' },
+      searchForm: { deptCode: '', deptName: '' },
       searchCondition: [
-        { index: 0, label: '流程名称', field: 'name', type: 'input', show: true },
-        { index: 1, label: '流程key', field: 'key', type: 'input', show: true }
+        { index: 0, label: '部门代码', field: 'deptCode', type: 'input', show: true },
+        { index: 1, label: '部门名称', field: 'deptName', type: 'input', show: true }
       ],
       showSearch: false,
       buttonGroups: [
         { index: 0, label: '查询', method: 'showCondition', icon: 'el-icon-search' },
-        { index: 1, label: '签收任务', method: 'claim', icon: 'el-icon-check' }, 
+        { index: 1, label: '新建', method: 'addAndEdit', icon: 'el-icon-plus' },
+        { index: 5, label: '删除', method: 'delete', icon: 'el-icon-delete' },
         { index: 6, label: '刷新', method: 'searchData', icon: 'el-icon-refresh' }
       ],
       tableColumns: [],
       defaultColumns: [
-        { label: '任务id', prop: 'id', show: true, fixed: false, sortable: false, width: 200 },
-        { label: '当前签核节点', prop: 'name', show: true, fixed: false, sortable: false, width: 200 },
-        { label: '当前签核人', prop: 'assignee', show: true, fixed: false, sortable: false },
-        { label: '流程分类', prop: 'category', show: true, fixed: false, sortable: false },
-        { label: '业务单据 ', prop: 'businessKey', show: true, fixed: false, sortable: false },
-        { label: '描述', prop: 'description', show: true, fixed: false, sortable: false }
+        { label: '部门代码', prop: 'deptCode', show: true, fixed: false, sortable: false, width: 200 },
+        { label: '部门名称', prop: 'deptName', show: true, fixed: false, sortable: false, width: 200 },
+        { label: '负责人', prop: 'deptHeaderName', show: true, fixed: false, sortable: false, width: 200 },
+        { label: '创建时间', prop: 'createTime', show: true, fixed: false, sortable: false },
       ],
       showForm: false,
-      userForm: { id: '', loginName: '', nickName: '', passWord: '', cmfPassWord: '', mobilePhone: '', qq: '', email: '', isEnable: '' },
-      userControl: [
+      deptForm: {
+        id: '', deptCode: '', deptName: '', parentId: '', deptHeader: ''
+      },
+      deptControl: [
         { label: 'ID', field: 'id', type: 'hidden', show: false, readonly: true },
-        { label: '账号', field: 'loginName', type: 'input', show: true, readonly: true },
-        { label: '昵称', field: 'nickName', type: 'input', show: true, readonly: false },
-        { label: '密码', field: 'passWord', type: 'password', show: true, readonly: false },
-        { label: '密码确认', field: 'cmfPassWord', type: 'password', show: true, readonly: false },
-        { label: '手机', field: 'mobilePhone', type: 'input', show: true, readonly: false },
-        { label: 'QQ', field: 'qq', type: 'input', show: true },
-        { label: '邮箱', field: 'email', type: 'input', show: true }
+        { label: '部门代码', field: 'deptCode', type: 'input', show: true, readonly: true },
+        { label: '部门名称', field: 'deptName', type: 'input', show: true, readonly: false },
+        {
+          label: '上级部门', field: 'parentId', type: 'tree-select', show: true, options: null, isClearable: true,      // 可清空（可选）
+          isAccordion: true,      // 可收起（可选
+          props: {                // 配置项（必选）
+            value: 'id',
+            label: 'deptName',
+            children: 'children',
+          },
+        },
+        { label: '负责人', field: 'deptHeader', type: 'input', show: true, readonly: false },
       ],
-      userRules: {
-        loginName: [
-          { required: true, message: '请输入账号', trigger: 'blur' },
+      deptRules: {
+        deptCode: [
+          { required: true, message: '请输入部门代码', trigger: 'blur' },
           { min: 3, max: 20, message: '长度在 3 到 20 个字符', trigger: 'blur' }
         ],
-        nickName: [
-          { required: true, message: '请输入昵称', trigger: 'blur' },
+        deptName: [
+          { required: true, message: '请输入部门名称', trigger: 'blur' },
           { min: 1, max: 50, message: '长度在 3 到 50 个字符', trigger: 'blur' }
         ],
-        passWord: [
-          { required: true, message: '请输入密码', trigger: 'blur' },
-          { min: 3, max: 20, message: '长度在 3 到 20 个字符', trigger: 'blur' }
+        parentId: [
+          { required: true, message: '请选择上级部门', trigger: 'blur' },
         ],
-        cmfPassWord: [
-          { required: true, message: '请输入密码', trigger: 'blur' },
-          { min: 3, max: 20, message: '长度在 3 到 20 个字符', trigger: 'blur' }
+        deptHeader: [
+          { required: true, message: '请选择负责人', trigger: 'blur' },
         ],
-        mobilePhone: [
-          { required: true, message: '请输入手机号', trigger: 'blur' }
-        ],
-        email: [
-          { required: true, message: '请输入邮箱', trigger: 'blur' }
-        ]
       },
       multipleSelection: [],
       visible: false,
-      showView: false,
-      imgSrc: '../../assets/img/loading.gif'
+      deptId: null,
     }
   },
 
   methods: {
+    /**
+  * 
+  */
+    getDept () {
+      this.$http
+        .get('/api/sysDept/tree-all-list', {
+          params: {
+            dicCode: 'EDUCATION'
+          }
+        })
+        .then(res => {
+          if (res.code == 0) {
+            if (res.data) {
+              let that = this;
+              that.deptArray = res.data;
+            }
+          } else {
+            this.$message.error(res.msg)
+          }
+        })
+        .catch(err => {
+          console.log(err.message)
+        })
+    },
     searchData () {
       this.$http
-        .get('/api/wflowTask/claim-list', {
+        .get('/api/sysDept/tree-list', {
           params: this._handerParams()
         })
         .then(res => {
           if (res.code == 0) {
-            this.tableData = res.data.records
+            this.tableData = this.handleTree(res.data.records, 'deptId');
+            console.log(this.tableData)
             this.total = res.data.total
             this.current = res.data.current
             this.size = res.data.size
@@ -191,6 +217,27 @@ export default {
           console.log(err.message)
         })
     },
+
+    handleTree (data, id, parentId, children, rootId) {
+      id = id || 'id'
+      parentId = parentId || 'parentId'
+      children = children || 'children'
+      rootId = rootId || Math.min.apply(Math, data.map(item => { return item[parentId] })) || 0
+      //对源数据深度克隆
+      const cloneData = JSON.parse(JSON.stringify(data))
+      //循环所有项
+      const treeData = cloneData.filter(father => {
+        let branchArr = cloneData.filter(child => {
+          //返回每一项的子级数组
+          return father[id] === child[parentId]
+        });
+        branchArr.length > 0 ? father.children = branchArr : '';
+        //返回第一层
+        return father[parentId] === rootId;
+      });
+      return treeData != '' ? treeData : data;
+    },
+
     /**
      * 查询条件处理
      */
@@ -198,49 +245,25 @@ export default {
       const params = {
         current: this.current,
         size: this.size,
-        name: this.searchForm.name,
-        key: this.searchForm.key
+        deptCode: this.searchForm.deptCode,
+        deptName: this.searchForm.deptName,
       }
       return params
     },
     /**
-     * 审批通过
+     * 新增修改数据
      */
-    claim () {
-      const idArray = []
-      this.$refs.multipleTable.selection.forEach(element => {
-        idArray.push(element.id)
-      })
-      this.$http.post('/api/wflowTask/claim', idArray).then(res => {
-        if (res.code == '0') {
-          this.$message.success(res.msg)
-          this.searchData()
-        } else {
-          this.$message.error(res.msg)
-        }
-      }).catch(err => {
-        console.log(err.message)
-      })
+    addAndEdit () {
+      // 设置账号栏位可编辑
+      for (const item in this.deptForm) {
+        this.deptForm[item] = ''
+      }
+      this.deptControl[1].readonly = false
+      this.deptControl[3].options = this.deptArray
+      this.showForm = true
     },
-    /**
-     * 审批通过
-     */
-    reject () {
-      const idArray = []
-      this.$refs.multipleTable.selection.forEach(element => {
-        idArray.push(element.id)
-      })
-      this.$http.post('/api/wflowTask/reject', idArray).then(res => {
-        if (res.code == '0') {
-          this.$message.success(res.msg)
-          this.searchData()
-        } else {
-          this.$message.error(res.msg)
-        }
-      }).catch(err => {
-        console.log(err.message)
-      })
-    },
+
+
     /**
      * 选择事件
      */
@@ -266,13 +289,6 @@ export default {
       console.log(this.showSearch)
     },
     /**
-     * 隐藏查询条件
-     */
-    hidCondition (val) {
-      console.log('hiddiv' + val)
-      this.showSearch = val
-    },
-    /**
      * 设置查询条件
      */
     setCondition (from) {
@@ -286,10 +302,11 @@ export default {
      */
     saveForm (from) {
       const newData = JSON.parse(JSON.stringify(from))
-      this.userForm = newData
-      this.$http.post('/api/wflowDefine/save', this.userForm).then(res => {
+      this.deptForm = newData
+      this.$http.post('/api/sysDept/save', this.deptForm).then(res => {
         if (res.code == '0') {
           this.$message.success(res.msg)
+          this.showForm = false
           this.searchData()
         } else {
           this.$message.error(res.msg)
@@ -299,20 +316,20 @@ export default {
       })
     },
     /**
-     * 删除用户
+     * 删除部门
      */
     handleDelClick (row) {
       // 设置账号栏位不可编辑
-      this.$confirm('此操作将永久删除该流程定义, 是否继续?', '提示', {
+      this.$confirm('此操作将永久删除该部门, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
         const idArray = []
         this.$refs.multipleTable.selection.forEach(element => {
-          idArray.push(element.deploymentId)
+          idArray.push(element.id)
         })
-        this.$http.post('/api/wflowDefine/delete', idArray).then(res => {
+        this.$http.post('/api/sysDept/delete', idArray).then(res => {
           if (res.code == '0') {
             this.$message.success(res.msg)
             this.searchData()
@@ -327,50 +344,54 @@ export default {
       })
     },
     /**
-   * 查看流程图
-   */
-    handleViewProcessClick (row) {
-      // 设置账号栏位不可编辑
-      this.showView = true
-      this.imgSrc = '/api/wflowChart/traceprocess?processInstanceId=' + row.processInstanceId
-    },
-    /**
-     * 隐藏编辑表单
+     * 修改数据
      */
-    hidForm (val) {
-      console.log('hiddiv' + val)
-      this.showForm = val
-    },
-    deploy () {
-      this.$http.post('/api/wflowDefine/deploy', {}).then(res => {
-        if (res.code == '0') {
-          this.$message.success(res.msg)
-          this.searchData()
-        } else {
-          this.$message.error(res.msg)
-        }
-      }).catch(err => {
-        console.log(err.message)
-      })
+    handleEditClick (row) {
+      // 设置账号栏位不可编辑
+      for (const item in this.deptForm) {
+        this.deptForm[item] = ''
+      }
+      this.deptControl[1].readonly = true
+      this.deptControl[3].options = this.deptArray
+      this.showForm = true
+      this.deptForm.deptCode = row.deptCode
+      this.deptForm.deptName = row.deptName
+      this.deptForm.parentId = row.parentId
+      this.deptForm.id = row.id
     },
     /**
-     * 删除用户
+     * 授权
+     */
+    handleAuthClick () {
+    },
+    /**
+     *权限查看
+     */
+    handleAuthVClick (row) {
+      this.deptId = row.id
+      this.showTree = true
+    },
+
+
+
+    /**
+     * 删除部门
      */
     delete () {
       if (this.$refs.multipleTable.selection.length <= 0) {
-        this.$message.warning('请选择要操作的数据')
+        this.$message.warning('请选择要操作的部门')
         return
       }
-      this.$confirm('此操作将永久删除选择的流程定义, 是否继续?', '提示', {
+      this.$confirm('此操作将永久删除选择的部门, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
         const idArray = []
         this.$refs.multipleTable.selection.forEach(element => {
-          idArray.push(element.deploymentId)
+          idArray.push(element.id)
         })
-        this.$http.post('/api/wflowDefine/delete', idArray).then(res => {
+        this.$http.post('/api/sysDept/delete', idArray).then(res => {
           if (res.code == '0') {
             this.$message.success(res.msg)
             this.searchData()
@@ -415,6 +436,7 @@ export default {
     this.tableHeight = document.documentElement.clientHeight - 240
     //
     this.tableColumns = this.defaultColumns
+    this.getDept();
     this.searchData()
   }
 }

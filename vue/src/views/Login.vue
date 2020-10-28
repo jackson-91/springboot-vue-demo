@@ -60,6 +60,7 @@ export default {
           this.$http
             .post('/api/login', formData)
             .then(res => {
+              debugger
               if (res.code == 0) {
                 _this.$store.commit('set_token', res.data)
                 _this.$message.success('登录成功')
@@ -70,6 +71,7 @@ export default {
               }
             })
             .catch(err => {
+              debugger
               console.log(err.message)
             })
         } else {
