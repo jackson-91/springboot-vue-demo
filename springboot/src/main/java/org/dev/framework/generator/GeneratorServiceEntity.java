@@ -24,7 +24,7 @@ public class GeneratorServiceEntity {
     public static void generateCode() {
         String packageName = "org.dev.framework.modules.sys";
         boolean serviceNameStartWithI = false;//user -> UserService, 设置成true: user -> IUserService
-        generateByTables(serviceNameStartWithI, packageName, "sys_sequence_log","sys_sequence_queue");
+        generateByTables(serviceNameStartWithI, packageName, "sys_dept");
     }
 
     private static void generateByTables(boolean serviceNameStartWithI, String packageName, String... tableNames) {
@@ -34,7 +34,7 @@ public class GeneratorServiceEntity {
         dataSourceConfig.setDbType(DbType.MYSQL)
                 .setUrl(dbUrl)
                 .setUsername("root")
-                .setPassword("bqcBQC123")
+                .setPassword("root")
                 .setDriverName("com.mysql.cj.jdbc.Driver");
         StrategyConfig strategyConfig = new StrategyConfig();
         strategyConfig

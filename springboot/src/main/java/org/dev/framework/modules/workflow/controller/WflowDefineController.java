@@ -1,5 +1,6 @@
 package org.dev.framework.modules.workflow.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import lombok.extern.slf4j.Slf4j;
 import org.activiti.bpmn.converter.BpmnXMLConverter;
@@ -19,6 +20,9 @@ import org.activiti.image.impl.DefaultProcessDiagramGenerator;
 import org.apache.commons.io.FileUtils;
 import org.dev.framework.common.PaginAtion;
 import org.dev.framework.common.ResponseResult;
+import org.dev.framework.exception.CustomException;
+import org.dev.framework.modules.sys.util.SequenceUtil;
+import org.dev.framework.modules.workflow.entity.TaskDemo;
 import org.dev.framework.modules.workflow.entity.WflowDefine;
 import org.dev.framework.security.jwt.JwtUtil;
 import org.springframework.beans.BeanUtils;
@@ -32,10 +36,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 
 @RestController
@@ -44,6 +45,9 @@ import java.util.UUID;
 public class WflowDefineController {
     @Value("${springboot_vue.upload.local-upload-path}")
     private String upload_path;
+
+    @Autowired
+    SequenceUtil sequenceUtil;
 
     /**
      * 流程定义查询
@@ -286,13 +290,23 @@ public class WflowDefineController {
      * @return
      */
     @GetMapping("/start-process-test")
-    public ResponseResult startProcess(@RequestParam("definitionId") String processInstanceId) {
+    public ResponseResult startProcess(@RequestParam("definitionId") String processInstanceId) throws CustomException {
+        String FlowNo = "";
+
+        Random random = new Random();
+        TaskDemo taskDemo = new TaskDemo();
+        taskDemo.setCode("123456789");
+        taskDemo.setName("测试");
+        taskDemo.setTotal(Math.random() * 200);
+        log.info("系统随机数-----------" + taskDemo.getTotal());
+        Map map = JSON.parseObject(JSON.toJSONString(taskDemo), Map.class);
+        log.info("系统随机数-----------" + map);
         //得到processEngine对象
         ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
         //得到RuntimeService方法
         RuntimeService runtimeService = processEngine.getRuntimeService();
         Authentication.setAuthenticatedUserId(JwtUtil.CurrentUserName());
-        ProcessInstance processInstance = runtimeService.startProcessInstanceById(processInstanceId, UUID.randomUUID().toString());
+        ProcessInstance processInstance = runtimeService.startProcessInstanceById(processInstanceId, sequenceUtil.GeneratorCode("FLOW_CODE"), map);
         System.out.println(processInstance.getId());
         System.out.println(processInstance.getDeploymentId());
         System.out.println(processInstance.getActivityId());

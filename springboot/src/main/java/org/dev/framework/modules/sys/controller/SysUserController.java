@@ -62,6 +62,9 @@ public class SysUserController {
         for (Long userId : idArray) {
             SysUser sysUser = this.sysUserService.getById(userId);
             if (sysUser != null) {
+                if ("admin".equals(sysUser.getLoginName())) {
+                    return ResponseResult.error("系统管理员账号无法禁用");
+                }
                 if (enable) {
                     sysUser.setIsEnable(1);
                 } else {
@@ -131,7 +134,7 @@ public class SysUserController {
 
 
     /**
-     * 获取用户信息
+     * 删除用户信息
      *
      * @param ids
      * @return

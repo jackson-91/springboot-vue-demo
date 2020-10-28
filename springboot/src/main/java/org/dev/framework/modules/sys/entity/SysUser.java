@@ -58,10 +58,6 @@ public class SysUser extends TenantEntity implements UserDetails {
      */
     private String mobilePhone;
     /**
-     * 工号
-     */
-    private String workNum;
-    /**
      * 微信号
      */
     private String wechat;
