@@ -73,7 +73,7 @@ public class MySecurityMetadataSource implements FilterInvocationSecurityMetadat
                 return resourceMap.get(resURL);
             }*/
             }
-            return SecurityConfig.createList("ROLE_LOGIN");
+            //return SecurityConfig.createList("ROLE_LOGIN");
 //            int firstQuestionMarkIndex = requestUrl.indexOf("?");
 //            if (firstQuestionMarkIndex != -1) {
 //                requestUrl = requestUrl.substring(0, firstQuestionMarkIndex);
@@ -89,6 +89,7 @@ public class MySecurityMetadataSource implements FilterInvocationSecurityMetadat
 //            }
         }
         return SecurityConfig.createList("ROLE_LOGIN");
+        //return null;
     }
 
     @Override

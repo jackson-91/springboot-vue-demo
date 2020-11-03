@@ -4,6 +4,7 @@ package org.dev.framework.modules.sys.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.dev.framework.modules.sys.entity.SysDic;
+import org.dev.framework.modules.sys.entity.SysDicItem;
 import org.dev.framework.modules.sys.service.SysDicItemService;
 import org.dev.framework.modules.sys.service.SysDicService;
 import org.dev.framework.common.PaginAtion;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -50,6 +52,23 @@ public class SysDicController {
     public ResponseResult<IPage<SysDic>> list(SysDic sysDic, PaginAtion pagination) {
         return ResponseResult.success(sysDicService.page(pagination.getPage(),
                 new QueryWrapper<>(sysDic)));
+    }
+
+    /**
+     * 数据字典集合
+     *
+     * @return
+     */
+    @GetMapping("/all-list")
+    @OperLog(description = "数据字典集合")
+    public ResponseResult<List<SysDic>> allList() {
+        List<SysDic> sysDicList = sysDicService.list();
+        List<SysDicItem> sysDicItems = sysDicItemService.list();
+        for (SysDic sysDic : sysDicList) {
+            List<SysDicItem> sysDicItems1 = sysDicItems.stream().filter(x -> x.getDicId().equals(sysDic.getId())).distinct().collect(Collectors.toList());
+            sysDic.setSysDicItems(sysDicItems1);
+        }
+        return ResponseResult.success(sysDicList);
     }
 
     /**
@@ -94,7 +113,7 @@ public class SysDicController {
     @Transactional
     public ResponseResult<String> delete(@RequestBody List<Long> ids) {
         QueryWrapper queryWrapper = new QueryWrapper();
-        queryWrapper.in("dic_id",ids);
+        queryWrapper.in("dic_id", ids);
         this.sysDicItemService.remove(queryWrapper);
         this.sysDicService.removeByIds(ids);
         return ResponseResult.success();

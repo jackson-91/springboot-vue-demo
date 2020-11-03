@@ -1,8 +1,11 @@
 package org.dev.framework.modules.sys.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import org.dev.framework.core.entity.TenantEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.util.List;
 
 /**
  * <p>
@@ -38,5 +41,7 @@ public class SysDic extends TenantEntity {
      */
     private String description;
 
+    @TableField(exist = false)
+    List<SysDicItem> sysDicItems;
 
 }

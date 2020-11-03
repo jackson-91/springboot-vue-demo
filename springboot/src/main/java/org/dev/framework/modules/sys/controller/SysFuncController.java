@@ -1,7 +1,6 @@
 package org.dev.framework.modules.sys.controller;
 
 
-
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -46,7 +45,8 @@ public class SysFuncController {
     public ResponseResult<IPage<SysFunc>> menuFuncList(@RequestParam("menuId") Long menuId, PaginAtion pagination) {
         SysFunc sysFunc = new SysFunc();
         sysFunc.setMenuId(menuId);
-        QueryWrapper entityWrapper = new QueryWrapper(sysFunc);
+        QueryWrapper entityWrapper = new QueryWrapper();
+        entityWrapper.eq("menu_id", menuId);
         return ResponseResult.success(this.sysFuncService.page(pagination.getPage(), entityWrapper));
     }
 
@@ -81,6 +81,7 @@ public class SysFuncController {
 
     /**
      * 批量删除方法
+     *
      * @param ids
      * @return
      */

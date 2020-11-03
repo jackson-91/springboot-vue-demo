@@ -205,15 +205,19 @@ public class SysMenuController {
             sysRoleMenu.setRoleId(roleId);
             QueryWrapper queryWrapper = new QueryWrapper(sysRoleMenu);
             List<SysRoleMenu> sysRoleMenus = this.sysRoleMenuService.list(queryWrapper);
-            //获取菜单信息
-            List<Long> meunIds = sysRoleMenus.stream().map(SysRoleMenu::getMenuId).collect(Collectors.toList());
-            queryWrapper = new QueryWrapper();
-            queryWrapper.in("id", meunIds);
-            queryWrapper.eq("menu_platform", PlatForm.PC);
-            sysMenuList = this.sysMenuService.list(queryWrapper);
             List<Long> cmenuids = new ArrayList<>();
-            for (SysMenu sysMenu : rootMenus) {
-                this.recursiveMenuId(sysMenu, sysMenuList, cmenuids);
+            if (sysRoleMenus != null && sysRoleMenus.size() > 0) {
+                //获取菜单信息
+                List<Long> meunIds = sysRoleMenus.stream().map(SysRoleMenu::getMenuId).collect(Collectors.toList());
+                queryWrapper = new QueryWrapper();
+                queryWrapper.in("id", meunIds);
+                queryWrapper.eq("menu_platform", PlatForm.PC);
+                sysMenuList = this.sysMenuService.list(queryWrapper);
+
+                for (SysMenu sysMenu : rootMenus) {
+                    //this.recursiveMenuId(sysMenu, sysMenuList, cmenuids);
+                    this.recursiveMenuId(sysMenu, sysMenuList, sysFuncList, cmenuids);
+                }
             }
             //由于element api限制 先改为只传递选中的子叶节点id
             //List<Long> idArray = sysRoleMenus.stream().map(SysRoleMenu::getMenuId).collect(Collectors.toList());
@@ -282,18 +286,19 @@ public class SysMenuController {
 
             List<Long> idArray = sysRoleUsers.stream().map(SysRoleUser::getRoleId).collect(Collectors.toList());
             SysRoleMenu sysRoleMenu = new SysRoleMenu();
-            queryWrapper = new QueryWrapper(sysRoleMenu);
-            queryWrapper.in("role_id", idArray);
-            List<SysRoleMenu> sysRoleMenus = this.sysRoleMenuService.list(queryWrapper);
+            QueryWrapper queryWrapperRoleMenu = new QueryWrapper(sysRoleMenu);
+            queryWrapperRoleMenu.in("role_id", idArray);
+            List<SysRoleMenu> sysRoleMenus = this.sysRoleMenuService.list(queryWrapperRoleMenu);
 
             List<Long> meunIds = sysRoleMenus.stream().map(SysRoleMenu::getMenuId).collect(Collectors.toList());
-            queryWrapper = new QueryWrapper();
-            queryWrapper.in("id", meunIds);
-            queryWrapper.eq("menu_platform", PlatForm.PC);
-            sysMenuList = this.sysMenuService.list(queryWrapper);
+            QueryWrapper queryWrapperUserMenu = new QueryWrapper();
+            queryWrapperUserMenu.in("id", meunIds);
+            queryWrapperUserMenu.eq("menu_platform", PlatForm.PC);
+            List<SysMenu> sysMenuList1 = this.sysMenuService.list(queryWrapperUserMenu);
             List<Long> cmenuids = new ArrayList<>();
             for (SysMenu sysMenu : rootMenus) {
-                this.recursiveMenuId(sysMenu, sysMenuList, cmenuids);
+                //this.recursiveMenuId(sysMenu, sysMenuList, cmenuids);
+                this.recursiveMenuId(sysMenu, sysMenuList1, sysFuncList, cmenuids);
             }
             //获取菜单ID 由于element api限制 先改为只传递选中的子叶节点id
             //List<Long> idArray = sysRoleMenus.stream().map(SysRoleMenu::getMenuId).collect(Collectors.toList());
@@ -351,10 +356,36 @@ public class SysMenuController {
                 this.recursiveMenuId(sysMenu1, sysMenus, idArray);
             }
         } else {
+            //
+
+            //
             idArray.add(sysMenu.getId());
         }
     }
 
+    /**
+     * 递归处理菜单
+     *
+     * @param sysMenu
+     * @param sysMenus
+     */
+    private void recursiveMenuId(SysMenu sysMenu, List<SysMenu> sysMenus, List<SysFunc> sysFuncs, List<Long> idArray) {
+        List<SysMenu> sysMenuList = sysMenus.stream().filter(x -> x.getParentId().equals(sysMenu.getId()))
+                .sorted(Comparator.comparing(SysMenu::getSortNo))
+                .collect(Collectors.toList());
+        if (sysMenuList != null && sysMenuList.size() > 0) {
+            for (SysMenu sysMenu1 : sysMenuList) {
+                this.recursiveMenuId(sysMenu1, sysMenus, sysFuncs, idArray);
+            }
+        } else {
+            if (!sysMenu.getParentId().equals(1L)) {
+                List<SysFunc> sysFuncs1 = sysFuncs.stream().filter(x -> x.getMenuId().equals(sysMenu.getId())).distinct().collect(Collectors.toList());
+                if (sysFuncs1 == null || sysFuncs1.size() == 0) {
+                    idArray.add(sysMenu.getId());
+                }
+            }
+        }
+    }
 
     /**
      * 递归处理菜单

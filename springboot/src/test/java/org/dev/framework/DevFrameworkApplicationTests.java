@@ -28,11 +28,11 @@ public class DevFrameworkApplicationTests {
 
     @Test
     public void FlowCode() {
-        try {
-            sequenceUtil.GeneratorCode("FLOW_CODE");
-        } catch (CustomException ee) {
-            ee.printStackTrace();
-        }
+//        try {
+//           // sequenceUtil.GeneratorCode("FLOW_CODE");
+//        } catch (CustomException ee) {
+//            ee.printStackTrace();
+//        }
     }
 
 }

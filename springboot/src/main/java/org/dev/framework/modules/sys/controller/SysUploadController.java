@@ -115,7 +115,7 @@ public class SysUploadController {
     public void downLoad(HttpServletResponse response) throws UnsupportedEncodingException {
         String filename = "JAVA核心知识点整理.pdf";
         String filePath = "D:/file";
-        File file = new File(filePath + "/" + filename);
+        File file = new File(upload_path + "/" + filename);
         if (file.exists()) {
             response.setContentType("application/octet-stream");
             response.setHeader("content-type", "application/octet-stream");
