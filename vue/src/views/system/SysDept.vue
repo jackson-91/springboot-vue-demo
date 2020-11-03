@@ -308,6 +308,7 @@ export default {
           this.$message.success(res.msg)
           this.showForm = false
           this.searchData()
+          this.getDept();
         } else {
           this.$message.error(res.msg)
         }
@@ -333,6 +334,7 @@ export default {
           if (res.code == '0') {
             this.$message.success(res.msg)
             this.searchData()
+            this.getDept();
           } else {
             this.$message.error(res.msg)
           }
@@ -395,6 +397,7 @@ export default {
           if (res.code == '0') {
             this.$message.success(res.msg)
             this.searchData()
+            this.getDept();
           } else {
             this.$message.error(res.msg)
           }

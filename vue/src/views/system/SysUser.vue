@@ -410,6 +410,8 @@ export default {
     handleRoleClick (row) {
       this.visible = true
       this.userId = row.id
+      this.treeData = [];
+      this.checkedKeys = [];
       this.$http.get('/api/sysRoleUser/role-list-set', { params: { userId: row.id } }).then(res => {
         console.log(res)
         this.treeData = res.data.tree
