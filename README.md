@@ -12,16 +12,16 @@ springboot+vue+mysql+redis 前后分离快速开发框架(目前系统初具雏�
 前端技术 vue+elementUi+axios+vuex+vueRouter+bpmn-js   
 后端技术 springboot2.3.5+mybatis-plus 3.4.0+spring security+quartz+activiti7
 springboot     
-├── dev-admin             // 启动模块 
-├── dev-common            // 通用模块 
-├── dev-util              // 通用工具 
-├── dev-generator         // 代码生成器
-├── dev-modules           // 业务模块
-│       └── dev-auth      				// 权限认证模块
-│       └── dev-basic     				// 基础数据
-│       └── dev-workflow  				// 工作流
-├──pom.xml                // 公共依赖
-vue                       // 前端框架
+├── dev-admin             // 启动模块    
+├── dev-common            // 通用模块    
+├── dev-util              // 通用工具    
+├── dev-generator         // 代码生成器   
+├── dev-modules           // 业务模块   
+│       └── dev-auth      				// 权限认证模块   
+│       └── dev-basic     				// 基础数据   
+│       └── dev-workflow  				// 工作流   
+├──pom.xml                // 公共依赖   
+vue                       // 前端框架   
 #### 安装教程
 开发工具
     IntelliJ IDEA    
