@@ -10,7 +10,8 @@ springboot+vue+mysql+redis 前后分离快速开发框架(目前系统初具雏�
 软件架构说明   
 此为前后分离项目   
 前端技术 vue+elementUi+axios+vuex+vueRouter+bpmn-js   
-后端技术 springboot2.3.1+mybatis-plus3.3.2+spring security+quartz+activiti7   
+后端技术 springboot2.3.5+mybatis-plus 3.4.0+spring security+quartz+activiti7
+  
 
 #### 安装教程
 开发工具
