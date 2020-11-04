@@ -1,0 +1,82 @@
+package ${package.Controller};
+
+import ${package.Service}.${table.serviceName};
+import ${package.Entity}.${entity};
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import org.dev.common.core.page.PaginAtion;
+import org.dev.common.core.result.ResponseResult;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/${table.entityPath}")
+public class ${entity}Controller {
+    @Autowired
+    public ${table.serviceName} ${table.entityPath}Service;
+
+    /**
+     * 保存和修改公用的
+     * @param ${table.entityPath}  传递的实体
+     * @return ResponseResult转换结果
+     */
+    @RequestMapping(value="/save",method= RequestMethod.POST)
+    public ResponseResult<String> save(@RequestBody ${entity} ${table.entityPath}) {
+        boolean result = false;
+        try {
+            if(${table.entityPath}.getId()!=null){
+                result = ${table.entityPath}Service.updateById(${table.entityPath});
+            }else{
+                result = ${table.entityPath}Service.save(${table.entityPath});
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            result = false;
+        }
+        if (result)
+            return ResponseResult.success();
+        return ResponseResult.error();
+    }
+    /**
+     * 获取对象信息
+     * @param id
+     * @return
+     */
+    @GetMapping("/get")
+    public  ResponseResult<${entity}> get(@RequestParam("id") Long id) {
+        ${entity} ${table.entityPath} = ${table.entityPath}Service.getById(id);
+        return ResponseResult.success(${table.entityPath});
+    }
+
+    /**
+     * 删除对象信息
+     * @param ids
+     * @return
+     */
+    @PostMapping("/delete")
+    public ResponseResult<String> delete(@RequestBody List<Long> ids) {
+        try {
+            ${table.entityPath}Service.removeByIds(ids);
+            return ResponseResult.success();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseResult.error("删除对象失败！"+e.getMessage());
+        }
+    }
+
+    /**
+     * 分页查询数据信息
+     * @param ids
+     * @param ${table.entityPath}
+     * @return
+     */
+     @RequestMapping("/list")
+    public ResponseResult<IPage<${entity}>> list(${entity} ${table.entityPath} , PaginAtion pagination) {
+        Page page = pagination.getPage();
+        return ResponseResult.success(${table.entityPath}Service.page(page, new QueryWrapper<${entity}>(${table.entityPath})));
+    }
+}
