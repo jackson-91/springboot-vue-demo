@@ -12,7 +12,7 @@ body,
 }
 .el-card {
   box-shadow: 0 1px 1px rgb(241, 227, 227) !important;
-  height: 99.5%;
+  overflow-y: auto;
 }
 .el-table {
   margin-top: 15px;
@@ -32,4 +32,16 @@ body,
 }
 .el-drawer__body {
   padding: 10px !important;
+}
+.site-tabs__tools {
+  position: absolute;
+  top: -40px;
+  right: 0;
+  z-index: 999999;
+  height: 40px;
+  padding: 0 12px;
+  font-size: 16px;
+  line-height: 40px;
+  background-color: #FFFFFF;
+  cursor: pointer;
 }

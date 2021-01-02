@@ -5,7 +5,7 @@ import { Message } from 'element-ui'
 import { store } from '../store/store'
 // 解决ElementUI导航栏中的vue-router在3.0版本以上重复点菜单报错问题
 const originalPush = VueRouter.prototype.push
-VueRouter.prototype.push = function push (location) {
+VueRouter.prototype.push = function push(location) {
   return originalPush.call(this, location).catch(err => err)
 }
 Vue.use(VueRouter)
@@ -23,24 +23,24 @@ const routes = [
         component: resolve => require(['../views/Welcome.vue'], resolve),
         meta: { requestLogin: true, permissions: false }
       },
-      { path: '/sysuser', component: resolve => require(['../views/system/SysUser.vue'], resolve), meta: { requestLogin: true, permissions: true } },
-      { path: '/sysrole', component: resolve => require(['../views/system/SysRole.vue'], resolve), meta: { requestLogin: true, permissions: true } },
-      { path: '/sysmenu', component: resolve => require(['../views/system/SysMenu.vue'], resolve), meta: { requestLogin: true, permissions: true } },
-      { path: '/syslog', component: resolve => require(['../views/system/SysLog.vue'], resolve), meta: { requestLogin: true, permissions: true } },
-      { path: '/sysdic', component: resolve => require(['../views/system/SysDic.vue'], resolve), meta: { requestLogin: true, permissions: true } },
-      { path: '/syssequence', component: resolve => require(['../views/system/SysSequence.vue'], resolve), meta: { requestLogin: true, permissions: true } },
-      { path: '/sysdept', component: resolve => require(['../views/system/SysDept.vue'], resolve), meta: { requestLogin: true, permissions: true } },
-      { path: '/sysjob', component: resolve => require(['../views/system/SysJob.vue'], resolve), meta: { requestLogin: true, permissions: true } },
-      { path: '/sysjobs', component: resolve => require(['../views/system/SysJobs.vue'], resolve), meta: { requestLogin: true, permissions: true } },
-      { path: '/sysemploye', component: resolve => require(['../views/system/SysEmploye.vue'], resolve), meta: { requestLogin: true, permissions: true } },
-      { path: '/wflowdesign', component: resolve => require(['../views/workflow/WflowDesign.vue'], resolve), meta: { requestLogin: true, permissions: true } },
-      { path: '/wflowdefine', component: resolve => require(['../views/workflow/WflowDefine.vue'], resolve), meta: { requestLogin: true, permissions: true } },
-      { path: '/wflowclaim', component: resolve => require(['../views/workflow/WflowClaim.vue'], resolve), meta: { requestLogin: true, permissions: true } },
-      { path: '/wflowtask', component: resolve => require(['../views/workflow/WflowTask.vue'], resolve), meta: { requestLogin: true, permissions: true } },
-      { path: '/wflowalltask', component: resolve => require(['../views/workflow/WflowAllTask.vue'], resolve), meta: { requestLogin: true, permissions: true } },
-      { path: '/wflowhistory', component: resolve => require(['../views/workflow/WflowHistory.vue'], resolve), meta: { requestLogin: true, permissions: true } },
-      { path: '/wflowhisinstance', component: resolve => require(['../views/workflow/WflowHisInstance.vue'], resolve), meta: { requestLogin: true, permissions: true } },
-      { path: '/formdemo', component: resolve => require(['../views/form/Template.vue'], resolve), meta: { requestLogin: false, permissions: false } },
+      { path: '/sysuser', component: resolve => require(['../views/system/SysUser.vue'], resolve), meta: { requestLogin: true, permissions: true, isTab: true } },
+      { path: '/sysrole', component: resolve => require(['../views/system/SysRole.vue'], resolve), meta: { requestLogin: true, permissions: true, isTab: true } },
+      { path: '/sysmenu', component: resolve => require(['../views/system/SysMenu.vue'], resolve), meta: { requestLogin: true, permissions: true, isTab: true } },
+      { path: '/syslog', component: resolve => require(['../views/system/SysLog.vue'], resolve), meta: { requestLogin: true, permissions: true, isTab: true } },
+      { path: '/sysdic', component: resolve => require(['../views/system/SysDic.vue'], resolve), meta: { requestLogin: true, permissions: true, isTab: true } },
+      { path: '/syssequence', component: resolve => require(['../views/system/SysSequence.vue'], resolve), meta: { requestLogin: true, permissions: true, isTab: true } },
+      { path: '/sysdept', component: resolve => require(['../views/system/SysDept.vue'], resolve), meta: { requestLogin: true, permissions: true, isTab: true } },
+      { path: '/sysjob', component: resolve => require(['../views/system/SysJob.vue'], resolve), meta: { requestLogin: true, permissions: true, isTab: true } },
+      { path: '/sysjobs', component: resolve => require(['../views/system/SysJobs.vue'], resolve), meta: { requestLogin: true, permissions: true, isTab: true } },
+      { path: '/sysemploye', component: resolve => require(['../views/system/SysEmploye.vue'], resolve), meta: { requestLogin: true, permissions: true, isTab: true } },
+      { path: '/wflowdesign', component: resolve => require(['../views/workflow/WflowDesign.vue'], resolve), meta: { requestLogin: true, permissions: true, isTab: true } },
+      { path: '/wflowdefine', component: resolve => require(['../views/workflow/WflowDefine.vue'], resolve), meta: { requestLogin: true, permissions: true, isTab: true } },
+      { path: '/wflowclaim', component: resolve => require(['../views/workflow/WflowClaim.vue'], resolve), meta: { requestLogin: true, permissions: true, isTab: true } },
+      { path: '/wflowtask', component: resolve => require(['../views/workflow/WflowTask.vue'], resolve), meta: { requestLogin: true, permissions: true, isTab: true } },
+      { path: '/wflowalltask', component: resolve => require(['../views/workflow/WflowAllTask.vue'], resolve), meta: { requestLogin: true, permissions: true, isTab: true } },
+      { path: '/wflowhistory', component: resolve => require(['../views/workflow/WflowHistory.vue'], resolve), meta: { requestLogin: true, permissions: true, isTab: true } },
+      { path: '/wflowhisinstance', component: resolve => require(['../views/workflow/WflowHisInstance.vue'], resolve), meta: { requestLogin: true, permissions: true, isTab: true } },
+      { path: '/formdemo', component: resolve => require(['../views/form/Template.vue'], resolve), meta: { requestLogin: false, permissions: false, isTab: true } },
       { path: '/401', component: resolve => require(['../views/error/401.vue'], resolve) },
       { path: '/404', name: 'notFound', component: resolve => require(['../views/error/404.vue'], resolve) },
       { path: '*', redirect: '/404' }

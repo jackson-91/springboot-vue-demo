@@ -56,7 +56,7 @@
                             stripe
                             highlight-current-row
                             ref="multipleTable"
-                            :height="tableHeight-110"
+                            :height="tableHeight-150"
                             style="width: 100%">
                     <el-table-column type="selection"
                                      width="55">
@@ -562,7 +562,7 @@ export default {
     }
   },
   created () {
-    this.tableHeight = document.documentElement.clientHeight - 240
+    this.tableHeight = document.documentElement.clientHeight - 280
     this.tableColumns = this.defaultColumns
     this.loadTree()
   }

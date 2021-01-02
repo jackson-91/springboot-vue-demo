@@ -246,7 +246,7 @@ export default {
     }
   },
   created () {
-    this.tableHeight = document.documentElement.clientHeight - 240
+    this.tableHeight = document.documentElement.clientHeight - 280
     //
     this.tableColumns = this.defaultColumns
     this.searchData()

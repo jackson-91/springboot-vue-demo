@@ -39,7 +39,11 @@ import {
   Drawer,
   Upload,
   Option,
-  Popover
+  Popover,
+  Tag,
+  DropdownMenu,
+  Dropdown,
+  DropdownItem
 } from 'element-ui'
 
 Vue.use(Button)
@@ -81,6 +85,10 @@ Vue.use(Loading.directive)
 Vue.use(Upload)
 Vue.use(Option)
 Vue.use(Popover)
+Vue.use(Tag)
+Vue.use(DropdownMenu)
+Vue.use(Dropdown)
+Vue.use(DropdownItem)
 Vue.prototype.$loading = Loading.service
 Vue.prototype.$msgbox = MessageBox
 Vue.prototype.$alert = MessageBox.alert

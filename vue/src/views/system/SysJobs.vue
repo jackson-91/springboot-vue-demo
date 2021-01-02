@@ -350,6 +350,7 @@ export default {
       }
       this.jobsControl[1].readonly = true
       this.showForm = true
+      this.jobsForm.id = row.id
       this.jobsForm.name = row.name
       this.jobsForm.code = row.code
       this.jobsForm.level = row.level;
@@ -417,7 +418,7 @@ export default {
     }
   },
   created () {
-    this.tableHeight = document.documentElement.clientHeight - 240
+    this.tableHeight = document.documentElement.clientHeight - 280
     //
     this.tableColumns = this.defaultColumns
     this.searchData();
