@@ -74,7 +74,7 @@ public class ${entity}Controller {
      * @param ${table.entityPath}
      * @return
      */
-     @RequestMapping("/list")
+    @RequestMapping("/list")
     public ResponseResult<IPage<${entity}>> list(${entity} ${table.entityPath} , PaginAtion pagination) {
         Page page = pagination.getPage();
         return ResponseResult.success(${table.entityPath}Service.page(page, new QueryWrapper<${entity}>(${table.entityPath})));

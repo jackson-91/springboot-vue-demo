@@ -8,6 +8,7 @@ import org.activiti.engine.TaskService;
 import org.activiti.engine.impl.identity.Authentication;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
+import org.dev.common.core.entity.CurrentRole;
 import org.dev.common.core.page.PaginAtion;
 import org.dev.common.core.result.ResponseResult;
 import org.dev.common.security.jwt.JwtUtil;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("wflowTask")
@@ -53,6 +55,8 @@ public class WflowTaskController {
          * taskAssignee匹配规则:1.Assigned
          */
         List<WflowTask> wflowTasks = new ArrayList<>();
+        List<CurrentRole> roles = (List<CurrentRole>) SpringSecurityUtils.CurrentUser().getAuthorities();
+        List<String> codes = roles.stream().map(CurrentRole::getRoleCode).distinct().collect(Collectors.toList());
         List<Task> list = taskService.createTaskQuery().taskCandidateUser(SpringSecurityUtils.CurrentUser().getLoginName())
                 .orderByTaskDueDate().desc().listPage(firstResult, maxResults);
 
@@ -104,8 +108,7 @@ public class WflowTaskController {
          * taskAssignee匹配规则:1.Assigned
          */
         List<WflowTask> wflowTasks = new ArrayList<>();
-        List<Task> list = taskService.createTaskQuery().taskCandidateOrAssigned(SpringSecurityUtils.CurrentUser().getLoginName())
-                .orderByTaskDueDate().desc().listPage(firstResult, maxResults);
+        List<Task> list = taskService.createTaskQuery().taskCandidateOrAssigned(SpringSecurityUtils.CurrentUser().getLoginName()).orderByTaskDueDate().desc().listPage(firstResult, maxResults);
         long count = taskService.createTaskQuery().taskCandidateOrAssigned(SpringSecurityUtils.CurrentUser().getLoginName()).count();
         for (Task task : list) {
             WflowTask wflowTask1 = new WflowTask();

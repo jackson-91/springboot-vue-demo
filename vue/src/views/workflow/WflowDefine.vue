@@ -117,7 +117,7 @@
 import CustomForm from '../../components/CustomForm'
 import CustomTableCols from '../../components/CustomTableCols'
 import Search from '../../components/Search'
-import BpmnDesign from '../../components/BpmnDesign'
+import BpmnDesign from '../../components/activiti/BpmnDesignCustom'
 export default {
   components: {
     CustomTableCols,
@@ -129,6 +129,7 @@ export default {
     return {
       initData: {},
       tableData: [],
+      dicItem:[],
       tableHeight: '400px',
       current: 1,
       size: 10,
@@ -163,11 +164,11 @@ export default {
       wflowDefineControl: [
         { label: 'ID', field: 'id', type: 'hidden', show: false, readonly: true },
         { label: '流程名称', field: 'name', type: 'input', show: true, readonly: true },
-        { label: '流程key', field: 'key', type: 'input', show: true, readonly: false },
-        { label: '流程分类', field: 'category', type: 'password', show: true, readonly: false },
-        { label: '流程描述', field: 'description', type: 'password', show: true, readonly: false },
+        { label: '业务单据', field: 'key', type: 'select', show: true, readonly: false ,options:null},
+        // { label: '流程分类', field: 'category', type: 'password', show: true, readonly: false },
+        { label: '流程描述', field: 'description', type: 'textarea', show: true, readonly: false },
         { label: '流程BPM文件', field: 'bpmnfile', type: 'upload', show: true },
-        { label: '流程PNG文件', field: 'pngfile', type: 'upload', show: true }
+        // { label: '流程PNG文件', field: 'pngfile', type: 'upload', show: true }
       ],
       wflowDefineRules: {
         name: [
@@ -176,9 +177,9 @@ export default {
         bpmnfile: [
           { required: true, message: '请上传bpmn文件', trigger: 'blur' }
         ],
-        pngfile: [
-          { required: true, message: '请上传流程png文件', trigger: 'blur' }
-        ]
+        // pngfile: [
+        //   { required: true, message: '请上传流程png文件', trigger: 'blur' }
+        // ]
       },
       multipleSelection: [],
       visible: false,
@@ -229,7 +230,8 @@ export default {
       for (const item in this.wflowDefineForm) {
         this.wflowDefineForm[item] = ''
       }
-      this.wflowDefineControl[1].readonly = false
+      this.wflowDefineControl[1].readonly = false;
+      this.wflowDefineControl[2].options = this.dicItem;
       this.showForm = true
     },
     /**
@@ -444,13 +446,40 @@ export default {
       console.log(`当前页: ${val}`)
       this.current = val
       this.searchData()
-    }
+    },
+    getDicItem() {
+      this.$http
+        .get("/api/sysDicItem/item-list-bydiccode", {
+          params: {
+            dicCode: "WLFOW_TYPE",
+          },
+        })
+        .then((res) => {
+          if (res.code == 0) {
+            if (res.data) {
+              let that = this;
+              res.data.forEach((item) => {
+                that.dicItem.push({
+                  label: item.dicItemName,
+                  value: item.dicItemValue,
+                });
+              });
+            }
+          } else {
+            this.$message.error(res.msg);
+          }
+        })
+        .catch((err) => {
+          console.log(err.message);
+        });
+    },
   },
   created () {
     this.tableHeight = document.documentElement.clientHeight - 280
     //
     this.tableColumns = this.defaultColumns
     this.searchData()
+    this.getDicItem();
   }
 }
 </script>

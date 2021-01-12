@@ -4,6 +4,7 @@ package org.dev.auth.module.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.dev.auth.module.entity.SysRole;
+import org.dev.auth.module.entity.SysUser;
 import org.dev.auth.module.service.SysRoleService;
 import org.dev.common.core.page.PaginAtion;
 import org.dev.common.core.result.ResponseResult;
@@ -38,6 +39,17 @@ public class SysRoleController {
     public ResponseResult<IPage<SysRole>> list(SysRole sysRole, PaginAtion pagination) {
         return ResponseResult.success(sysRoleService.page(pagination.getPage(),
                 new QueryWrapper<>(sysRole)));
+    }
+
+
+    /**
+     * 查询角色列表
+     *
+     * @return
+     */
+    @RequestMapping("/list-signed")
+    public ResponseResult<List<SysRole>> listSigned() {
+        return ResponseResult.success(sysRoleService.list());
     }
 
     /**

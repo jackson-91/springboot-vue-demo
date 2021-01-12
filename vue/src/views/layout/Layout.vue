@@ -6,10 +6,20 @@
         <img src="../../assets/logo.png" alt />
         <span>后台管理系统</span>
       </div>
-      <el-button type="info" @click="logout()">退出</el-button>
+      <el-dropdown :show-timeout="0" placement="bottom">
+        <span class="el-dropdown-link">
+          <img src="~@/assets/img/avatar.png" :alt="userName" />{{ userName }}
+        </span>
+        <el-dropdown-menu slot="dropdown">
+          <el-dropdown-item @click.native="updatePasswordHandle()"
+            >修改密码</el-dropdown-item
+          >
+          <el-dropdown-item @click.native="logout()">退出</el-dropdown-item>
+        </el-dropdown-menu>
+      </el-dropdown>
     </el-header>
 
-    <el-container>
+    <el-container class="main-container">
       <!--左侧菜单-->
       <el-aside :width="isCollapse ? '64px' : '200px'">
         <Menu
@@ -27,14 +37,14 @@
         </div>
       </el-aside>
       <!--右侧主体-->
-      <el-main>
+      <el-main :style="setMarginLeft">
         <el-tabs
           v-model="mainTabsActiveName"
           type="border-card"
           @tab-click="tabClick"
           @tab-remove="removeTab"
         >
-          <el-dropdown class="site-tabs__tools" :show-timeout="0">
+          <!-- <el-dropdown class="site-tabs__tools" :show-timeout="0">
             <i class="el-icon-arrow-down el-icon--right"></i>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item @click.native="tabsCloseCurrentHandle"
@@ -50,7 +60,7 @@
                 >刷新当前标签页</el-dropdown-item
               >
             </el-dropdown-menu>
-          </el-dropdown>
+          </el-dropdown> -->
           <el-tab-pane
             :key="item.name"
             v-for="(item, index) in editableTabs"
@@ -60,9 +70,7 @@
           >
             <el-card :body-style="siteContentViewHeight">
               <el-breadcrumb separator-class="el-icon-arrow-right">
-                <el-breadcrumb-item :to="{ path: '/welcome' }"
-                  >首页</el-breadcrumb-item
-                >
+                <el-breadcrumb-item @click="goHome">首页</el-breadcrumb-item>
                 <el-breadcrumb-item
                   v-for="item in BreadcrumbList"
                   :index="item.id"
@@ -87,6 +95,7 @@ import Menu from "./Menu.vue";
 export default {
   data() {
     return {
+      userName: "",
       isCollapse: false,
       BreadcrumbList: [],
       mainTabsActiveName: "/welcome",
@@ -120,6 +129,7 @@ export default {
         });
     },
     changeBreadcrumb(params) {
+      this.mainTabsActiveName = "";
       this.BreadcrumbList = params;
       if (params.length == 2) {
         let tab = this.editableTabs.filter(
@@ -129,11 +139,17 @@ export default {
           this.mainTabsActiveName = params[1].menuUrl;
         } else {
           if (params[1].menuUrl != "/welcome") {
-            this.editableTabs.push({
+            // this.editableTabs.push({
+            //   title: params[1].menuName,
+            //   name: params[1].menuUrl,
+            //   BreadcrumbList: params,
+            // });
+            tab = {
               title: params[1].menuName,
               name: params[1].menuUrl,
               BreadcrumbList: params,
-            });
+            };
+            this.editableTabs = this.editableTabs.concat(tab);
           }
           this.mainTabsActiveName = params[1].menuUrl;
         }
@@ -142,11 +158,17 @@ export default {
           (item) => item.name === params[0].menuUrl
         );
         if (params[0].menuUrl != "/welcome") {
-          this.editableTabs.push({
+          // this.editableTabs.push({
+          //   title: params[0].menuName,
+          //   name: params[0].menuUrl,
+          //   BreadcrumbList: params,
+          // });
+          tab = {
             title: params[0].menuName,
             name: params[0].menuUrl,
             BreadcrumbList: params,
-          });
+          };
+          this.editableTabs = this.editableTabs.concat(tab);
         }
         this.mainTabsActiveName = params[0].menuUrl;
       }
@@ -161,10 +183,12 @@ export default {
           this.$router.push({
             path: path,
           });
+          this.$refs.menu.defaultActive = path;
         }
       } else {
         this.mainTabsActiveName = "/welcome";
         this.$router.push({ path: "/welcome" });
+        this.$refs.menu.defaultActive = "/welcome";
       }
     },
     tabClick(tab) {
@@ -177,11 +201,23 @@ export default {
         this.BreadcrumbList = tab[0].BreadcrumbList;
       }
     },
+    goHome() {
+      this.mainTabsActiveName = "/welcome";
+      this.$router.push({ path: "/welcome" });
+      this.$refs.menu.defaultActive = "/welcome";
+    },
   },
   computed: {
     siteContentViewHeight() {
       var height = document.documentElement["clientHeight"] - 50 - 30 - 2;
       return { minHeight: height + "px" };
+    },
+    setMarginLeft() {
+      if (this.isCollapse) {
+        return { marginLeft: "64px" };
+      } else {
+        return { marginLeft: "200px" };
+      }
     },
   },
   components: {
@@ -201,6 +237,13 @@ export default {
   align-items: center;
   color: #fff;
   font-size: 20px;
+  position: fixed;
+  height: 50px !important;
+  line-height: 50px !important;
+  left: 0px;
+  top: 0px;
+  width: 100%;
+  z-index: 230;
   div {
     display: flex;
     align-items: center;
@@ -209,39 +252,63 @@ export default {
     }
     img {
       height: 100%;
-      height: 50px;
+      height: 45px;
+    }
+  }
+  .el-dropdown-link {
+    > img {
+      width: 36px;
+      height: auto;
+      margin-right: 5px;
+      border-radius: 100%;
+      vertical-align: middle;
     }
   }
 }
-.el-aside {
-  background-color: white;
-  .el-menu {
-    border-right: none;
-    text-align: left;
+.main-container {
+  position: relative;
+  top: 50px;
+  .el-aside {
+    background-color: white;
+    position: fixed;
+    .el-menu {
+      border-right: none;
+      text-align: left;
+    }
+    .toggle-button {
+      background-color: white;
+      font-size: 10px;
+      line-height: 24px;
+      color: #000000;
+      text-align: center;
+      letter-spacing: 0.2em;
+      cursor: pointer;
+      border-top: solid 1px #cccccc;
+      border-bottom: solid 1px #cccccc;
+    }
   }
-}
-.el-main {
-  background-color: #eaedf1;
-  padding: 0px;
-}
-.el-tabs__content {
-  background-color: #eaedf1 !important;
-}
-.toggle-button {
-  background-color: white;
-  font-size: 10px;
-  line-height: 24px;
-  color: #000000;
-  text-align: center;
-  letter-spacing: 0.2em;
-  cursor: pointer;
-  border-top: solid 1px #cccccc;
-  border-bottom: solid 1px #cccccc;
-}
-.el-tabs__header {
-  background-color: red !important;
-}
-.el-breadcrumb {
-  height: 20px;
+  .el-main {
+    background-color: #eaedf1;
+    padding: 0px;
+    .el-tabs {
+      .el-tabs__header {
+        background-color: red !important;
+      }
+      .el-tabs__content {
+        background-color: #eaedf1 !important;
+
+        .el-breadcrumb {
+          height: 20px;
+        }
+        .el-tabs__item {
+          min-width: 90px !important;
+        }
+        .site-tabs__tools {
+          position: absolute;
+          top: -15px;
+        }
+      }
+    }
+  }
 }
 </style>

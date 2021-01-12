@@ -31,7 +31,7 @@ export default {
     }
   },
   created () {
-    this.loadUser()
+    //this.loadUser()
   }
 }
 </script>

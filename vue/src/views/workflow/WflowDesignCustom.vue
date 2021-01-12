@@ -1,8 +1,9 @@
 <template>
   <div class="flow-container">
     <div class="containers" ref="content">
+      <PropertyPanel v-if="bpmnModeler" :modeler="bpmnModeler" />
       <div class="canvas" ref="canvas"></div>
-      <div id="js-properties-panel" class="panel"></div>
+      <!-- <div id="js-properties-panel" class="panel"></div> -->
       <ul class="buttons">
         <li>
           <el-upload
@@ -45,16 +46,18 @@
 // 引入相关的依赖
 // import BpmnViewer from 'bpmn-js'
 import BpmnModeler from "bpmn-js/lib/Modeler";
-import propertiesPanelModule from "bpmn-js-properties-panel-activiti";
+//import propertiesPanelModule from "bpmn-js-properties-panel-activiti";
 //import propertiesPanelModule from 'bpmn-js-properties-panel'
 // import activitiModdleDescriptor from '../../plugins/activiti.json'
 import propertiesProviderModule from "bpmn-js-properties-panel-activiti/lib/provider/activiti";
 //import propertiesProviderModule from 'bpmn-js-properties-panel/lib/provider/camunda'
-import camundaModdleDescriptor from "activiti-bpmn-moddle/resources/activiti";
+//import camundaModdleDescriptor from "activiti-bpmn-moddle/resources/activiti";
 //import camundaModdleDescriptor from 'camunda-bpmn-moddle/resources/camunda'
 import customTranslate from "../../plugins/translate/customTranslate";
 // import activitiExtensionModule from 'activiti-bpmn-moddle/lib'
 // import activitiModdle from 'activiti-bpmn-moddle/resources/activiti'
+
+import PropertyPanel from "../../components/activiti/PropertyPanel";
 export default {
   data() {
     return {
@@ -66,12 +69,16 @@ export default {
       processName: "",
     };
   },
+  components: {
+    PropertyPanel,
+  },
   methods: {
     /**
      * 设置默认模板
      */
     createNewDiagram() {
-      const bpmnXmlStr =
+      var timestamp = new Date().getTime();
+      let bpmnXmlStr =
         '<?xml version="1.0" encoding="UTF-8"?>\n' +
         '<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:activiti="http://activiti.org/bpmn" xmlns:normal="http://flowable.org/bpmn/normal" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd" id="sample-diagram" targetNamespace="http://bpmn.io/schema/bpmn">\n' +
         '  <bpmn2:process id="test_process"  >\n' +
@@ -86,9 +93,11 @@ export default {
         "  </bpmndi:BPMNDiagram>\n" +
         "</bpmn2:definitions>";
       // 将字符串转换成图显示出来
+      bpmnXmlStr = bpmnXmlStr.replace("test_process", "process_" + timestamp);
       this.bpmnModeler.importXML(bpmnXmlStr, function (err) {
         if (err) {
           console.error(err);
+        } else {
         }
       });
     },
@@ -121,6 +130,7 @@ export default {
         _this.bpmnModeler.importXML(newXml, function (err) {
           if (err) {
             console.error(err);
+          } else {
           }
         });
       };
@@ -138,6 +148,8 @@ export default {
         link.download = name;
       }
     },
+    //
+    success() {},
   },
   mounted() {
     const customTranslateModule = {
@@ -152,21 +164,21 @@ export default {
     this.bpmnModeler = new BpmnModeler({
       container: canvas,
       // 添加控制板
-      propertiesPanel: {
-        parent: "#js-properties-panel",
-      },
+      // propertiesPanel: {
+      //   parent: "#js-properties-panel",
+      // },
       additionalModules: [
         // 左边工具栏以及节点
         propertiesProviderModule,
         // 右边的工具栏
-        propertiesPanelModule,
+        // propertiesPanelModule,
         // 汉化
         customTranslateModule,
         // activiti
         // activitiExtensionModule
       ],
       moddleExtensions: {
-        camunda: camundaModdleDescriptor,
+        // camunda: camundaModdleDescriptor,
         // activiti: activitiModdleDescriptor
         // activiti: activitiModdle
       },

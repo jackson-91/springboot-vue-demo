@@ -70,52 +70,55 @@ spring:
     database: 2
   # quartz 定时任务配置
   quartz:
-      # 将任务等保存化到数据库
-      job-store-type: jdbc
-      # 程序结束时会等待quartz相关的内容结束
-      wait-for-jobs-to-complete-on-shutdown: true
-      # QuartzScheduler启动时更新己存在的Job,这样就不用每次修改targetObject后删除qrtz_job_details表对应记录
-      overwrite-existing-jobs: true
-      # 这里居然是个map，搞得智能提示都没有，佛了
-      properties:
-        org:
-          quartz:
-              # scheduler相关
-            scheduler:
-              # scheduler的实例名
-              instanceName: scheduler
-              instanceId: AUTO
-            # 持久化相关
-            jobStore:
-              class: org.quartz.impl.jdbcjobstore.JobStoreTX
-              driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
-              # 表示数据库中相关表是QRTZ_开头的
-              tablePrefix: QRTZ_
-              useProperties: false
-            # 线程池相关
-            threadPool:
-              class: org.quartz.simpl.SimpleThreadPool
-              # 线程数
-              threadCount: 10
-              # 线程优先级
-              threadPriority: 5
-              threadsInheritContextClassLoaderOfInitializingThread: true
+    # 将任务等保存化到数据库
+    job-store-type: jdbc
+    # 程序结束时会等待quartz相关的内容结束
+    wait-for-jobs-to-complete-on-shutdown: true
+    # QuartzScheduler启动时更新己存在的Job,这样就不用每次修改targetObject后删除qrtz_job_details表对应记录
+    overwrite-existing-jobs: true
+    # 这里居然是个map，搞得智能提示都没有，佛了
+    properties:
+      org:
+        quartz:
+          # scheduler相关
+          scheduler:
+            # scheduler的实例名
+            instanceName: scheduler
+            instanceId: AUTO
+          # 持久化相关
+          jobStore:
+            class: org.quartz.impl.jdbcjobstore.JobStoreTX
+            driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
+            # 表示数据库中相关表是QRTZ_开头的
+            tablePrefix: QRTZ_
+            useProperties: false
+          # 线程池相关
+          threadPool:
+            class: org.quartz.simpl.SimpleThreadPool
+            # 线程数
+            threadCount: 10
+            # 线程优先级
+            threadPriority: 5
+            threadsInheritContextClassLoaderOfInitializingThread: true
   #Activiti property configuration
   activiti:
-      #自动更新数据库结构
-      database-schema-update: false
-      #自动检查、部署流程定义文件
-      check-process-definitions: false
-      # asyncExecutorActivate是指activiti在流程引擎启动就激活AsyncExecutor,异步：true-开启（默认）、false-关闭
-      spring.activiti.async-executor-activate: false
-      #历史级别
-      history-level: full
-      db-history-used: true
-      #流程定义文件存放目录,要具体到某个目录
-      #process-definition-location-prefix: classpath:/process/
-      #process-definition-location-suffixes: #流程文件格式
-      #  - **.bpmn20.xml
-      #  - **.bpmn
+    #自动更新数据库结构
+    database-schema-update: true
+    #自动检查、部署流程定义文件
+    check-process-definitions: false
+    # asyncExecutorEnabled属性设置设置true后将代替那些老的Job executor
+    #async-executor-enabled: false
+    #job-executor-activate: false
+    # asyncExecutorActivate是指activiti在流程引擎启动就激活AsyncExecutor,异步：true-开启（默认）、false-关闭
+    spring.activiti.async-executor-activate: false
+    #历史级别
+    history-level: full
+    db-history-used: true
+    #流程定义文件存放目录,要具体到某个目录
+    #process-definition-location-prefix: classpath:/process/
+    #process-definition-location-suffixes: #流程文件格式
+    #  - **.bpmn20.xml
+    #  - **.bpmn
   # servlet 文件
   servlet:
     multipart:
@@ -124,7 +127,7 @@ spring:
       max-file-size: 100MB
       # 最大支持请求大小
       max-request-size: 100MB
-#mybatis:
+  #mybatis:
   #mapper-locations: classpath*:/mapper/*.xml
   #type-aliases-package: lqx.framework.modules.**.entity
 #mybatis-plus配置
@@ -156,9 +159,9 @@ mybatis-plus:
     isLogicDel: 'true'
 #日志
 logging:
-      level:
-        org.dev.framework.modules.**.mapper: DEBUG
-        org.dev.framework.modules: INFO
+  level:
+    org.dev.framework.modules.**.mapper: DEBUG
+    org.dev.framework.modules: INFO
 # 自定义配置
 springboot_vue:
   upload:

@@ -323,9 +323,11 @@ export default {
     setAuth () {
       if (this.$refs.multipleTable.selection.length <= 0) {
         this.$message.warning('请选择要操作的角色')
+        return;
       }
       if (this.$refs.multipleTable.selection.length > 1) {
         this.$message.warning('只能选择一个角色')
+        return;
       }
       const id = this.$refs.multipleTable.selection[0].id
       this.roleId = id

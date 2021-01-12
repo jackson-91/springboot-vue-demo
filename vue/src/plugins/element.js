@@ -43,7 +43,8 @@ import {
   Tag,
   DropdownMenu,
   Dropdown,
-  DropdownItem
+  DropdownItem,
+  ColorPicker
 } from 'element-ui'
 
 Vue.use(Button)
@@ -89,6 +90,7 @@ Vue.use(Tag)
 Vue.use(DropdownMenu)
 Vue.use(Dropdown)
 Vue.use(DropdownItem)
+Vue.use(ColorPicker)
 Vue.prototype.$loading = Loading.service
 Vue.prototype.$msgbox = MessageBox
 Vue.prototype.$alert = MessageBox.alert

@@ -84,7 +84,7 @@
     <el-dialog title="流程图"
                :visible.sync="showView">
       <img :src="imgSrc"
-           style="margin-top: -150px;margin-bottom: 30px;" />
+           style="width: 100%; height: 100%" />
       <br />
     </el-dialog>
   </div>

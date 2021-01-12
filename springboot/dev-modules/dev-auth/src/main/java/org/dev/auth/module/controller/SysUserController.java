@@ -48,6 +48,16 @@ public class SysUserController {
 
 
     /**
+     * 用户列表
+     *
+     * @return
+     */
+    @RequestMapping("/list-signed")
+    public ResponseResult<List<SysUser>> listSigned() {
+        return ResponseResult.success(sysUserService.list());
+    }
+
+    /**
      * 禁用启用用户
      *
      * @param enable

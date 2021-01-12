@@ -26,6 +26,11 @@
                   v-model="formModel[item.field]"
                   type="password"
                   :disabled="item.readonly"></el-input>
+        <!--多行文本框-->
+        <el-input v-if="item.type==='textarea'"
+                  v-model="formModel[item.field]"
+                  type="textarea"
+                  :disabled="item.readonly"></el-input>
         <!--隐藏域-->
         <el-input v-if="item.type==='hidden'"
                   v-model="formModel[item.field]"

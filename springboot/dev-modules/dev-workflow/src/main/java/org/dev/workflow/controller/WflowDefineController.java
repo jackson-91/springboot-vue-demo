@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import lombok.extern.slf4j.Slf4j;
 import org.activiti.bpmn.converter.BpmnXMLConverter;
 import org.activiti.bpmn.model.BpmnModel;
+import org.activiti.bpmn.model.Process;
 import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.ProcessEngines;
 import org.activiti.engine.RepositoryService;
@@ -24,6 +25,7 @@ import org.dev.workflow.entity.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.parameters.P;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -109,7 +111,7 @@ public class WflowDefineController {
         try {
             RepositoryService repositoryService = ProcessEngines.getDefaultProcessEngine().getRepositoryService();
             for (String deploymentId : deploymentIds) {
-                repositoryService.deleteDeployment(deploymentId);
+                repositoryService.deleteDeployment(deploymentId, true);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -142,7 +144,7 @@ public class WflowDefineController {
                     swapStream.write(bpmnBytes, 0, rc);
                 }
                 byte[] in_b = swapStream.toByteArray(); //in_b为转换之后的结果
-                log.info("------" +new String(in_b));
+                log.info("------" + new String(in_b));
                 // 封装输出流
                 bos = new BufferedOutputStream(response.getOutputStream());
                 bos.write(in_b);// 写入流
@@ -189,6 +191,7 @@ public class WflowDefineController {
     /**
      * 部署流程
      * 根据文件部署
+     *
      * @param wflowDefine
      * @return
      */
@@ -204,6 +207,22 @@ public class WflowDefineController {
             } catch (IOException e) {
 
             }
+
+            if (StringUtils.isEmpty(wflowDefine.getBpmnfile())) {
+                return ResponseResult.error("流程文件不存在,无法部署");
+            }
+            XMLInputFactory factory = XMLInputFactory.newFactory();
+            XMLStreamReader streamReader = factory.createXMLStreamReader(BpmnInputStream);
+            BpmnXMLConverter converter = new BpmnXMLConverter();
+            BpmnModel bpmnModel = converter.convertToBpmnModel(streamReader);
+            List<Process> processes = bpmnModel.getProcesses();
+            if (processes != null && processes.size() != 1) {
+                return ResponseResult.error("存在多个流程,无法部署");
+            }
+            Process process = processes.get(0);
+            process.setName(wflowDefine.getName());
+            process.setId(wflowDefine.getKey());
+            process.setDocumentation(wflowDefine.getDescription());
             File fileSvg = new File(upload_path + wflowDefine.getBpmnfile());
             InputStream SvgInputStream = null;
             try {
@@ -217,15 +236,16 @@ public class WflowDefineController {
             //2.得到RepositoryService实例
             RepositoryService repositoryService = processEngine.getRepositoryService();
 
-
+            String resourceName = System.currentTimeMillis() + ".bpmn";
             //3.进行部署
             Deployment deployment = repositoryService.createDeployment()//创建Deployment对象
                     .name(wflowDefine.getName())
                     .key(wflowDefine.getKey())
                     .category(wflowDefine.getCategory())
                     .tenantId("000000")
-                    .addInputStream(fileBpmn.getName(), BpmnInputStream)//添加bpmn文件
-                    .addInputStream(fileSvg.getName(), SvgInputStream)//添加png文件
+                    .addBpmnModel(resourceName, bpmnModel)
+                    //.addInputStream(fileBpmn.getName(), BpmnInputStream)//添加bpmn文件
+                    //.addInputStream(fileSvg.getName(), SvgInputStream)//添加png文件
                     .deploy();//部署
             log.info("name---" + deployment.getName());
         } catch (Exception e) {
@@ -238,6 +258,7 @@ public class WflowDefineController {
     /**
      * 部署流程
      * 根据XML部署
+     *
      * @param wflowDefine
      * @return
      */
@@ -256,7 +277,10 @@ public class WflowDefineController {
             XMLStreamReader streamReader = factory.createXMLStreamReader(reader);
             BpmnXMLConverter converter = new BpmnXMLConverter();
             BpmnModel bpmnModel = converter.convertToBpmnModel(streamReader);
-
+            List<Process> processes = bpmnModel.getProcesses();
+            if (processes != null && processes.size() != 1) {
+                return ResponseResult.error("存在多个流程,无法部署");
+            }
 
             //1.创建ProcessEngine对象
             ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
@@ -265,6 +289,11 @@ public class WflowDefineController {
             RepositoryService repositoryService = processEngine.getRepositoryService();
             //3.获取原先流程
             ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery().processDefinitionId(wflowDefine.getId()).singleResult();
+            //
+            Process process = processes.get(0);
+            process.setName(processDefinition.getName());
+            process.setId(processDefinition.getKey());
+            process.setDocumentation(processDefinition.getDescription());
             //4.进行部署
             Deployment deployment = repositoryService.createDeployment()//创建Deployment对象
                     .name(wflowDefine.getName())
@@ -280,7 +309,6 @@ public class WflowDefineController {
         }
         return ResponseResult.success();
     }
-
 
 
     /**

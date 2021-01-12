@@ -41,7 +41,7 @@ public class OperLogAspect {
      * 表示匹配org.dev.framework.modules*.controller 包下的所有方法
      */
 
-    @Pointcut("execution(* org.dev.framework.modules.*.controller.*.*(..))")
+    @Pointcut("execution(* org.dev..controller.*.*(..))")
     public void privilege() {
 
     }
