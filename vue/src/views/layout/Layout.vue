@@ -38,13 +38,14 @@
       </el-aside>
       <!--右侧主体-->
       <el-main :style="setMarginLeft">
-        <el-tabs
-          v-model="mainTabsActiveName"
-          type="border-card"
-          @tab-click="tabClick"
-          @tab-remove="removeTab"
-        >
-          <!-- <el-dropdown class="site-tabs__tools" :show-timeout="0">
+        <keep-alive>
+          <el-tabs
+            v-model="mainTabsActiveName"
+            type="border-card"
+            @tab-click="tabClick"
+            @tab-remove="removeTab"
+          >
+            <!-- <el-dropdown class="site-tabs__tools" :show-timeout="0">
             <i class="el-icon-arrow-down el-icon--right"></i>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item @click.native="tabsCloseCurrentHandle"
@@ -61,13 +62,14 @@
               >
             </el-dropdown-menu>
           </el-dropdown> -->
-          <el-tab-pane
-            :key="item.name"
-            v-for="(item, index) in editableTabs"
-            :label="item.title"
-            :name="item.name"
-            :closable="item.name == '/welcome' ? false : true"
-          >
+            <el-tab-pane
+              :key="item.name"
+              v-for="(item, index) in editableTabs"
+              :label="item.title"
+              :name="item.name"
+              :closable="item.name == '/welcome' ? false : true"
+            >
+            </el-tab-pane>
             <el-card :body-style="siteContentViewHeight">
               <el-breadcrumb separator-class="el-icon-arrow-right">
                 <el-breadcrumb-item @click="goHome">首页</el-breadcrumb-item>
@@ -76,15 +78,18 @@
                   :index="item.id"
                   :key="item.id"
                   >{{ item.menuName }}</el-breadcrumb-item
-                > </el-breadcrumb
-              ><keep-alive>
+                >
+              </el-breadcrumb>
+              <!-- <keep-alive>
                 <router-view
                   v-if="item.name === mainTabsActiveName"
                 ></router-view>
-              </keep-alive>
+              </keep-alive> -->
+
+              <router-view></router-view>
             </el-card>
-          </el-tab-pane>
-        </el-tabs>
+          </el-tabs>
+        </keep-alive>
       </el-main>
     </el-container>
   </el-container>

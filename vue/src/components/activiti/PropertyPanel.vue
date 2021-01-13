@@ -202,6 +202,8 @@ export default {
               element.businessObject.$attrs["activiti:assigneeType"];
           }
           console.log(this.form);
+          //
+          
         }
       });
 
