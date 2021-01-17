@@ -51,7 +51,7 @@ import BpmnModeler from "bpmn-js/lib/Modeler";
 // import activitiModdleDescriptor from '../../plugins/activiti.json'
 import propertiesProviderModule from "bpmn-js-properties-panel-activiti/lib/provider/activiti";
 //import propertiesProviderModule from 'bpmn-js-properties-panel/lib/provider/camunda'
-//import camundaModdleDescriptor from "activiti-bpmn-moddle/resources/activiti";
+import camundaModdleDescriptor from "activiti-bpmn-moddle/resources/activiti";
 //import camundaModdleDescriptor from 'camunda-bpmn-moddle/resources/camunda'
 import customTranslate from "../../plugins/translate/customTranslate";
 // import activitiExtensionModule from 'activiti-bpmn-moddle/lib'
@@ -182,7 +182,7 @@ export default {
         // activitiExtensionModule
       ],
       moddleExtensions: {
-        // camunda: camundaModdleDescriptor,
+        activiti: camundaModdleDescriptor,
         // activiti: activitiModdleDescriptor
         // activiti: activitiModdle
       },

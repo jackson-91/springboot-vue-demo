@@ -25,6 +25,7 @@
           <el-option value="user" label="指定人员"></el-option>
           <el-option value="role" label="角色"></el-option>
           <el-option value="job" label="岗位"></el-option>
+          <el-option value="custom" label="自定义"></el-option>
         </el-select>
       </el-form-item>
       <!-- 指定人员 -->
@@ -101,6 +102,13 @@
           ></el-option>
         </el-select>
       </el-form-item>
+      <!-- 自定义 -->
+      <el-form-item
+        label="自定义"
+        v-else-if="userTask && form.assigneeType === 'custom'"
+      >
+        <el-input v-model="form.assignee" @input="assigneeChange"></el-input>
+      </el-form-item>
       <!-- 分支允许添加条件 -->
       <el-form-item label="分支条件" v-if="sequenceFlow">
         <el-input
@@ -148,6 +156,7 @@ export default {
         name: "",
         color: null,
         description: "",
+        assignee: null,
         conditionExpression: { body: null },
       },
       element: {},
@@ -167,17 +176,16 @@ export default {
         this.element = element;
         console.log(this.element);
         if (!element) return;
-        if (this.sequenceFlow) {
-          if (!element.businessObject.$attrs["conditionExpression"]) {
-            element.businessObject.$attrs["conditionExpression"] = {
-              body: null,
-            };
-          }
-        }
+        const modeling = this.modeler.get("modeling");
         this.form = {
           ...element.businessObject,
           ...element.businessObject.$attrs,
         };
+        if (this.sequenceFlow) {
+          if (!this.form.conditionExpression) {
+            this.form.conditionExpression = { body: null };
+          }
+        }
 
         if (element.businessObject.$attrs["activiti:description"]) {
           this.form.description =
@@ -202,9 +210,62 @@ export default {
               element.businessObject.$attrs["activiti:assigneeType"];
           }
           console.log(this.form);
-          //
-          
         }
+        modeling.updateProperties(this.element, {
+          extensionElements: null,
+        });
+        let extensionElements = this.element.businessObject.get(
+          "extensionElements"
+        );
+        if (!extensionElements) {
+          extensionElements = this.modeler
+            .get("moddle")
+            .create("bpmn:ExtensionElements");
+        }
+
+        const bpmnFactory = this.modeler.get("bpmnFactory");
+        //   elementFactory = this.modeler.get("elementFactory");
+        //  let executionListener=  bpmnFactory.create('activiti:ExecutionListener', {
+        //    event: 'start',
+        //    value: 'org.dev.workflow.listener.DevExecutionListener',
+        //  });
+
+        let executionListener = this.modeler
+          .get("moddle")
+          .create(
+            "activiti:ExecutionListener",
+            null,
+            this.element,
+            bpmnFactory
+          );
+        executionListener.$attrs["event"] = "statrt";
+        executionListener.$attrs["class"] =
+          "org.dev.workflow.listener.DevExecutionListener";
+        extensionElements.get("values").push(executionListener);
+        executionListener = this.modeler
+          .get("moddle")
+          .create(
+            "activiti:ExecutionListener",
+            null,
+            this.element,
+            bpmnFactory
+          );
+        executionListener.$attrs["event"] = "end";
+        executionListener.$attrs["class"] =
+          "org.dev.workflow.listener.DevExecutionListener";
+        extensionElements.get("values").push(executionListener);
+        if (element.type === "bpmn:UserTask") {
+          let taskListener = this.modeler
+            .get("moddle")
+            .create("activiti:TaskListener", null, this.element, bpmnFactory);
+          taskListener.$attrs["event"] = "all";
+          taskListener.$attrs["class"] =
+            "org.dev.workflow.listener.DevTaskListener";
+          extensionElements.get("values").push(taskListener);
+        }
+        modeling.updateProperties(this.element, {
+          extensionElements: extensionElements,
+        });
       });
 
       //  监听节点属性变化
@@ -261,14 +322,24 @@ export default {
       modeling.updateProperties(this.element, { color: color });
     },
     // 属性面板名称，更新回流程节点
+    assigneeChange(assignee) {
+      const modeling = this.modeler.get("modeling");
+      modeling.updateProperties(this.element, {
+        "activiti:assigneeType": this.form.assigneeType,
+        "activiti:assignee": assignee,
+      });
+    },
+    // 属性面板名称，更新回流程节点
     expressionChange(condition) {
       const modeling = this.modeler.get("modeling");
       //   modeling.updateProperties(this.element, {
       //     conditionExpression: newCondition,
       //   });
-      var newCondition = this.modeler._moddle.create("bpmn:FormalExpression", {
-        body: condition,
-      });
+      var newCondition = this.modeler
+        .get("moddle")
+        .create("bpmn:FormalExpression", {
+          body: condition,
+        });
 
       modeling.updateProperties(this.element, {
         conditionExpression: newCondition,
@@ -284,7 +355,7 @@ export default {
     },
     // 切换人员类型
     typeChange() {
-      const types = ["user", "role", "job"];
+      const types = ["user", "role", "job", "custom"];
       types.forEach((type) => {
         delete this.element.businessObject.$attrs[type];
         delete this.form[type];
