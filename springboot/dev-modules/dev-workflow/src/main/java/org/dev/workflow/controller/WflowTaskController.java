@@ -9,6 +9,7 @@ import org.activiti.engine.impl.identity.Authentication;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
 import org.dev.common.core.entity.CurrentRole;
+import org.dev.common.core.entity.CurrentUser;
 import org.dev.common.core.page.PaginAtion;
 import org.dev.common.core.result.ResponseResult;
 import org.dev.common.security.jwt.JwtUtil;
@@ -58,6 +59,7 @@ public class WflowTaskController {
         List<CurrentRole> roles = (List<CurrentRole>) SpringSecurityUtils.CurrentUser().getAuthorities();
         List<String> codes = roles.stream().map(CurrentRole::getRoleCode).distinct().collect(Collectors.toList());
         List<Task> list = taskService.createTaskQuery().taskCandidateUser(SpringSecurityUtils.CurrentUser().getLoginName())
+                .taskCandidateGroupIn(codes)
                 .orderByTaskDueDate().desc().listPage(firstResult, maxResults);
 
         long count = taskService.createTaskQuery().taskCandidateUser(SpringSecurityUtils.CurrentUser().getLoginName()).count();
@@ -107,9 +109,11 @@ public class WflowTaskController {
          * taskCandidateOrAssigned匹配规则:1.Assigned 2.配置bpmn文件中定义的值
          * taskAssignee匹配规则:1.Assigned
          */
+        CurrentUser currentUser = SpringSecurityUtils.CurrentUser();
         List<WflowTask> wflowTasks = new ArrayList<>();
-        List<Task> list = taskService.createTaskQuery().taskCandidateOrAssigned(SpringSecurityUtils.CurrentUser().getLoginName()).orderByTaskDueDate().desc().listPage(firstResult, maxResults);
-        long count = taskService.createTaskQuery().taskCandidateOrAssigned(SpringSecurityUtils.CurrentUser().getLoginName()).count();
+        String userId=currentUser.getId().toString();
+        List<Task> list = taskService.createTaskQuery().taskAssignee(userId).orderByTaskDueDate().desc().listPage(firstResult, maxResults);
+        long count = taskService.createTaskQuery().taskAssignee(userId).count();
         for (Task task : list) {
             WflowTask wflowTask1 = new WflowTask();
             BeanUtils.copyProperties(task, wflowTask1);

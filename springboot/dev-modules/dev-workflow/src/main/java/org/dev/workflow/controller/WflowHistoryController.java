@@ -39,13 +39,13 @@ public class WflowHistoryController {
         //获取HistoryService接口
         HistoryService historyService = processEngine.getHistoryService();
         //获取历史任务
-        HistoricActivityInstanceQuery historicActivityInstanceQuery = historyService.createHistoricActivityInstanceQuery().taskAssignee(SpringSecurityUtils.CurrentUser().getLoginName());
+        HistoricActivityInstanceQuery historicActivityInstanceQuery = historyService.createHistoricActivityInstanceQuery().taskAssignee(SpringSecurityUtils.CurrentUser().getId().toString());
         //获取指定流程实例的任务
         //historicActivityInstanceQuery.processInstanceId("2501");
         //获取任务列表
         List<HistoricActivityInstance> list = historicActivityInstanceQuery.orderByHistoricActivityInstanceEndTime().desc().listPage(firstResult, maxResults);
         //查询总数
-        Long count = historicActivityInstanceQuery.taskAssignee(SpringSecurityUtils.CurrentUser().getLoginName()).count();
+        Long count = historicActivityInstanceQuery.taskAssignee(SpringSecurityUtils.CurrentUser().getId().toString()).count();
         //
         List<WflowHis> wflowHisList = new ArrayList<>();
         for (HistoricActivityInstance ai : list) {
