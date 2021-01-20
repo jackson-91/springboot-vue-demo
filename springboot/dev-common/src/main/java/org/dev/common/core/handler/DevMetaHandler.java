@@ -9,7 +9,7 @@ import java.util.Date;
 
 @Slf4j
 @Component
-public class MetaHandler implements MetaObjectHandler {
+public class DevMetaHandler implements MetaObjectHandler {
 
     /**
      * 新增数据执行

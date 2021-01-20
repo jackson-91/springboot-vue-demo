@@ -1,0 +1,7 @@
+activiti的表可以通过程序自动生成 修改配置文件 下面节点改为true即可
+  #Activiti property configuration
+  activiti:
+    #自动更新数据库结构
+    database-schema-update: true
+
+springbootVue.sql 里面为基础表格以及默认数据 不含有activiti 和quartz
