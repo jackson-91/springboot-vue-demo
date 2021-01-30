@@ -26,6 +26,11 @@
             <groupId>org.dev.framework</groupId>
             <artifactId>dev-util</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.dev.framework</groupId>
+            <artifactId>dev-basic</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
         <!--工作流activiti-->
         <dependency>
             <groupId>org.activiti</groupId>

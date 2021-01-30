@@ -10,10 +10,251 @@ Target Server Type    : MYSQL
 Target Server Version : 50731
 File Encoding         : 65001
 
-Date: 2021-01-20 17:27:30
+Date: 2021-01-30 21:57:36
 */
 
 SET FOREIGN_KEY_CHECKS=0;
+
+-- ----------------------------
+-- Table structure for base_table
+-- ----------------------------
+DROP TABLE IF EXISTS `base_table`;
+CREATE TABLE `base_table` (
+  `id` bigint(32) NOT NULL COMMENT 'ID',
+  `tenant_id` bigint(32) DEFAULT NULL COMMENT '项目编码',
+  `is_del` int(1) DEFAULT '0' COMMENT '是否删除 1已删除 0未删除',
+  `create_time` datetime(6) DEFAULT NULL COMMENT '创建时间',
+  `create_by` bigint(32) DEFAULT NULL COMMENT '创建用户',
+  `update_time` datetime(6) DEFAULT NULL COMMENT '更新时间',
+  `update_by` bigint(20) DEFAULT NULL COMMENT '更新用户',
+  `memo` varchar(255) DEFAULT NULL COMMENT '备注',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of base_table
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for qrtz_blob_triggers
+-- ----------------------------
+DROP TABLE IF EXISTS `qrtz_blob_triggers`;
+CREATE TABLE `qrtz_blob_triggers` (
+  `sched_name` varchar(120) NOT NULL,
+  `trigger_name` varchar(200) NOT NULL,
+  `trigger_group` varchar(200) NOT NULL,
+  `blob_data` blob,
+  PRIMARY KEY (`sched_name`,`trigger_name`,`trigger_group`),
+  CONSTRAINT `qrtz_blob_triggers_ibfk_1` FOREIGN KEY (`sched_name`, `trigger_name`, `trigger_group`) REFERENCES `qrtz_triggers` (`sched_name`, `trigger_name`, `trigger_group`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of qrtz_blob_triggers
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for qrtz_calendars
+-- ----------------------------
+DROP TABLE IF EXISTS `qrtz_calendars`;
+CREATE TABLE `qrtz_calendars` (
+  `sched_name` varchar(120) NOT NULL,
+  `calendar_name` varchar(200) NOT NULL,
+  `calendar` blob NOT NULL,
+  PRIMARY KEY (`sched_name`,`calendar_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of qrtz_calendars
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for qrtz_cron_triggers
+-- ----------------------------
+DROP TABLE IF EXISTS `qrtz_cron_triggers`;
+CREATE TABLE `qrtz_cron_triggers` (
+  `sched_name` varchar(120) NOT NULL,
+  `trigger_name` varchar(200) NOT NULL,
+  `trigger_group` varchar(200) NOT NULL,
+  `cron_expression` varchar(200) NOT NULL,
+  `time_zone_id` varchar(80) DEFAULT NULL,
+  PRIMARY KEY (`sched_name`,`trigger_name`,`trigger_group`),
+  CONSTRAINT `qrtz_cron_triggers_ibfk_1` FOREIGN KEY (`sched_name`, `trigger_name`, `trigger_group`) REFERENCES `qrtz_triggers` (`sched_name`, `trigger_name`, `trigger_group`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of qrtz_cron_triggers
+-- ----------------------------
+INSERT INTO `qrtz_cron_triggers` VALUES ('scheduler', 'triggerJOB1', 'JOB1', '*/1 * * * * ?', 'Asia/Shanghai');
+
+-- ----------------------------
+-- Table structure for qrtz_fired_triggers
+-- ----------------------------
+DROP TABLE IF EXISTS `qrtz_fired_triggers`;
+CREATE TABLE `qrtz_fired_triggers` (
+  `sched_name` varchar(120) NOT NULL,
+  `entry_id` varchar(95) NOT NULL,
+  `trigger_name` varchar(200) NOT NULL,
+  `trigger_group` varchar(200) NOT NULL,
+  `instance_name` varchar(200) NOT NULL,
+  `fired_time` bigint(13) NOT NULL,
+  `sched_time` bigint(13) NOT NULL,
+  `priority` int(11) NOT NULL,
+  `state` varchar(16) NOT NULL,
+  `job_name` varchar(200) DEFAULT NULL,
+  `job_group` varchar(200) DEFAULT NULL,
+  `is_nonconcurrent` varchar(1) DEFAULT NULL,
+  `requests_recovery` varchar(1) DEFAULT NULL,
+  PRIMARY KEY (`sched_name`,`entry_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of qrtz_fired_triggers
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for qrtz_job_details
+-- ----------------------------
+DROP TABLE IF EXISTS `qrtz_job_details`;
+CREATE TABLE `qrtz_job_details` (
+  `sched_name` varchar(120) NOT NULL,
+  `job_name` varchar(200) NOT NULL,
+  `job_group` varchar(200) NOT NULL,
+  `description` varchar(250) DEFAULT NULL,
+  `job_class_name` varchar(250) NOT NULL,
+  `is_durable` varchar(1) NOT NULL,
+  `is_nonconcurrent` varchar(1) NOT NULL,
+  `is_update_data` varchar(1) NOT NULL,
+  `requests_recovery` varchar(1) NOT NULL,
+  `job_data` blob,
+  PRIMARY KEY (`sched_name`,`job_name`,`job_group`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of qrtz_job_details
+-- ----------------------------
+INSERT INTO `qrtz_job_details` VALUES ('scheduler', 'JOB1', 'JOB1', '测试任务', 'org.dev.basic.job.Job1', '0', '1', '0', '0', 0xACED0005737200156F72672E71756172747A2E4A6F62446174614D61709FB083E8BFA9B0CB020000787200266F72672E71756172747A2E7574696C732E537472696E674B65794469727479466C61674D61708208E8C3FBC55D280200015A0013616C6C6F77735472616E7369656E74446174617872001D6F72672E71756172747A2E7574696C732E4469727479466C61674D617013E62EAD28760ACE0200025A000564697274794C00036D617074000F4C6A6176612F7574696C2F4D61703B787001737200116A6176612E7574696C2E486173684D61700507DAC1C31660D103000246000A6C6F6164466163746F724900097468726573686F6C6478703F4000000000000C770800000010000000017400157363686564756C6572496E7374616E63654E616D6574000F71756172747A5363686564756C65727800);
+
+-- ----------------------------
+-- Table structure for qrtz_locks
+-- ----------------------------
+DROP TABLE IF EXISTS `qrtz_locks`;
+CREATE TABLE `qrtz_locks` (
+  `sched_name` varchar(120) NOT NULL,
+  `lock_name` varchar(40) NOT NULL,
+  PRIMARY KEY (`sched_name`,`lock_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of qrtz_locks
+-- ----------------------------
+INSERT INTO `qrtz_locks` VALUES ('scheduler', 'TRIGGER_ACCESS');
+
+-- ----------------------------
+-- Table structure for qrtz_paused_trigger_grps
+-- ----------------------------
+DROP TABLE IF EXISTS `qrtz_paused_trigger_grps`;
+CREATE TABLE `qrtz_paused_trigger_grps` (
+  `sched_name` varchar(120) NOT NULL,
+  `trigger_group` varchar(200) NOT NULL,
+  PRIMARY KEY (`sched_name`,`trigger_group`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of qrtz_paused_trigger_grps
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for qrtz_scheduler_state
+-- ----------------------------
+DROP TABLE IF EXISTS `qrtz_scheduler_state`;
+CREATE TABLE `qrtz_scheduler_state` (
+  `sched_name` varchar(120) NOT NULL,
+  `instance_name` varchar(200) NOT NULL,
+  `last_checkin_time` bigint(13) NOT NULL,
+  `checkin_interval` bigint(13) NOT NULL,
+  PRIMARY KEY (`sched_name`,`instance_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of qrtz_scheduler_state
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for qrtz_simple_triggers
+-- ----------------------------
+DROP TABLE IF EXISTS `qrtz_simple_triggers`;
+CREATE TABLE `qrtz_simple_triggers` (
+  `sched_name` varchar(120) NOT NULL,
+  `trigger_name` varchar(200) NOT NULL,
+  `trigger_group` varchar(200) NOT NULL,
+  `repeat_count` bigint(7) NOT NULL,
+  `repeat_interval` bigint(12) NOT NULL,
+  `times_triggered` bigint(10) NOT NULL,
+  PRIMARY KEY (`sched_name`,`trigger_name`,`trigger_group`),
+  CONSTRAINT `qrtz_simple_triggers_ibfk_1` FOREIGN KEY (`sched_name`, `trigger_name`, `trigger_group`) REFERENCES `qrtz_triggers` (`sched_name`, `trigger_name`, `trigger_group`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of qrtz_simple_triggers
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for qrtz_simprop_triggers
+-- ----------------------------
+DROP TABLE IF EXISTS `qrtz_simprop_triggers`;
+CREATE TABLE `qrtz_simprop_triggers` (
+  `sched_name` varchar(120) NOT NULL,
+  `trigger_name` varchar(200) NOT NULL,
+  `trigger_group` varchar(200) NOT NULL,
+  `str_prop_1` varchar(512) DEFAULT NULL,
+  `str_prop_2` varchar(512) DEFAULT NULL,
+  `str_prop_3` varchar(512) DEFAULT NULL,
+  `int_prop_1` int(11) DEFAULT NULL,
+  `int_prop_2` int(11) DEFAULT NULL,
+  `long_prop_1` bigint(20) DEFAULT NULL,
+  `long_prop_2` bigint(20) DEFAULT NULL,
+  `dec_prop_1` decimal(13,4) DEFAULT NULL,
+  `dec_prop_2` decimal(13,4) DEFAULT NULL,
+  `bool_prop_1` varchar(1) DEFAULT NULL,
+  `bool_prop_2` varchar(1) DEFAULT NULL,
+  PRIMARY KEY (`sched_name`,`trigger_name`,`trigger_group`),
+  CONSTRAINT `qrtz_simprop_triggers_ibfk_1` FOREIGN KEY (`sched_name`, `trigger_name`, `trigger_group`) REFERENCES `qrtz_triggers` (`sched_name`, `trigger_name`, `trigger_group`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of qrtz_simprop_triggers
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for qrtz_triggers
+-- ----------------------------
+DROP TABLE IF EXISTS `qrtz_triggers`;
+CREATE TABLE `qrtz_triggers` (
+  `sched_name` varchar(120) NOT NULL,
+  `trigger_name` varchar(200) NOT NULL,
+  `trigger_group` varchar(200) NOT NULL,
+  `job_name` varchar(200) NOT NULL,
+  `job_group` varchar(200) NOT NULL,
+  `description` varchar(250) DEFAULT NULL,
+  `next_fire_time` bigint(13) DEFAULT NULL,
+  `prev_fire_time` bigint(13) DEFAULT NULL,
+  `priority` int(11) DEFAULT NULL,
+  `trigger_state` varchar(16) NOT NULL,
+  `trigger_type` varchar(8) NOT NULL,
+  `start_time` bigint(13) NOT NULL,
+  `end_time` bigint(13) DEFAULT NULL,
+  `calendar_name` varchar(200) DEFAULT NULL,
+  `misfire_instr` smallint(2) DEFAULT NULL,
+  `job_data` blob,
+  PRIMARY KEY (`sched_name`,`trigger_name`,`trigger_group`),
+  KEY `sched_name` (`sched_name`,`job_name`,`job_group`),
+  CONSTRAINT `qrtz_triggers_ibfk_1` FOREIGN KEY (`sched_name`, `job_name`, `job_group`) REFERENCES `qrtz_job_details` (`sched_name`, `job_name`, `job_group`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of qrtz_triggers
+-- ----------------------------
+INSERT INTO `qrtz_triggers` VALUES ('scheduler', 'triggerJOB1', 'JOB1', 'JOB1', 'JOB1', null, '1608298750000', '1608298749000', '5', 'PAUSED', 'CRON', '1597482726000', '0', null, '0', '');
 
 -- ----------------------------
 -- Table structure for sys_auth_btn
@@ -57,7 +298,7 @@ CREATE TABLE `sys_dept` (
   `dept_desc` varchar(50) DEFAULT NULL COMMENT '部门描述',
   `parent_id` bigint(32) DEFAULT NULL COMMENT '父级部门',
   `dept_header` bigint(32) DEFAULT NULL COMMENT '部门负责人',
-  `dept_header_name` varchar(50) DEFAULT NULL COMMENT '负责人行明',
+  `dept_header_jobscode` varchar(50) DEFAULT NULL COMMENT '负责人代码',
   `dept_header_jobs` bigint(32) DEFAULT NULL COMMENT '负责人职务',
   `dept_header_jobsname` varchar(50) DEFAULT NULL COMMENT '负责人职务名称',
   `dept_phone` varchar(15) DEFAULT NULL COMMENT '部门电话',
@@ -73,9 +314,12 @@ CREATE TABLE `sys_dept` (
 -- ----------------------------
 -- Records of sys_dept
 -- ----------------------------
-INSERT INTO `sys_dept` VALUES ('1', '1', 'D001', '公司', null, '-1', null, null, null, null, null, '0', null, null, null, null, null);
+INSERT INTO `sys_dept` VALUES ('1', '1', 'D001', '公司', null, '-1', '1319972557251690497', 'A005', '1319972557251690497', '营运长', null, '0', null, null, '2021-01-30 08:43:33.259000', null, null);
 INSERT INTO `sys_dept` VALUES ('1319993068082016258', null, '1111', '1111', null, '1', '1', null, null, null, null, '1', '2020-10-24 13:24:06.374000', '1', '2020-10-24 13:24:06.374000', '1', null);
-INSERT INTO `sys_dept` VALUES ('1321449022619250689', null, 'DT00', '实施一处', null, '1', '1', null, null, null, null, '0', '2020-10-28 13:49:32.985000', '1', '2020-10-28 13:49:32.985000', '1', null);
+INSERT INTO `sys_dept` VALUES ('1321449022619250689', null, 'DT00', '实施一处', null, '1', '1319640560482439169', 'A004', '1319640560482439169', '处长', null, '0', '2020-10-28 13:49:32.985000', '1', '2021-01-30 08:51:49.404000', null, null);
+INSERT INTO `sys_dept` VALUES ('1353250973491322881', null, 'DT010', '开发一部', null, '1321449022619250689', '1319640501757988865', 'A003', '1319640501757988865', '部长', null, '0', '2021-01-24 07:59:08.934000', null, '2021-01-30 08:43:38.612000', null, null);
+INSERT INTO `sys_dept` VALUES ('1353251092714414081', null, 'DT011', '开发一课', null, '1353250973491322881', '1319640445013250050', 'A002', '1319640445013250050', '课长', null, '0', '2021-01-24 07:59:37.350000', null, '2021-01-30 08:43:41.243000', null, null);
+INSERT INTO `sys_dept` VALUES ('1353251202168971265', null, 'DT012', '开发二课', null, '1353250973491322881', '1319640445013250050', 'A002', '1319640445013250050', '课长', null, '0', '2021-01-24 08:00:03.445000', null, '2021-01-30 08:43:44.057000', null, null);
 
 -- ----------------------------
 -- Table structure for sys_dic
@@ -162,10 +406,12 @@ CREATE TABLE `sys_employe` (
   `gender` varchar(10) DEFAULT NULL COMMENT '性别',
   `mobile_phone` varchar(15) DEFAULT NULL COMMENT '手机号',
   `telephone` varchar(30) DEFAULT NULL COMMENT '座机号码',
-  `education` varchar(10) DEFAULT NULL COMMENT '学历',
+  `education` varchar(20) DEFAULT NULL COMMENT '学历',
   `email` varchar(32) DEFAULT NULL COMMENT '邮箱',
   `birthday` datetime DEFAULT NULL COMMENT '生日',
-  `department` varchar(20) DEFAULT NULL COMMENT '所属部门',
+  `dept_id` bigint(32) DEFAULT NULL,
+  `dept_code` varchar(20) DEFAULT NULL COMMENT '所属部门',
+  `dept_name` varchar(30) DEFAULT NULL,
   `position` varchar(20) DEFAULT NULL COMMENT '职位',
   `status` varchar(5) DEFAULT NULL COMMENT '状态 离职 试用期 在职',
   `entry_date` datetime DEFAULT NULL COMMENT '入职日期',
@@ -184,8 +430,12 @@ CREATE TABLE `sys_employe` (
 -- ----------------------------
 -- Records of sys_employe
 -- ----------------------------
-INSERT INTO `sys_employe` VALUES ('1294558619441930241', '1111', '1111', '11', null, '11111111111', '111', '111', '111', '2020-08-06 16:00:00', '11', '111111', '', '2020-07-31 16:00:00', '2020-07-31 16:00:00', null, '1', '2020-08-15 08:56:41.269000', '1', '2020-08-15 08:56:41.269000', '1', null);
-INSERT INTO `sys_employe` VALUES ('1316588941431918594', '2009822117', '刘钦响', 'dean.x.liu', null, '15295171816', '', 'college', '1152232809@qq.com', '2020-10-13 16:00:00', 'DT00', 'A004', '', '2020-10-13 16:00:00', '2020-10-13 16:00:00', null, '0', '2020-10-15 03:57:19.335000', '1', '2021-01-07 13:28:05.017000', null, null);
+INSERT INTO `sys_employe` VALUES ('1294558619441930241', '1111', '1111', '11', null, '11111111111', '111', '111', '111', '2020-08-06 16:00:00', null, '11', null, '111111', '', '2020-07-31 16:00:00', '2020-07-31 16:00:00', null, '1', '2020-08-15 08:56:41.269000', '1', '2020-08-15 08:56:41.269000', '1', null);
+INSERT INTO `sys_employe` VALUES ('1316588941431918594', '2009822117', '刘钦响', 'dean.x.liu', null, '15295171816', '', 'college', '1152232809@qq.com', '2020-10-13 16:00:00', '1353250973491322881', 'DT010', '开发一部', 'A004', '', '2020-10-13 16:00:00', '2020-10-13 16:00:00', null, '0', '2020-10-15 03:57:19.335000', '1', '2021-01-26 04:52:32.694000', null, null);
+INSERT INTO `sys_employe` VALUES ('1353252554869760002', '20200001', '营运长', '', null, '15295171810', '', 'doctor', '2@qq.com', '2021-01-01 00:00:00', '1', 'D001', '公司', 'A005', '', null, null, null, '0', '2021-01-24 08:05:25.954000', null, '2021-01-26 04:31:51.892000', null, null);
+INSERT INTO `sys_employe` VALUES ('1353253009775583233', '20200002', '处长', '', null, '15295171811', '', 'master', '3@qq.com', '2021-01-01 00:00:00', '1353250973491322881', 'DT010', '开发一部', 'A004', '', null, null, null, '0', '2021-01-24 08:07:14.413000', null, '2021-01-26 04:52:14.141000', null, null);
+INSERT INTO `sys_employe` VALUES ('1353253437066108929', '20200003', '部长', '', null, '15295171812', '', 'undergraduate', '4@qq.com', '2021-01-02 00:00:00', '1353250973491322881', 'DT010', '开发一部', 'A003', '', null, null, null, '0', '2021-01-24 08:08:56.286000', null, '2021-01-26 04:52:24.971000', null, null);
+INSERT INTO `sys_employe` VALUES ('1353253862792159234', '20200004', '课长', '', null, '15295171815', '', 'undergraduate', '5@qq.com', '2021-01-02 00:00:00', '1353251202168971265', 'DT012', '开发二课', 'A002', '', null, null, null, '0', '2021-01-24 08:10:37.787000', null, '2021-01-26 04:31:34.093000', null, null);
 
 -- ----------------------------
 -- Table structure for sys_func
@@ -266,6 +516,7 @@ INSERT INTO `sys_jobs` VALUES ('1319640445013250050', null, 'A002', '课长', '2
 INSERT INTO `sys_jobs` VALUES ('1319640501757988865', null, 'A003', '部长', '3', '1', '0', '2020-10-23 14:03:08.011000', '1', '2020-10-23 14:03:08.011000', '1', null);
 INSERT INTO `sys_jobs` VALUES ('1319640560482439169', null, 'A004', '处长', '4', '1', '0', '2020-10-23 14:03:22.013000', '1', '2020-10-23 14:03:22.013000', '1', null);
 INSERT INTO `sys_jobs` VALUES ('1319972557251690497', null, 'A005', '营运长', '5', '1', '0', '2020-10-24 12:02:36.210000', '1', '2021-01-18 14:22:42.587000', null, null);
+INSERT INTO `sys_jobs` VALUES ('1352514973538349058', null, 'A001', '职员', '1', '1', '1', '2021-01-22 07:14:32.861000', null, '2021-01-22 07:14:32.861000', null, null);
 
 -- ----------------------------
 -- Table structure for sys_language
@@ -571,6 +822,7 @@ INSERT INTO `sys_role_user` VALUES ('1332229642232279042', '1332229590180966402'
 INSERT INTO `sys_role_user` VALUES ('1332229681633570818', '1332229590180966402', '1322806857248620546', null, '0', '2020-11-27 07:48:02.392000', '1', '2020-11-27 07:48:02.392000', '1', null);
 INSERT INTO `sys_role_user` VALUES ('1332229681633570819', '1332229590180966402', '1332229447528493057', null, '0', '2020-11-27 07:48:02.393000', '1', '2020-11-27 07:48:02.393000', '1', null);
 INSERT INTO `sys_role_user` VALUES ('1344586498515267586', '1', '1', null, '0', '2020-12-31 10:09:37.112000', null, '2020-12-31 10:09:37.112000', null, null);
+INSERT INTO `sys_role_user` VALUES ('1355438013278691330', '1353256863002976257', '1322806857248620546', null, '0', '2021-01-30 08:49:39.844000', null, '2021-01-30 08:49:39.844000', null, null);
 
 -- ----------------------------
 -- Table structure for sys_sequence
@@ -648,6 +900,19 @@ INSERT INTO `sys_sequence_log` VALUES ('1351103946938548225', '12852261282057707
 INSERT INTO `sys_sequence_log` VALUES ('1351104485499740161', '1285226128205770753', 'defalut', 'H2101180002', '0', '2021-01-18 09:49:46.308000', null, '2021-01-18 09:49:46.308000', null, null, null);
 INSERT INTO `sys_sequence_log` VALUES ('1351104618123632642', '1285226128205770753', 'defalut', 'H2101180003', '0', '2021-01-18 09:50:17.927000', null, '2021-01-18 09:50:17.927000', null, null, null);
 INSERT INTO `sys_sequence_log` VALUES ('1351104823401259010', '1285226128205770753', 'defalut', 'H2101180004', '0', '2021-01-18 09:51:06.869000', null, '2021-01-18 09:51:06.869000', null, null, null);
+INSERT INTO `sys_sequence_log` VALUES ('1355436573567066113', '1285226128205770753', 'defalut', 'H2101300001', '0', '2021-01-30 08:43:56.590000', null, '2021-01-30 08:43:56.590000', null, null, null);
+INSERT INTO `sys_sequence_log` VALUES ('1355441100164792321', '1285226128205770753', 'defalut', 'H2101300002', '0', '2021-01-30 09:01:55.814000', null, '2021-01-30 09:01:55.814000', null, null, null);
+INSERT INTO `sys_sequence_log` VALUES ('1355442268572057602', '1285226128205770753', 'defalut', 'H2101300003', '0', '2021-01-30 09:06:34.384000', null, '2021-01-30 09:06:34.384000', null, null, null);
+INSERT INTO `sys_sequence_log` VALUES ('1355442510826668033', '1285226128205770753', 'defalut', 'H2101300004', '0', '2021-01-30 09:07:32.142000', null, '2021-01-30 09:07:32.143000', null, null, null);
+INSERT INTO `sys_sequence_log` VALUES ('1355444566549250049', '1285226128205770753', 'defalut', 'H2101300005', '0', '2021-01-30 09:15:42.266000', null, '2021-01-30 09:15:42.266000', null, null, null);
+INSERT INTO `sys_sequence_log` VALUES ('1355444864441303041', '1285226128205770753', 'defalut', 'H2101300006', '0', '2021-01-30 09:16:53.287000', null, '2021-01-30 09:16:53.287000', null, null, null);
+INSERT INTO `sys_sequence_log` VALUES ('1355446963317153794', '1285226128205770753', 'defalut', 'H2101300007', '0', '2021-01-30 09:25:13.699000', null, '2021-01-30 09:25:13.699000', null, null, null);
+INSERT INTO `sys_sequence_log` VALUES ('1355449330066411521', '1285226128205770753', 'defalut', 'H2101300008', '0', '2021-01-30 09:34:37.977000', null, '2021-01-30 09:34:37.977000', null, null, null);
+INSERT INTO `sys_sequence_log` VALUES ('1355449880145186817', '1285226128205770753', 'defalut', 'H2101300009', '0', '2021-01-30 09:36:49.124000', null, '2021-01-30 09:36:49.124000', null, null, null);
+INSERT INTO `sys_sequence_log` VALUES ('1355450865584328705', '1285226128205770753', 'defalut', 'H2101300010', '0', '2021-01-30 09:40:44.071000', null, '2021-01-30 09:40:44.071000', null, null, null);
+INSERT INTO `sys_sequence_log` VALUES ('1355458968606466050', '1285226128205770753', 'defalut', 'H2101300011', '0', '2021-01-30 10:12:55.983000', null, '2021-01-30 10:12:55.983000', null, null, null);
+INSERT INTO `sys_sequence_log` VALUES ('1355459511101874178', '1285226128205770753', 'defalut', 'H2101300012', '0', '2021-01-30 10:15:05.325000', null, '2021-01-30 10:15:05.325000', null, null, null);
+INSERT INTO `sys_sequence_log` VALUES ('1355459818728861698', '1285226128205770753', 'defalut', 'H2101300013', '0', '2021-01-30 10:16:18.670000', null, '2021-01-30 10:16:18.670000', null, null, null);
 
 -- ----------------------------
 -- Table structure for sys_sequence_queue
@@ -685,6 +950,7 @@ INSERT INTO `sys_sequence_queue` VALUES ('1349228046991118337', '128522612820577
 INSERT INTO `sys_sequence_queue` VALUES ('1349733211506647042', '1285226128205770753', 'defalut', 'H2101140004', '4', '210114', '0', '2021-01-14 15:00:49.111000', null, '2021-01-14 15:17:32.231000', null, null, null);
 INSERT INTO `sys_sequence_queue` VALUES ('1349918315537424386', '1285226128205770753', 'defalut', 'H2101150003', '3', '210115', '0', '2021-01-15 03:16:21.350000', null, '2021-01-15 03:27:29.304000', null, null, null);
 INSERT INTO `sys_sequence_queue` VALUES ('1351103946837884929', '1285226128205770753', 'defalut', 'H2101180004', '4', '210118', '0', '2021-01-18 09:47:37.882000', null, '2021-01-18 09:51:06.866000', null, null, null);
+INSERT INTO `sys_sequence_queue` VALUES ('1355436573495762946', '1285226128205770753', 'defalut', 'H2101300013', '13', '210130', '0', '2021-01-30 08:43:56.573000', null, '2021-01-30 10:16:18.609000', null, null, null);
 
 -- ----------------------------
 -- Table structure for sys_structure
@@ -758,6 +1024,35 @@ CREATE TABLE `sys_upload` (
 -- ----------------------------
 -- Records of sys_upload
 -- ----------------------------
+INSERT INTO `sys_upload` VALUES ('1347006526315171841', null, '____ (1).bpmn', '/20210107/d23ce53b-0e98-46c5-87d6-803fd2f0eb22.bpmn', null, '0', '2021-01-07 02:25:56.702000', null, '2021-01-07 02:25:56.702000', null, null);
+INSERT INTO `sys_upload` VALUES ('1347006552982556673', null, '____1 (1).bpmn', '/20210107/cb3aa7e1-678e-4b17-8759-fb382a462f7a.bpmn', null, '0', '2021-01-07 02:26:03.060000', null, '2021-01-07 02:26:03.060000', null, null);
+INSERT INTO `sys_upload` VALUES ('1347006799171424258', null, '____ (3).bpmn', '/20210107/4f35a187-b02a-4dc4-9a8d-d98f26874f23.bpmn', null, '0', '2021-01-07 02:27:01.756000', null, '2021-01-07 02:27:01.756000', null, null);
+INSERT INTO `sys_upload` VALUES ('1347006811976634369', null, '____ (3).bpmn', '/20210107/ffd9e96d-e97c-4b3a-bd6d-56d1ff3a584b.bpmn', null, '0', '2021-01-07 02:27:04.808000', null, '2021-01-07 02:27:04.810000', null, null);
+INSERT INTO `sys_upload` VALUES ('1347006917115252738', null, '______ (2).bpmn', '/20210107/c1e67b70-770f-4743-bffa-0d7d72ed9244.bpmn', null, '0', '2021-01-07 02:27:29.876000', null, '2021-01-07 02:27:29.876000', null, null);
+INSERT INTO `sys_upload` VALUES ('1347006930956455938', null, '______ (2).bpmn', '/20210107/3b6ad632-40ee-41e7-92ed-628097995918.bpmn', null, '0', '2021-01-07 02:27:33.176000', null, '2021-01-07 02:27:33.176000', null, null);
+INSERT INTO `sys_upload` VALUES ('1348544703668748290', null, 'diagram (12).bpmn', '/20210111/1fee6144-bd2d-4011-9312-f9b34a245934.bpmn', null, '0', '2021-01-11 08:18:06.760000', null, '2021-01-11 08:18:06.760000', null, null);
+INSERT INTO `sys_upload` VALUES ('1348544718600470530', null, 'diagram (12).bpmn', '/20210111/f05fe443-61d6-4ac5-8f45-ae8a1554276b.bpmn', null, '0', '2021-01-11 08:18:10.320000', null, '2021-01-11 08:18:10.320000', null, null);
+INSERT INTO `sys_upload` VALUES ('1348909640385687553', null, 'diagram (59).bpmn', '/20210112/059eaab8-bd35-4a78-b278-99f833eb42dd.bpmn', null, '0', '2021-01-12 08:28:14.454000', null, '2021-01-12 08:28:14.454000', null, null);
+INSERT INTO `sys_upload` VALUES ('1348909651160854530', null, 'diagram (59).bpmn', '/20210112/a68895c4-e672-4853-a6a8-550f653989a4.bpmn', null, '0', '2021-01-12 08:28:17.023000', null, '2021-01-12 08:28:17.023000', null, null);
+INSERT INTO `sys_upload` VALUES ('1348910015935279105', null, 'diagram (59).bpmn', '/20210112/ead65f58-2cda-4818-b607-6c2338c0f0ea.bpmn', null, '0', '2021-01-12 08:29:43.993000', null, '2021-01-12 08:29:43.993000', null, null);
+INSERT INTO `sys_upload` VALUES ('1348910042371977218', null, 'diagram (59).bpmn', '/20210112/c95da2e8-2f40-423a-8169-7b946aec71eb.bpmn', null, '0', '2021-01-12 08:29:50.295000', null, '2021-01-12 08:29:50.295000', null, null);
+INSERT INTO `sys_upload` VALUES ('1348910198907596801', null, 'diagram (61).bpmn', '/20210112/2d979e21-ff41-406a-bb1d-647281aae929.bpmn', null, '0', '2021-01-12 08:30:27.617000', null, '2021-01-12 08:30:27.617000', null, null);
+INSERT INTO `sys_upload` VALUES ('1348910217719050241', null, 'diagram (61).bpmn', '/20210112/b3f33d39-4c9a-4453-a735-3635ad9fe2c5.bpmn', null, '0', '2021-01-12 08:30:32.101000', null, '2021-01-12 08:30:32.101000', null, null);
+INSERT INTO `sys_upload` VALUES ('1348911677835964417', null, 'diagram (62).bpmn', '/20210112/376f30be-043c-4f90-9c70-e3dca5fcf331.bpmn', null, '0', '2021-01-12 08:36:20.220000', null, '2021-01-12 08:36:20.220000', null, null);
+INSERT INTO `sys_upload` VALUES ('1348911837882216450', null, 'diagram (62).bpmn', '/20210112/96a7d301-50c9-4287-a092-c37647db3be1.bpmn', null, '0', '2021-01-12 08:36:58.378000', null, '2021-01-12 08:36:58.378000', null, null);
+INSERT INTO `sys_upload` VALUES ('1348911942316191746', null, 'diagram (62).bpmn', '/20210112/79a50dd2-6107-4987-87c3-86a520c56d83.bpmn', null, '0', '2021-01-12 08:37:23.277000', null, '2021-01-12 08:37:23.277000', null, null);
+INSERT INTO `sys_upload` VALUES ('1348913967296802818', null, 'diagram (66).bpmn', '/20210112/f17fc179-babb-4367-b32e-03b19e7d4928.bpmn', null, '0', '2021-01-12 08:45:26.071000', null, '2021-01-12 08:45:26.071000', null, null);
+INSERT INTO `sys_upload` VALUES ('1348996625169010690', null, 'diagram (70).bpmn', '/20210112/303a54fd-3341-433b-907f-3a14bf2c1b7d.bpmn', null, '0', '2021-01-12 14:13:53.243000', null, '2021-01-12 14:13:53.243000', null, null);
+INSERT INTO `sys_upload` VALUES ('1348998137819578369', null, 'diagram (73).bpmn', '/20210112/d7fc85f6-0ea8-408c-abc2-fa03d74941d8.bpmn', null, '0', '2021-01-12 14:19:53.887000', null, '2021-01-12 14:19:53.887000', null, null);
+INSERT INTO `sys_upload` VALUES ('1349000016939094017', null, 'diagram (73).bpmn', '/20210112/b1e404f9-640f-4683-8b30-c98cf4e8273c.bpmn', null, '0', '2021-01-12 14:27:21.904000', null, '2021-01-12 14:27:21.904000', null, null);
+INSERT INTO `sys_upload` VALUES ('1349000670944378881', null, 'diagram (73).bpmn', '/20210112/eea4ffd5-1c04-4b28-958b-c22c6ff2470c.bpmn', null, '0', '2021-01-12 14:29:57.830000', null, '2021-01-12 14:29:57.830000', null, null);
+INSERT INTO `sys_upload` VALUES ('1349001235581530113', null, 'diagram (73).bpmn', '/20210112/d48f2238-d34a-4e66-8ba5-76252eb099cc.bpmn', null, '0', '2021-01-12 14:32:12.451000', null, '2021-01-12 14:32:12.451000', null, null);
+INSERT INTO `sys_upload` VALUES ('1349002469596196866', null, 'diagram (73).bpmn', '/20210112/09fe0e5e-c511-4093-a9ea-986ee13cd970.bpmn', null, '0', '2021-01-12 14:37:06.663000', null, '2021-01-12 14:37:06.663000', null, null);
+INSERT INTO `sys_upload` VALUES ('1349003241863925762', null, 'diagram (73).bpmn', '/20210112/bdcf490b-db1c-4322-9d36-6886d966487c.bpmn', null, '0', '2021-01-12 14:40:10.787000', null, '2021-01-12 14:40:10.787000', null, null);
+INSERT INTO `sys_upload` VALUES ('1349003440631992321', null, 'diagram (73).bpmn', '/20210112/2acda540-7c7e-48e9-870b-47948285ed83.bpmn', null, '0', '2021-01-12 14:40:58.175000', null, '2021-01-12 14:40:58.175000', null, null);
+INSERT INTO `sys_upload` VALUES ('1349005244862189569', null, 'diagram (75).bpmn', '/20210112/3e50168f-a2db-41e6-a53c-6ade990e000c.bpmn', null, '0', '2021-01-12 14:48:08.338000', null, '2021-01-12 14:48:08.338000', null, null);
+INSERT INTO `sys_upload` VALUES ('1349005744944861186', null, 'diagram (76).bpmn', '/20210112/f8df1765-3f7f-443f-b33f-b20070f4c927.bpmn', null, '0', '2021-01-12 14:50:07.567000', null, '2021-01-12 14:50:07.567000', null, null);
+INSERT INTO `sys_upload` VALUES ('1349228010127380482', null, 'diagram (77).bpmn', '/20210113/f47d4309-99a7-42fe-8be3-0e0470d04f42.bpmn', null, '0', '2021-01-13 05:33:19.716000', null, '2021-01-13 05:33:19.716000', null, null);
 
 -- ----------------------------
 -- Table structure for sys_user
@@ -777,9 +1072,10 @@ CREATE TABLE `sys_user` (
   `fax` varchar(20) DEFAULT NULL COMMENT '传真',
   `last_login_time` datetime(6) DEFAULT NULL COMMENT '最后登录时间',
   `expire_time` datetime(6) DEFAULT NULL COMMENT '有效期',
-  `is_enable` int(11) DEFAULT '1' COMMENT '是否禁用 1启用 0禁用',
+  `is_enable` int(4) DEFAULT '1' COMMENT '是否禁用 1启用 0禁用',
   `user_img` varchar(500) DEFAULT NULL COMMENT '用户头像',
   `user_skin` text COMMENT '用户皮肤',
+  `employe_id` bigint(32) DEFAULT NULL COMMENT '职工ID',
   `is_del` int(1) DEFAULT '0' COMMENT '是否删除 1已删除 0 未删除',
   `create_time` datetime(6) DEFAULT NULL COMMENT '创建时间',
   `create_by` bigint(32) DEFAULT NULL COMMENT '创建用户',
@@ -792,16 +1088,17 @@ CREATE TABLE `sys_user` (
 -- ----------------------------
 -- Records of sys_user
 -- ----------------------------
-INSERT INTO `sys_user` VALUES ('1', '1', 'admin', '超级管理员', '$2a$10$Y2E/i9gnm7.PBaR9zpgNIewozjD4.prFDXRxBH.IRkGa/tR.krHfa', '1', '1152232809@qq.com', '13025161555', '', '', '', '2018-04-15 10:20:23.000000', '9999-12-31 00:00:00.000000', '1', null, '', '0', '2018-04-15 10:02:55.000000', null, '2020-11-27 01:09:38.347000', '1', null);
-INSERT INTO `sys_user` VALUES ('1279577531316084738', null, 'user', 'user', '$2a$10$5ARs7OQtCL.2B32rovGYU.wGFU93P4DTN5qCzAnK2mX4M77qwSl5y', null, '1', '1', null, '1', null, null, '9999-12-31 00:00:00.000000', '1', null, null, '1', '2020-07-04 19:47:11.525000', '1', '2020-07-04 19:47:11.525000', '1', null);
-INSERT INTO `sys_user` VALUES ('1279577615655149569', null, 'user', 'user', '$2a$10$Gi3bZ2NZO7QOBO1odhuamOfmrbJZmvrOP5J6w7LQwgihW2DWEcdJ6', null, '1', '1', null, '1', null, null, '9999-12-31 00:00:00.000000', '1', null, null, '0', '2020-07-04 19:47:31.633000', '1', '2020-11-27 07:45:11.575000', '1', null);
-INSERT INTO `sys_user` VALUES ('1296624483095842817', null, 'manager', '部门经理', '$2a$10$NZ1I5/eFsZeTW65XJ8arTOdjkLnFkkxsuKZtbyVJRzBDkBxHcEVNO', null, '0000', '0000', null, '000', null, null, null, '1', null, null, '0', '2020-08-21 01:45:41.545000', '1', '2020-08-21 01:45:41.545000', '1', null);
-INSERT INTO `sys_user` VALUES ('1296624680504954882', null, 'supervisor', '事业部主管', '$2a$10$ZGwuFGO34Hrn2HVsyxuSuujsI7rv8BY2yXX0sgvgElejOlcmRKMDW', null, '1111', '1111', null, '1111', null, null, null, '1', null, null, '0', '2020-08-21 01:46:28.612000', '1', '2020-08-21 02:01:58.393000', '1', null);
-INSERT INTO `sys_user` VALUES ('1296624816626896898', null, 'cmanager', '公司经理', '$2a$10$L4UuF3uB.OTB/VLUgdQaCueUciRGYiKfVynuE4k8IJo/r82B4GYn2', null, '333', '2333', null, '33', null, null, null, '1', null, null, '0', '2020-08-21 01:47:01.065000', '1', '2020-08-21 01:47:01.065000', '1', null);
-INSERT INTO `sys_user` VALUES ('1296624964950069250', null, 'president', '公司总裁', '$2a$10$zBZJxDZpGEAIwryLbxo10.8GBcsxYT2804xSj0m3x8zWE/oc24OwK', null, '000000', '000000', null, '000000', null, null, null, '1', null, null, '1', '2020-08-21 01:47:36.428000', '1', '2020-11-27 07:45:44.292000', '1', null);
-INSERT INTO `sys_user` VALUES ('1324190583048208385', null, 'asd', 'asd', '$2a$10$NcT1C0OK0Yi/8StNUccEJOouUurneoskDWjtib9wwLpmBJ/gmJKjK', null, 'asd', 'asd', null, 'asd', null, null, null, '1', null, null, '1', '2020-11-05 03:23:31.929000', '1', '2020-11-05 03:23:31.929000', '1', null);
-INSERT INTO `sys_user` VALUES ('1332229590180966402', null, 'cssss', 'cssss', '$2a$10$2Rn.pOLobxh5BKPgvB3cIO3RpkmiRwplHGfSnb7/zyD3ctrF.mjMe', null, '11@11.com', '11111111111', null, '11111', null, null, null, '1', null, null, '0', '2020-11-27 07:47:40.588000', '1', '2020-11-27 07:47:40.588000', '1', null);
-INSERT INTO `sys_user` VALUES ('1350076119610949634', null, 'hr_xl', 'HR小刘', '$2a$10$iF1Q6K1UgXj5gaqm.3kc3uxOGbA7hvEG2RXpqhGildBzz0ff8fEUu', null, '1152232809@qq.cm', '18961443673', null, '1152232809', null, null, null, '1', null, null, '0', '2021-01-15 13:43:24.773000', null, '2021-01-15 13:43:24.773000', null, null);
+INSERT INTO `sys_user` VALUES ('1', '1', 'admin', '超级管理员', '$2a$10$a77gQxtwl/lGAOL9QR2gsuA6eMQ1TIQcLld09I9PoU786YDUAOymG', '1', '1152232809@qq.com', '13025161555', '', '', '', '2018-04-15 10:20:23.000000', '9999-12-31 00:00:00.000000', '1', null, '', '1316588941431918594', '0', '2018-04-15 10:02:55.000000', null, '2021-01-22 08:05:36.939000', null, null);
+INSERT INTO `sys_user` VALUES ('1279577531316084738', null, 'user', 'user', '$2a$10$5ARs7OQtCL.2B32rovGYU.wGFU93P4DTN5qCzAnK2mX4M77qwSl5y', null, '1', '1', null, '1', null, null, '9999-12-31 00:00:00.000000', '1', null, null, null, '1', '2020-07-04 19:47:11.525000', '1', '2020-07-04 19:47:11.525000', '1', null);
+INSERT INTO `sys_user` VALUES ('1279577615655149569', null, 'user', 'user', '$2a$10$/4m1mbhbm3bY8uXSSW2QIuEzQhyqsDeOAkQqTmYO3yMBTSmgdkkfe', null, '1', '1', null, '1', null, null, '9999-12-31 00:00:00.000000', '1', null, null, '1316588941431918594', '0', '2020-07-04 19:47:31.633000', '1', '2021-01-24 08:11:29.971000', null, null);
+INSERT INTO `sys_user` VALUES ('1296624483095842817', null, 'manager', '课长', '$2a$10$Hm4ixl5/o77hMx/jMQneXuJEAwWV5.WcGgHwm/vdPC072klHqj0ta', null, '0000', '0000', null, '000', null, null, null, '1', null, null, '1353253862792159234', '0', '2020-08-21 01:45:41.545000', '1', '2021-01-24 08:21:05.293000', null, null);
+INSERT INTO `sys_user` VALUES ('1296624680504954882', null, 'supervisor', '处长', '$2a$10$vsrKNoNXQfJgpcJUJqj3iu0LkK1fwO/esldHzUUaD3MA3ei9ZEM4q', null, '1111', '1111', null, '1111', null, null, null, '1', null, null, '1353253009775583233', '0', '2020-08-21 01:46:28.612000', '1', '2021-01-24 08:21:38.713000', null, null);
+INSERT INTO `sys_user` VALUES ('1296624816626896898', null, 'cmanager', '公司经理', '$2a$10$yRdNIOhnMBkylzIzJwoyKOFRi91akuipu3tzudG4eJhYL/Uy0eFMS', null, '333', '2333', null, '33', null, null, null, '1', null, null, '1353252554869760002', '0', '2020-08-21 01:47:01.065000', '1', '2021-01-24 08:22:49.411000', null, null);
+INSERT INTO `sys_user` VALUES ('1296624964950069250', null, 'president', '公司总裁', '$2a$10$zBZJxDZpGEAIwryLbxo10.8GBcsxYT2804xSj0m3x8zWE/oc24OwK', null, '000000', '000000', null, '000000', null, null, null, '1', null, null, null, '1', '2020-08-21 01:47:36.428000', '1', '2020-11-27 07:45:44.292000', '1', null);
+INSERT INTO `sys_user` VALUES ('1324190583048208385', null, 'asd', 'asd', '$2a$10$NcT1C0OK0Yi/8StNUccEJOouUurneoskDWjtib9wwLpmBJ/gmJKjK', null, 'asd', 'asd', null, 'asd', null, null, null, '1', null, null, null, '1', '2020-11-05 03:23:31.929000', '1', '2020-11-05 03:23:31.929000', '1', null);
+INSERT INTO `sys_user` VALUES ('1332229590180966402', null, 'cssss', 'cssss', '$2a$10$2Rn.pOLobxh5BKPgvB3cIO3RpkmiRwplHGfSnb7/zyD3ctrF.mjMe', null, '11@11.com', '11111111111', null, '11111', null, null, null, '1', null, null, null, '0', '2020-11-27 07:47:40.588000', '1', '2020-11-27 07:47:40.588000', '1', null);
+INSERT INTO `sys_user` VALUES ('1350076119610949634', null, 'hr_xl', 'HR小刘', '$2a$10$iF1Q6K1UgXj5gaqm.3kc3uxOGbA7hvEG2RXpqhGildBzz0ff8fEUu', null, '1152232809@qq.cm', '18961443673', null, '1152232809', null, null, null, '1', null, null, null, '0', '2021-01-15 13:43:24.773000', null, '2021-01-15 13:43:24.773000', null, null);
+INSERT INTO `sys_user` VALUES ('1353256863002976257', null, 'buzhang', '部长', '$2a$10$CR90OZ02OVzGfyEVwflP5uoeuK1Q3a.0iyY97iNTLXgucKykwNSPe', null, '3334', '18961443671', null, '', null, null, null, '1', null, null, '1353253437066108929', '0', '2021-01-24 08:22:33.093000', null, '2021-01-24 08:22:33.093000', null, null);
 
 -- ----------------------------
 -- Table structure for sys_user_column
@@ -827,10 +1124,10 @@ CREATE TABLE `sys_user_column` (
 -- ----------------------------
 -- Records of sys_user_column
 -- ----------------------------
-INSERT INTO `sys_user_column` VALUES ('1289546315633623042', '1', 'table_user_-sysuser', '[{\"label\":\"账号\",\"prop\":\"loginName\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":200},{\"label\":\"昵称\",\"prop\":\"nickName\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":200},{\"label\":\"手机\",\"prop\":\"mobilePhone\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"邮箱\",\"prop\":\"email\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"QQ\",\"prop\":\"qq\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"是否有效\",\"prop\":\"isEnable\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"到期时间\",\"prop\":\"expireTime\",\"show\":true,\"fixed\":false,\"sortable\":false}]', null, '87082ebde2420284fabb636228e0f418', null, '0', '2020-08-01 12:59:34.916000', '1', '2020-08-01 12:59:34.916000', '1', null);
+INSERT INTO `sys_user_column` VALUES ('1289546315633623042', '1', 'table_user_-sysuser', '[{\"label\":\"账号\",\"prop\":\"loginName\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":200},{\"label\":\"昵称\",\"prop\":\"nickName\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":200},{\"label\":\"手机\",\"prop\":\"mobilePhone\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"邮箱\",\"prop\":\"email\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"QQ\",\"prop\":\"qq\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"是否有效\",\"prop\":\"isEnable\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"到期时间\",\"prop\":\"expireTime\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"到期时间\",\"prop\":\"expireTime\",\"show\":true,\"fixed\":false,\"sortable\":false}]', null, 'eca5a637959266b0b6553786a758ab73', null, '0', '2020-08-01 12:59:34.916000', '1', '2021-01-22 08:07:32.118000', '1', null);
 INSERT INTO `sys_user_column` VALUES ('1289546321941856257', '1', 'table_sysrole_-sysrole', '[{\"label\":\"角色代码\",\"prop\":\"roleCode\",\"show\":true,\"fixed\":false,\"sortable\":true},{\"label\":\"角色名称\",\"prop\":\"roleName\",\"show\":true,\"fixed\":false,\"sortable\":true},{\"label\":\"创建时间\",\"prop\":\"createTime\",\"show\":true,\"fixed\":false,\"sortable\":true},{\"label\":\"创建人\",\"prop\":\"createBy\",\"show\":true,\"fixed\":false,\"sortable\":true}]', null, '80360c98c20a7f66464f2a34852cf772', null, '0', '2020-08-01 12:59:36.420000', '1', '2020-12-31 04:30:50.425000', '1', null);
 INSERT INTO `sys_user_column` VALUES ('1289546328082317313', '1', 'table_sysfunc_-sysmenu', '[{\"label\":\"方法名称\",\"prop\":\"funcName\",\"show\":true,\"fixed\":false,\"sortable\":true},{\"label\":\"方法代码\",\"prop\":\"funcCode\",\"show\":true,\"fixed\":false,\"sortable\":true},{\"label\":\"方法URL\",\"prop\":\"funcUrl\",\"show\":true,\"fixed\":false,\"sortable\":true},{\"label\":\"创建时间\",\"prop\":\"createTime\",\"show\":true,\"fixed\":false,\"sortable\":true},{\"label\":\"创建人\",\"prop\":\"createBy\",\"show\":true,\"fixed\":false,\"sortable\":true}]', null, '513a141ca9030d2a7ac8a185b0340373', null, '0', '2020-08-01 12:59:37.885000', '1', '2020-12-30 13:15:47.093000', '1', null);
-INSERT INTO `sys_user_column` VALUES ('1289546334617042945', '1', 'table_sysSequence_-syssequence', '[{\"label\":\"编码\",\"prop\":\"code\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":200},{\"label\":\"名称\",\"prop\":\"name\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":200},{\"label\":\"前缀\",\"prop\":\"prefix\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"分隔符\",\"prop\":\"separator\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"日期格式\",\"prop\":\"dateFormat\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"数字长度\",\"prop\":\"numLength\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"初始值\",\"prop\":\"initValue\",\"show\":true,\"fixed\":false,\"sortable\":false}]', null, 'f7617f836d55a2792c581ccefcc2759c', null, '0', '2020-08-01 12:59:39.443000', '1', '2020-08-01 12:59:39.443000', '1', null);
+INSERT INTO `sys_user_column` VALUES ('1289546334617042945', '1', 'table_sysSequence_-syssequence', '[{\"label\":\"编码\",\"prop\":\"code\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":200},{\"label\":\"名称\",\"prop\":\"name\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":200},{\"label\":\"前缀\",\"prop\":\"prefix\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"分隔符\",\"prop\":\"separator\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"日期格式\",\"prop\":\"dateFormat\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"数字长度\",\"prop\":\"numLength\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"初始值\",\"prop\":\"initValue\",\"show\":true,\"fixed\":false,\"sortable\":false}]', null, 'f7617f836d55a2792c581ccefcc2759c', null, '0', '2020-08-01 12:59:39.443000', '1', '2021-01-30 09:00:59.075000', '1', null);
 INSERT INTO `sys_user_column` VALUES ('1289546338966536193', '1', 'table_sysdic_-sysdic', '[{\"label\":\"字典编号\",\"prop\":\"dicCode\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":200},{\"label\":\"字典名称\",\"prop\":\"dicName\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":200},{\"label\":\"字典描述\",\"prop\":\"description\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"创建人\",\"prop\":\"createByName\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"创建时间\",\"prop\":\"createTime\",\"show\":true,\"fixed\":false,\"sortable\":false}]', null, 'f6589e318b8279c59e00fcd14086028b', null, '0', '2020-08-01 12:59:40.479000', '1', '2020-08-01 12:59:40.479000', '1', null);
 INSERT INTO `sys_user_column` VALUES ('1289546345434152961', '1', 'table_sysjob_-sysjob', '[{\"label\":\"任务名称\",\"prop\":\"jobName\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":200},{\"label\":\"任务分组\",\"prop\":\"jobGroup\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":200},{\"label\":\"任务描述\",\"prop\":\"description\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"类路径\",\"prop\":\"jobClassName\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"执行频率\",\"prop\":\"cronExpression\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"状态\",\"prop\":\"triggerState\",\"show\":true,\"fixed\":false,\"sortable\":false}]', null, '05ba46640ef8206cff291b8cda7b65ce', null, '0', '2020-08-01 12:59:42.021000', '1', '2020-08-01 12:59:42.021000', '1', null);
 INSERT INTO `sys_user_column` VALUES ('1289546351222292482', '1', 'table_syslog_-syslog', '[{\"label\":\"用户名称\",\"prop\":\"userName\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":200},{\"label\":\"IP地址\",\"prop\":\"ip\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":200},{\"label\":\"访问URL\",\"prop\":\"url\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"方法描述\",\"prop\":\"description\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"方法\",\"prop\":\"method\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"访问时间\",\"prop\":\"createTime\",\"show\":true,\"fixed\":false,\"sortable\":false}]', null, '9a20f555a1d1ab5c5494ca11886e0641', null, '0', '2020-08-01 12:59:43.402000', '1', '2020-08-01 12:59:43.402000', '1', null);
@@ -840,7 +1137,7 @@ INSERT INTO `sys_user_column` VALUES ('1289546378091003905', '1', 'table_wlfowTa
 INSERT INTO `sys_user_column` VALUES ('1289546383421964289', '1', 'table_wflowHistroy_-wflowhistory', '[{\"label\":\"任务id\",\"prop\":\"id\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":200},{\"label\":\"签核节点\",\"prop\":\"activityName\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":200},{\"label\":\"签核类型\",\"prop\":\"activityType\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"签核人\",\"prop\":\"assignee\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"开始时间\",\"prop\":\"startTime\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"结束时间\",\"prop\":\"endTime\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"拒绝理由\",\"prop\":\"deleteReason\",\"show\":true,\"fixed\":false,\"sortable\":false}]', null, 'c2510070ff77b9e0c1f23b699e8955da', null, '0', '2020-08-01 12:59:51.078000', '1', '2020-08-01 12:59:51.078000', '1', null);
 INSERT INTO `sys_user_column` VALUES ('1289546389382070273', '1', 'table_wlfowAllTask_-wflowalltask', '[{\"label\":\"任务id\",\"prop\":\"id\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":200},{\"label\":\"当前签核节点\",\"prop\":\"name\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":200},{\"label\":\"当前签核人\",\"prop\":\"assignee\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"流程分类\",\"prop\":\"category\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"业务单据 \",\"prop\":\"businessKey\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"描述\",\"prop\":\"description\",\"show\":true,\"fixed\":false,\"sortable\":false}]', null, '7383a431704d4d8492240bd7c710ed36', null, '0', '2020-08-01 12:59:52.500000', '1', '2021-01-07 02:29:36.027000', '1', null);
 INSERT INTO `sys_user_column` VALUES ('1289546395086323713', '1', 'table_wflowHisInstance_-wflowhisinstance', '[{\"label\":\"任务id\",\"prop\":\"id\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":200},{\"label\":\"流程名称\",\"prop\":\"processDefinitionName\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":200},{\"label\":\"业务单据\",\"prop\":\"businessKey\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"发起人\",\"prop\":\"startUserId\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"任务名称\",\"prop\":\"name\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"开始时间\",\"prop\":\"startTime\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"结束时间\",\"prop\":\"endTime\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"描述\",\"prop\":\"description\",\"show\":true,\"fixed\":false,\"sortable\":false}]', null, '8907b8fa69f2df9309e80bf83de80a99', null, '0', '2020-08-01 12:59:53.859000', '1', '2020-08-01 12:59:53.859000', '1', null);
-INSERT INTO `sys_user_column` VALUES ('1291732437835038721', '1', 'table_employe_-sysemploye', '[{\"label\":\"工号\",\"prop\":\"workNo\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":100},{\"label\":\"姓名\",\"prop\":\"name\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":100},{\"label\":\"英文名\",\"prop\":\"foreignName\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":100},{\"label\":\"手机\",\"prop\":\"mobilePhone\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":100},{\"label\":\"座机号\",\"prop\":\"telePhone\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":100},{\"label\":\"邮箱\",\"prop\":\"email\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":150},{\"label\":\"生日\",\"prop\":\"birthday\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":120},{\"label\":\"学历\",\"prop\":\"education\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":100},{\"label\":\"部门\",\"prop\":\"department\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":100},{\"label\":\"职位\",\"prop\":\"position\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":100},{\"label\":\"状态\",\"prop\":\"status\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":80},{\"label\":\"入职日期\",\"prop\":\"entryDate\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":120},{\"label\":\"离职日期\",\"prop\":\"departureDate\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":120}]', null, '7fb288179c7657cb693126d0ff3e29c2', null, '0', '2020-08-07 13:46:27.065000', '1', '2021-01-19 09:54:10.955000', '1', null);
+INSERT INTO `sys_user_column` VALUES ('1291732437835038721', '1', 'table_employe_-sysemploye', '[{\"label\":\"工号\",\"prop\":\"workNo\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":100},{\"label\":\"姓名\",\"prop\":\"name\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":100},{\"label\":\"英文名\",\"prop\":\"foreignName\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":100},{\"label\":\"手机\",\"prop\":\"mobilePhone\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":100},{\"label\":\"座机号\",\"prop\":\"telePhone\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":100},{\"label\":\"邮箱\",\"prop\":\"email\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":150},{\"label\":\"生日\",\"prop\":\"birthday\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":120},{\"label\":\"学历\",\"prop\":\"education\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":100},{\"label\":\"部门\",\"prop\":\"deptName\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":100},{\"label\":\"职位\",\"prop\":\"position\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":100},{\"label\":\"状态\",\"prop\":\"status\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":80},{\"label\":\"入职日期\",\"prop\":\"entryDate\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":120},{\"label\":\"离职日期\",\"prop\":\"departureDate\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":120}]', null, 'd3065b7fbc6b01127b99b4112ef18393', null, '0', '2020-08-07 13:46:27.065000', '1', '2021-01-26 03:30:20.728000', '1', null);
 INSERT INTO `sys_user_column` VALUES ('1294562630173827074', '1', 'table_sysdic_item_-sysdic', '[{\"label\":\"名称\",\"prop\":\"dicItemName\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":200},{\"label\":\"编码\",\"prop\":\"dicItemCode\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":200},{\"label\":\"值\",\"prop\":\"dicItemValue\",\"show\":true,\"fixed\":false,\"sortable\":false}]', null, 'bb9dc05f9c997e8ba59bdfd7770c57a3', null, '0', '2020-08-15 09:12:37.501000', '1', '2020-12-18 13:50:57.203000', '1', null);
 INSERT INTO `sys_user_column` VALUES ('1296628358263623682', '1296624483095842817', 'table_wlfowClaim_-wflowclaim', '[{\"label\":\"任务id\",\"prop\":\"id\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":200},{\"label\":\"当前签核节点\",\"prop\":\"name\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":200},{\"label\":\"当前签核人\",\"prop\":\"assignee\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"流程分类\",\"prop\":\"category\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"业务单据 \",\"prop\":\"businessKey\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"描述\",\"prop\":\"description\",\"show\":true,\"fixed\":false,\"sortable\":false}]', null, '7383a431704d4d8492240bd7c710ed36', null, '0', '2020-08-21 02:01:05.458000', '1296624483095842817', '2020-08-21 02:01:05.458000', '1296624483095842817', null);
 INSERT INTO `sys_user_column` VALUES ('1296628366329270274', '1296624483095842817', 'table_wlfowTask_-wflowtask', '[{\"label\":\"任务id\",\"prop\":\"id\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":200},{\"label\":\"当前签核节点\",\"prop\":\"name\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":200},{\"label\":\"当前签核人\",\"prop\":\"assignee\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"流程分类\",\"prop\":\"category\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"业务单据 \",\"prop\":\"businessKey\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"描述\",\"prop\":\"description\",\"show\":true,\"fixed\":false,\"sortable\":false}]', null, '7383a431704d4d8492240bd7c710ed36', null, '0', '2020-08-21 02:01:07.380000', '1296624483095842817', '2020-08-21 02:01:07.380000', '1296624483095842817', null);
@@ -855,7 +1152,7 @@ INSERT INTO `sys_user_column` VALUES ('1296637071871463426', '129662481662689689
 INSERT INTO `sys_user_column` VALUES ('1296637156055339010', '1296624680504954882', 'table_wflowHistroy_-wflowhistory', '[{\"label\":\"任务id\",\"prop\":\"id\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":200},{\"label\":\"签核节点\",\"prop\":\"activityName\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":200},{\"label\":\"签核类型\",\"prop\":\"activityType\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"签核人\",\"prop\":\"assignee\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"开始时间\",\"prop\":\"startTime\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"结束时间\",\"prop\":\"endTime\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"拒绝理由\",\"prop\":\"deleteReason\",\"show\":true,\"fixed\":false,\"sortable\":false}]', null, 'c2510070ff77b9e0c1f23b699e8955da', null, '0', '2020-08-21 02:36:03.014000', '1296624680504954882', '2020-08-21 02:36:03.014000', '1296624680504954882', null);
 INSERT INTO `sys_user_column` VALUES ('1299293743878275074', '1279577615655149569', 'table_wlfowTask_-wflowtask', '[{\"label\":\"任务id\",\"prop\":\"id\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":200},{\"label\":\"当前签核节点\",\"prop\":\"name\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":200},{\"label\":\"当前签核人\",\"prop\":\"assignee\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"流程分类\",\"prop\":\"category\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"业务单据 \",\"prop\":\"businessKey\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"描述\",\"prop\":\"description\",\"show\":true,\"fixed\":false,\"sortable\":false}]', null, '7383a431704d4d8492240bd7c710ed36', null, '0', '2020-08-28 10:32:22.909000', '1279577615655149569', '2020-08-28 10:32:22.909000', '1279577615655149569', null);
 INSERT INTO `sys_user_column` VALUES ('1299293757857890305', '1279577615655149569', 'table_user_-sysuser', '[{\"label\":\"账号\",\"prop\":\"loginName\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":200},{\"label\":\"昵称\",\"prop\":\"nickName\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":200},{\"label\":\"手机\",\"prop\":\"mobilePhone\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"邮箱\",\"prop\":\"email\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"QQ\",\"prop\":\"qq\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"是否有效\",\"prop\":\"isEnable\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"到期时间\",\"prop\":\"expireTime\",\"show\":true,\"fixed\":false,\"sortable\":false}]', null, '87082ebde2420284fabb636228e0f418', null, '0', '2020-08-28 10:32:26.243000', '1279577615655149569', '2020-08-28 10:32:26.243000', '1279577615655149569', null);
-INSERT INTO `sys_user_column` VALUES ('1299294091925815298', '1296624483095842817', 'table_user_-sysuser', '[{\"label\":\"账号\",\"prop\":\"loginName\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":200},{\"label\":\"昵称\",\"prop\":\"nickName\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":200},{\"label\":\"手机\",\"prop\":\"mobilePhone\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"邮箱\",\"prop\":\"email\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"QQ\",\"prop\":\"qq\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"是否有效\",\"prop\":\"isEnable\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"到期时间\",\"prop\":\"expireTime\",\"show\":true,\"fixed\":false,\"sortable\":false}]', null, '87082ebde2420284fabb636228e0f418', null, '0', '2020-08-28 10:33:45.890000', '1296624483095842817', '2020-08-28 10:33:45.890000', '1296624483095842817', null);
+INSERT INTO `sys_user_column` VALUES ('1299294091925815298', '1296624483095842817', 'table_user_-sysuser', '[{\"label\":\"账号\",\"prop\":\"loginName\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":200},{\"label\":\"昵称\",\"prop\":\"nickName\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":200},{\"label\":\"手机\",\"prop\":\"mobilePhone\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"邮箱\",\"prop\":\"email\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"QQ\",\"prop\":\"qq\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"是否有效\",\"prop\":\"isEnable\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"到期时间\",\"prop\":\"expireTime\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"到期时间\",\"prop\":\"expireTime\",\"show\":true,\"fixed\":false,\"sortable\":false}]', null, 'eca5a637959266b0b6553786a758ab73', null, '0', '2020-08-28 10:33:45.890000', '1296624483095842817', '2021-01-30 08:47:50.569000', '1296624483095842817', null);
 INSERT INTO `sys_user_column` VALUES ('1319277404098785282', '1', 'table_sysjob_-sysjobs', '[{\"label\":\"任务名称\",\"prop\":\"jobName\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":200},{\"label\":\"任务分组\",\"prop\":\"jobGroup\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":200},{\"label\":\"任务描述\",\"prop\":\"description\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"类路径\",\"prop\":\"jobClassName\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"执行频率\",\"prop\":\"cronExpression\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"状态\",\"prop\":\"triggerState\",\"show\":true,\"fixed\":false,\"sortable\":false}]', null, '05ba46640ef8206cff291b8cda7b65ce', null, '0', '2020-10-22 14:00:18.783000', '1', '2020-10-22 14:00:18.783000', '1', null);
 INSERT INTO `sys_user_column` VALUES ('1319281979367129090', '1', 'table_employe_-sysjobs', '[{\"label\":\"职务编码\",\"prop\":\"code\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":200},{\"label\":\"职务名称\",\"prop\":\"name\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":200},{\"label\":\"职务级别\",\"prop\":\"level\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":200},{\"label\":\"是否有效\",\"prop\":\"isActive\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"创建时间\",\"prop\":\"createTime\",\"show\":true,\"fixed\":false,\"sortable\":false}]', null, 'bbf587c5312c162682039f3a12ded06a', null, '0', '2020-10-22 14:18:29.613000', '1', '2020-10-22 14:19:18.035000', '1', null);
 INSERT INTO `sys_user_column` VALUES ('1319282485447655426', '1', 'table_job_-sysjobs', '[{\"label\":\"职务编码\",\"prop\":\"code\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":200},{\"label\":\"职务名称\",\"prop\":\"name\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":200},{\"label\":\"职务级别\",\"prop\":\"level\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":200},{\"label\":\"是否有效\",\"prop\":\"isActive\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"创建时间\",\"prop\":\"createTime\",\"show\":true,\"fixed\":false,\"sortable\":false}]', null, 'bbf587c5312c162682039f3a12ded06a', null, '0', '2020-10-22 14:20:30.272000', '1', '2020-10-22 14:20:30.272000', '1', null);
@@ -864,3 +1161,4 @@ INSERT INTO `sys_user_column` VALUES ('1319984442873327618', '1', 'table_employe
 INSERT INTO `sys_user_column` VALUES ('1327615387348537346', '1', 'table_sysSequenceLog_-syssequence', '[{\"label\":\"流水编码\",\"prop\":\"flowCode\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":200},{\"label\":\"创建人\",\"prop\":\"createBy\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":200},{\"label\":\"创建时间\",\"prop\":\"createTime\",\"show\":true,\"fixed\":false,\"sortable\":false}]', null, 'd609e32ed8c0ac6c1cd4d1356848d569', null, '0', '2020-11-14 14:12:28.904000', '1', '2020-11-14 14:12:28.904000', '1', null);
 INSERT INTO `sys_user_column` VALUES ('1347003110033641473', '1279577615655149569', 'table_wlfowClaim_-wflowclaim', '[{\"label\":\"任务id\",\"prop\":\"id\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":200},{\"label\":\"当前签核节点\",\"prop\":\"name\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":200},{\"label\":\"当前签核人\",\"prop\":\"assignee\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"流程分类\",\"prop\":\"category\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"业务单据 \",\"prop\":\"businessKey\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"描述\",\"prop\":\"description\",\"show\":true,\"fixed\":false,\"sortable\":false}]', null, '7383a431704d4d8492240bd7c710ed36', null, '0', '2021-01-07 02:12:22.196000', null, '2021-01-07 02:12:22.196000', null, null);
 INSERT INTO `sys_user_column` VALUES ('1347003387759480834', '1279577615655149569', 'table_wflowHistroy_-wflowhistory', '[{\"label\":\"任务id\",\"prop\":\"id\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":200},{\"label\":\"签核节点\",\"prop\":\"activityName\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":200},{\"label\":\"签核类型\",\"prop\":\"activityType\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"签核人\",\"prop\":\"assignee\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"开始时间\",\"prop\":\"startTime\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"结束时间\",\"prop\":\"endTime\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"拒绝理由\",\"prop\":\"deleteReason\",\"show\":true,\"fixed\":false,\"sortable\":false}]', null, 'c2510070ff77b9e0c1f23b699e8955da', null, '0', '2021-01-07 02:13:28.413000', null, '2021-01-07 02:13:28.413000', null, null);
+INSERT INTO `sys_user_column` VALUES ('1355438058388430850', '1353256863002976257', 'table_wlfowTask_-wflowtask', '[{\"label\":\"任务id\",\"prop\":\"id\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":200},{\"label\":\"当前签核节点\",\"prop\":\"name\",\"show\":true,\"fixed\":false,\"sortable\":false,\"width\":200},{\"label\":\"当前签核人\",\"prop\":\"assignee\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"流程分类\",\"prop\":\"category\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"业务单据 \",\"prop\":\"businessKey\",\"show\":true,\"fixed\":false,\"sortable\":false},{\"label\":\"描述\",\"prop\":\"description\",\"show\":true,\"fixed\":false,\"sortable\":false}]', null, '7383a431704d4d8492240bd7c710ed36', null, '0', '2021-01-30 08:49:50.599000', null, '2021-01-30 08:49:50.599000', null, null);

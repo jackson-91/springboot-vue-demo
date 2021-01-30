@@ -58,7 +58,7 @@ public class SysDicController {
      * @return
      */
     @GetMapping("/all-list")
-    @OperLog(description = "数据字典集合")
+    @OperLog(description = "全部数据字典集合")
     public ResponseResult<List<SysDic>> allList() {
         List<SysDic> sysDicList = sysDicService.list();
         List<SysDicItem> sysDicItems = sysDicItemService.list();

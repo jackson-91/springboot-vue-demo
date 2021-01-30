@@ -76,7 +76,24 @@ public class SysEmploye extends TenantEntity {
     /**
      * 所属部门
      */
-    private String department;
+    // private String department;
+
+    /**
+     * 部门代码
+     */
+    private String deptId;
+
+    /**
+     * 部门代码
+     */
+    private String deptCode;
+
+    /**
+     * 部门名称
+     */
+    private String deptName;
+
+
 
     /**
      * 职位

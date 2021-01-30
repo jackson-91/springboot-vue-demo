@@ -54,7 +54,7 @@ public class SysDept extends TenantEntity {
     /**
      * 负责人行明
      */
-    private String deptHeaderName;
+    private String deptHeaderJobscode;
 
     /**
      * 负责人职务

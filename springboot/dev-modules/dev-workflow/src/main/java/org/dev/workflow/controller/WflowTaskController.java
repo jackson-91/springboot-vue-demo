@@ -19,9 +19,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -111,7 +109,7 @@ public class WflowTaskController {
          */
         CurrentUser currentUser = SpringSecurityUtils.CurrentUser();
         List<WflowTask> wflowTasks = new ArrayList<>();
-        String userId=currentUser.getId().toString();
+        String userId = currentUser.getId().toString();
         List<Task> list = taskService.createTaskQuery().taskAssignee(userId).orderByTaskDueDate().desc().listPage(firstResult, maxResults);
         long count = taskService.createTaskQuery().taskAssignee(userId).count();
         for (Task task : list) {
@@ -171,7 +169,10 @@ public class WflowTaskController {
     @PostMapping("/complete")
     public ResponseResult completeProcess(@RequestBody List<String> idArray) {
         for (String taskid : idArray) {
-            taskService.complete(taskid);
+
+            Map<String, Object> variables = new HashMap<>();
+            variables.put("memo", "审批通过");
+            taskService.complete(taskid,variables);
         }
         return ResponseResult.success();
     }

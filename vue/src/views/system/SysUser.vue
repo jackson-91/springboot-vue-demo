@@ -187,10 +187,11 @@ export default {
         { label: '邮箱', prop: 'email', show: true, fixed: false, sortable: false },
         { label: 'QQ', prop: 'qq', show: true, fixed: false, sortable: false },
         { label: '是否有效', prop: 'isEnable', show: true, fixed: false, sortable: false },
+        { label: '到期时间', prop: 'expireTime', show: true, fixed: false, sortable: false },
         { label: '到期时间', prop: 'expireTime', show: true, fixed: false, sortable: false }
       ],
       showForm: false,
-      userForm: { id: '', loginName: '', nickName: '', passWord: '', cmfPassWord: '', mobilePhone: '', qq: '', email: '', isEnable: '' },
+      userForm: { id: '', loginName: '', nickName: '', passWord: '', cmfPassWord: '', mobilePhone: '', qq: '', email: '', isEnable: '',employeId:'' },
       userControl: [
         { label: 'ID', field: 'id', type: 'hidden', show: false, readonly: true },
         { label: '账号', field: 'loginName', type: 'input', show: true, readonly: true },
@@ -199,7 +200,8 @@ export default {
         { label: '密码确认', field: 'cmfPassWord', type: 'password', show: true, readonly: false },
         { label: '手机', field: 'mobilePhone', type: 'input', show: true, readonly: false },
         { label: 'QQ', field: 'qq', type: 'input', show: true },
-        { label: '邮箱', field: 'email', type: 'input', show: true }
+        { label: '邮箱', field: 'email', type: 'input', show: true },
+        { label: '员工', field: 'employeId', type: 'select', show: true , options: null }
       ],
       userRules: {
         loginName: [
@@ -234,7 +236,8 @@ export default {
       },
       checkedKeys: [],
       userId: null,
-      showTree: false
+      showTree: false,
+      optionsArray:[]
     }
   },
 
@@ -284,6 +287,7 @@ export default {
       }
       this.userControl[1].readonly = false
       this.showForm = true
+      this.userControl[8].options = this.optionsArray
     },
     /**
      * 是否启用/禁用用户
@@ -436,6 +440,8 @@ export default {
       this.userForm.email = row.email
       this.userForm.mobilePhone = row.mobilePhone
       this.userForm.id = row.id
+      this.userForm.employeId = row.employeId
+      this.userControl[8].options = this.optionsArray
     },
     /**
      * 授权
@@ -579,13 +585,36 @@ export default {
       console.log(`当前页: ${val}`)
       this.current = val
       this.searchData()
-    }
+    },
+    getEmployes () {
+      this.$http
+        .get('/api/sysEmploye/all-list', {})
+        .then(res => {
+          if (res.code == 0) {
+            if (res.data) {
+              let that = this;
+              res.data.forEach(item => {
+                that.optionsArray.push({
+                  label: item.name,
+                  value: item.id
+                });
+              });
+            }
+          } else {
+            this.$message.error(res.msg)
+          }
+        })
+        .catch(err => {
+          console.log(err.message)
+        })
+    },
   },
   created () {
     this.tableHeight = document.documentElement.clientHeight - 280
     //
     this.tableColumns = this.defaultColumns
     this.searchData()
+    this.getEmployes();
   }
 }
 </script>

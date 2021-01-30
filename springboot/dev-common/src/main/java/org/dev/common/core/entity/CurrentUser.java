@@ -75,6 +75,10 @@ public class CurrentUser implements UserDetails {
      */
     private String userSkin;
 
+    /**
+     *
+     */
+    private Long employeId;
 
     @TableField(exist = false)
     private List<CurrentRole> roles;

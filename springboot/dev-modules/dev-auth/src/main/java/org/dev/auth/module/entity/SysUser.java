@@ -90,6 +90,11 @@ public class SysUser extends TenantEntity implements UserDetails {
      */
     private String userSkin;
 
+    /**
+     *
+     */
+    private Long employeId;
+
 
     @TableField(exist = false)
     private List<SysRole> roles;

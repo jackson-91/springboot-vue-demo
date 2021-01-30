@@ -1,0 +1,9 @@
+{
+    "editor.codeActionsOnSave": null,
+    "vetur.grammar.customBlocks": {
+
+        "docs": "md",
+        "i18n": "json"
+    },
+    "vetur.format.defaultFormatter.html":"js-beautify-html"
+}

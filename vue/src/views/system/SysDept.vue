@@ -3,43 +3,17 @@
     <div>
       <!--按钮列表-->
       <el-button-group class="toolBox">
-        <el-button
-          size="small"
-          v-for="(item, index) in buttonGroups"
-          :key="index"
-          @click="dynamicMethod(item.method, item.params)"
-          :icon="item.icon"
-          >{{ item.label }}</el-button
-        >
+        <el-button size="small" v-for="(item, index) in buttonGroups" :key="index" @click="dynamicMethod(item.method, item.params)" :icon="item.icon">{{ item.label }}</el-button>
       </el-button-group>
     </div>
     <!--数据表格-->
     <el-row>
       <el-col :span="24">
-        <el-table
-          :data="tableData"
-          border
-          row-key="id"
-          style="width: 100%; margin-bottom: 20px"
-          default-expand-all
-          highlight-current-row
-          ref="multipleTable"
-          :height="tableHeight"
-          @row-click="handleRowClick"
-          :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
-        >
+        <el-table :data="tableData" border row-key="id" style="width: 100%; margin-bottom: 20px" default-expand-all highlight-current-row ref="multipleTable" :height="tableHeight"
+          @row-click="handleRowClick" :tree-props="{ children: 'children', hasChildren: 'hasChildren' }">
           <template v-for="(el, i) in tableColumns">
-            <el-table-column
-              :label="el.label"
-              header-align="center"
-              v-if="el.show"
-              :width="el.width || ''"
-              :key="el.prop"
-              :fixed="el.fixed"
-              :prop="el.prop"
-              :sortable="el.sortable"
-              show-overflow-tooltip
-            >
+            <el-table-column :label="el.label" header-align="center" v-if="el.show" :width="el.width || ''" :key="el.prop" :fixed="el.fixed" :prop="el.prop" :sortable="el.sortable"
+              show-overflow-tooltip>
             </el-table-column>
           </template>
           <el-table-column fixed="right" label="操作" width="300">
@@ -47,18 +21,8 @@
               <!-- <el-button @click="handleAuthVClick(scope.row)"
                          type="text"
                          size="small">权限查看</el-button> -->
-              <el-button
-                type="text"
-                @click="handleDelClick(scope.row)"
-                size="small"
-                >删除</el-button
-              >
-              <el-button
-                type="text"
-                @click="handleEditClick(scope.row)"
-                size="small"
-                >编辑</el-button
-              >
+              <el-button type="text" @click="handleDelClick(scope.row)" size="small">删除</el-button>
+              <el-button type="text" @click="handleEditClick(scope.row)" size="small">编辑</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -67,42 +31,17 @@
     <!--分页插件-->
     <el-row>
       <el-col :span="24">
-        <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="current"
-          :page-sizes="pageSizeOptions"
-          :page-size="size"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="total"
-        >
+        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="current" :page-sizes="pageSizeOptions" :page-size="size"
+          layout="total, sizes, prev, pager, next, jumper" :total="total">
         </el-pagination>
       </el-col>
     </el-row>
     <!--列自定义-->
-    <CustomTableCols
-      :defaultCols="defaultColumns"
-      customName="employe"
-      @changeColumns="changeColumns"
-    />
+    <CustomTableCols :defaultCols="defaultColumns" customName="employe" @changeColumns="changeColumns" />
     <!--查询条件-->
-    <Search
-      :show.sync="showSearch"
-      :condition="searchCondition"
-      :form="searchForm"
-      @ok="setCondition"
-      @hidden="showSearch = false"
-    />
+    <Search :show.sync="showSearch" :condition="searchCondition" :form="searchForm" @ok="setCondition" @hidden="showSearch = false" />
     <!--新增编辑页面-->
-    <CustomForm
-      :show.sync="showForm"
-      title="部门编辑"
-      :control="deptControl"
-      :model="deptForm"
-      :rules="deptRules"
-      @ok="saveForm"
-      @hidden="showForm = false"
-    />
+    <CustomForm :show.sync="showForm" title="部门编辑" :control="deptControl" :model="deptForm" :rules="deptRules" @ok="saveForm" @hidden="showForm = false" />
   </div>
 </template>
 
@@ -245,10 +184,11 @@ export default {
         },
         {
           label: "负责人",
-          field: "deptHeader",
-          type: "input",
+          field: "deptHeaderJobs",
+          type: "select",
           show: true,
           readonly: false,
+          options: null,
         },
       ],
       deptRules: {
@@ -280,6 +220,7 @@ export default {
       multipleSelection: [],
       visible: false,
       deptId: null,
+      jobsArray: [],
     };
   },
 
@@ -379,6 +320,7 @@ export default {
       }
       this.deptControl[1].readonly = false;
       this.deptControl[3].options = this.deptArray;
+      this.deptControl[4].options = this.jobsArray;
       this.showForm = true;
     },
 
@@ -414,7 +356,31 @@ export default {
       this.searchForm = newData;
       this.searchData();
     },
-
+    /**
+     * 加载职位列表
+     * */
+    getJobs() {
+      this.$http
+        .get("/api/sysJobs/all-list", {})
+        .then((res) => {
+          if (res.code == 0) {
+            if (res.data) {
+              let that = this;
+              res.data.forEach((item) => {
+                that.jobsArray.push({
+                  label: item.name,
+                  value: item.id,
+                });
+              });
+            }
+          } else {
+            this.$message.error(res.msg);
+          }
+        })
+        .catch((err) => {
+          console.log(err.message);
+        });
+    },
     /**
      * 保存表单
      */
@@ -481,10 +447,12 @@ export default {
       }
       this.deptControl[1].readonly = true;
       this.deptControl[3].options = this.deptArray;
+      this.deptControl[4].options = this.jobsArray;
       this.showForm = true;
       this.deptForm.deptCode = row.deptCode;
       this.deptForm.deptName = row.deptName;
       this.deptForm.parentId = row.parentId;
+      this.deptForm.deptHeaderJobs = row.deptHeaderJobs;
       this.deptForm.id = row.id;
     },
     /**
@@ -567,10 +535,10 @@ export default {
     this.tableHeight = document.documentElement.clientHeight - 280;
     //
     this.tableColumns = this.defaultColumns;
-  },
-  activated() {
     this.getDept();
     this.searchData();
+    this.getJobs();
   },
+  activated() {},
 };
 </script>

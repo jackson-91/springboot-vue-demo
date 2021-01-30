@@ -1,17 +1,8 @@
 <template>
-  <el-select :value="valueTitle"
-             :clearable="clearable"
-             @clear="clearHandle">
-    <el-option :value="valueTitle"
-               :label="valueTitle">
-      <el-tree id="tree-option"
-               ref="selectTree"
-               :accordion="accordion"
-               :data="options"
-               :props="props"
-               :node-key="props.value"
-               :default-expanded-keys="defaultExpandedKey"
-               @node-click="handleNodeClick">
+  <el-select :value="valueTitle" :clearable="clearable" @clear="clearHandle">
+    <el-option :value="valueTitle" :label="valueTitle">
+      <el-tree id="tree-option" ref="selectTree" :accordion="accordion" :data="options" :props="props" :node-key="props.value" :default-expanded-keys="defaultExpandedKey"
+        @node-click="handleNodeClick">
       </el-tree>
     </el-option>
   </el-select>
@@ -25,85 +16,102 @@ export default {
       type: Object,
       default: () => {
         return {
-          value: 'id',             // ID字段名
-          label: 'name',         // 显示名称
-          children: 'children'    // 子级字段名
-        }
-      }
+          value: "id", // ID字段名
+          label: "name", // 显示名称
+          children: "children", // 子级字段名
+        };
+      },
     },
     /* 选项列表数据(树形结构的对象数组) */
     options: {
       type: Array,
-      default: () => { return [] }
+      default: () => {
+        return [];
+      },
     },
     /* 初始值 */
     value: {
       type: String,
-      default: () => { return null }
+      default: () => {
+        return null;
+      },
     },
     /* 可清空选项 */
     clearable: {
       type: Boolean,
-      default: () => { return true }
+      default: () => {
+        return true;
+      },
     },
     /* 自动收起 */
     accordion: {
       type: Boolean,
-      default: () => { return false }
+      default: () => {
+        return false;
+      },
     },
   },
-  data () {
+  data() {
     return {
-      valueId: this.value,    // 初始值
-      valueTitle: '',
-      defaultExpandedKey: []
-    }
+      valueId: this.value, // 初始值
+      valueTitle: "",
+      defaultExpandedKey: [],
+    };
   },
-  mounted () {
-    this.initHandle()
+  mounted() {
+    this.initHandle();
   },
   methods: {
     // 初始化值
-    initHandle () {
+    initHandle() {
       if (this.valueId) {
-        this.valueTitle = this.$refs.selectTree.getNode(this.valueId).data[this.props.label]     // 初始化显示
-        this.$refs.selectTree.setCurrentKey(this.valueId)       // 设置默认选中
-        this.defaultExpandedKey = [this.valueId]      // 设置默认展开
+        let data = this.$refs.selectTree.getNode(this.valueId);
+        if (data) {
+          this.valueTitle = this.$refs.selectTree.getNode(this.valueId).data[
+            this.props.label
+          ]; // 初始化显示
+          this.$refs.selectTree.setCurrentKey(this.valueId); // 设置默认选中
+          this.defaultExpandedKey = [this.valueId]; // 设置默认展开
+        }
       }
       this.$nextTick(() => {
-        let scrollWrap = document.querySelectorAll('.el-scrollbar .el-select-dropdown__wrap')[0]
-        let scrollBar = document.querySelectorAll('.el-scrollbar .el-scrollbar__bar')
-        scrollWrap.style.cssText = 'margin: 0px; max-height: none; overflow: hidden;'
-        scrollBar.forEach(ele => ele.style.width = 0)
-      })
-
+        let scrollWrap = document.querySelectorAll(
+          ".el-scrollbar .el-select-dropdown__wrap"
+        )[0];
+        let scrollBar = document.querySelectorAll(
+          ".el-scrollbar .el-scrollbar__bar"
+        );
+        scrollWrap.style.cssText =
+          "margin: 0px; max-height: none; overflow: hidden;";
+        scrollBar.forEach((ele) => (ele.style.width = 0));
+      });
     },
     // 切换选项
-    handleNodeClick (node) {
-      this.valueTitle = node[this.props.label]
-      this.valueId = node[this.props.value]
-      this.$emit('getValue', this.valueId)
-      this.defaultExpandedKey = []
+    handleNodeClick(node) {
+      this.valueTitle = node[this.props.label];
+      this.valueId = node[this.props.value];
+      this.$emit("getValue", this.valueId);
+      this.defaultExpandedKey = [];
     },
     // 清除选中
-    clearHandle () {
-      this.valueTitle = ''
-      this.valueId = null
-      this.defaultExpandedKey = []
-      this.clearSelected()
-      this.$emit('getValue', null)
+    clearHandle() {
+      this.valueTitle = "";
+      this.valueId = null;
+      this.defaultExpandedKey = [];
+      this.clearSelected();
+      this.$emit("getValue", null);
     },
     /* 清空选中样式 */
-    clearSelected () {
-      let allNode = document.querySelectorAll('#tree-option .el-tree-node')
-      allNode.forEach((element) => element.classList.remove('is-current'))
-    }
+    clearSelected() {
+      let allNode = document.querySelectorAll("#tree-option .el-tree-node");
+      allNode.forEach((element) => element.classList.remove("is-current"));
+    },
   },
   watch: {
-    value () {
-      this.valueId = this.value
-      this.initHandle()
-    }
+    value() {
+      this.valueId = this.value;
+      this.initHandle();
+    },
   },
 };
 </script>

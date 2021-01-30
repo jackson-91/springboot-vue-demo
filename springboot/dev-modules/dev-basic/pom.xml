@@ -26,6 +26,12 @@
             <groupId>org.dev.framework</groupId>
             <artifactId>dev-util</artifactId>
         </dependency>
+        <!--认证模块-->
+        <dependency>
+            <groupId>org.dev.framework</groupId>
+            <artifactId>dev-auth</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
     </dependencies>
     <build>
         <resources>

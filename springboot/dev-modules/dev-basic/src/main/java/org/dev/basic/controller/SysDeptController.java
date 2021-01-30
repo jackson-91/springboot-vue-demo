@@ -5,7 +5,9 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.dev.basic.entity.SysDept;
+import org.dev.basic.entity.SysJobs;
 import org.dev.basic.service.SysDeptService;
+import org.dev.basic.service.SysJobsService;
 import org.dev.common.core.page.PaginAtion;
 import org.dev.common.core.result.ResponseResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,9 @@ import java.util.List;
 public class SysDeptController {
     @Autowired
     SysDeptService sysDeptService;
+
+    @Autowired
+    SysJobsService sysJobsService;
 
     /**
      * 部门列表
@@ -110,6 +115,15 @@ public class SysDeptController {
     @PostMapping("/save")
     public ResponseResult<String> save(@RequestBody SysDept sysDept) {
         boolean result = false;
+
+        if (null != sysDept.getDeptHeaderJobs()) {
+            SysJobs sysJobs = this.sysJobsService.getById(sysDept.getDeptHeaderJobs());
+            if (sysJobs != null) {
+                sysDept.setDeptHeader(sysDept.getDeptHeaderJobs());
+                sysDept.setDeptHeaderJobscode(sysJobs.getCode());
+                sysDept.setDeptHeaderJobsname(sysJobs.getName());
+            }
+        }
         if (null == sysDept.getId()) {
 
             QueryWrapper queryWrapper = new QueryWrapper();

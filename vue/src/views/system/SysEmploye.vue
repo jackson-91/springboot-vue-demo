@@ -3,50 +3,24 @@
     <div>
       <!--按钮列表-->
       <el-button-group class="toolBox">
-        <el-button
-          size="small"
-          v-for="(item, index) in buttonGroups"
-          :key="index"
-          @click="dynamicMethod(item.method, item.params)"
-          :icon="item.icon"
-          >{{ item.label }}</el-button
-        >
+        <el-button size="small" v-for="(item, index) in buttonGroups" :key="index" @click="dynamicMethod(item.method, item.params)" :icon="item.icon">{{ item.label }}</el-button>
       </el-button-group>
     </div>
     <!--数据表格-->
     <el-row>
       <el-col :span="24">
-        <el-table
-          :data="tableData"
-          border
-          stripe
-          highlight-current-row
-          ref="multipleTable"
-          :height="tableHeight"
-          @row-click="handleRowClick"
-          style="width: 100%"
-        >
+        <el-table :data="tableData" border stripe highlight-current-row ref="multipleTable" :height="tableHeight" @row-click="handleRowClick" style="width: 100%">
           <el-table-column type="selection" width="55"> </el-table-column>
-          <el-table-column
-            type="index"
-            width="65"
-            label="序号"
-            align="center"
-            fixed
-            :show-overflow-tooltip="true"
-          ></el-table-column>
+          <el-table-column type="index" width="65" label="序号" align="center" fixed :show-overflow-tooltip="true"></el-table-column>
           <template v-for="(el, i) in tableColumns">
-            <el-table-column
-              :label="el.label"
-              header-align="center"
-              v-if="el.show"
-              :width="el.width || ''"
-              :key="el.prop"
-              :fixed="el.fixed"
-              :prop="el.prop"
-              :sortable="el.sortable"
-              show-overflow-tooltip
-            >
+            <el-table-column :label="el.label" header-align="center" v-if="el.show && el.prop === 'education'" :width="el.width || ''" :key="el.prop" :fixed="el.fixed" :prop="el.prop"
+              :sortable="el.sortable" show-overflow-tooltip>
+              <template slot-scope="scope">{{
+                scope.row.education | dic('EDUCATION')
+              }}</template>
+            </el-table-column>
+            <el-table-column :label="el.label" header-align="center" v-else-if="el.show" :width="el.width || ''" :key="el.prop" :fixed="el.fixed" :prop="el.prop" :sortable="el.sortable"
+              show-overflow-tooltip>
             </el-table-column>
           </template>
           <el-table-column fixed="right" label="操作" width="300">
@@ -54,18 +28,8 @@
               <!-- <el-button @click="handleAuthVClick(scope.row)"
                          type="text"
                          size="small">权限查看</el-button> -->
-              <el-button
-                type="text"
-                @click="handleDelClick(scope.row)"
-                size="small"
-                >删除</el-button
-              >
-              <el-button
-                type="text"
-                @click="handleEditClick(scope.row)"
-                size="small"
-                >编辑</el-button
-              >
+              <el-button type="text" @click="handleDelClick(scope.row)" size="small">删除</el-button>
+              <el-button type="text" @click="handleEditClick(scope.row)" size="small">编辑</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -74,60 +38,21 @@
     <!--分页插件-->
     <el-row>
       <el-col :span="24">
-        <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="current"
-          :page-sizes="pageSizeOptions"
-          :page-size="size"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="total"
-        >
+        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="current" :page-sizes="pageSizeOptions" :page-size="size"
+          layout="total, sizes, prev, pager, next, jumper" :total="total">
         </el-pagination>
       </el-col>
     </el-row>
     <!--列自定义-->
-    <CustomTableCols
-      :defaultCols="defaultColumns"
-      customName="employe"
-      @changeColumns="changeColumns"
-    />
+    <CustomTableCols :defaultCols="defaultColumns" customName="employe" @changeColumns="changeColumns" />
     <!--查询条件-->
-    <Search
-      :show.sync="showSearch"
-      :condition="searchCondition"
-      :form="searchForm"
-      @ok="setCondition"
-      @hidden="showSearch = false"
-    />
+    <Search :show.sync="showSearch" :condition="searchCondition" :form="searchForm" @ok="setCondition" @hidden="showSearch = false" />
     <!--新增编辑页面-->
-    <CustomForm
-      :show.sync="showForm"
-      title="员工编辑"
-      :control="employeControl"
-      :model="employeForm"
-      :rules="employeRules"
-      @ok="saveForm"
-      @hidden="showForm = false"
-    />
+    <CustomForm :show.sync="showForm" title="员工编辑" :control="employeControl" :model="employeForm" :rules="employeRules" @ok="saveForm" @hidden="showForm = false" />
     <!--分配角色-->
-    <el-dialog
-      title="角色分配"
-      :visible.sync="visible"
-      width="400px"
-      @close="visible = false"
-    >
-      <el-tree
-        node-key="id"
-        style="height: 400px !important; overflow-y: auto"
-        :data="treeData"
-        :props="treeProps"
-        ref="tree"
-        show-checkbox
-        :highlight-current="true"
-        :default-checked-keys="checkedKeys"
-        :default-expand-all="true"
-      ></el-tree>
+    <el-dialog title="角色分配" :visible.sync="visible" width="400px" @close="visible = false">
+      <el-tree node-key="id" style="height: 400px !important; overflow-y: auto" :data="treeData" :props="treeProps" ref="tree" show-checkbox :highlight-current="true"
+        :default-checked-keys="checkedKeys" :default-expand-all="true"></el-tree>
       <div slot="footer" class="dialog-footer">
         <el-button @click="visible = false">取消</el-button>
         <el-button @click="selectAll()" type="primary">全选</el-button>
@@ -135,14 +60,7 @@
       </div>
     </el-dialog>
     <!--赋权页面-->
-    <treelist
-      :show.sync="showTree"
-      title="权限查看"
-      ptype="employe"
-      :pid="employeId"
-      @ok="showTree = false"
-      @hidden="showTree = false"
-    />
+    <treelist :show.sync="showTree" title="权限查看" ptype="employe" :pid="employeId" @ok="showTree = false" @hidden="showTree = false" />
   </div>
 </template>
 
@@ -297,7 +215,7 @@ export default {
         },
         {
           label: "部门",
-          prop: "department",
+          prop: "deptName",
           show: true,
           fixed: false,
           sortable: false,
@@ -347,7 +265,7 @@ export default {
         email: "",
         birthday: "",
         education: "",
-        department: "",
+        deptId: "",
         position: "",
         status: "",
         entryDate: "",
@@ -407,7 +325,7 @@ export default {
         },
         {
           label: "部门",
-          field: "department",
+          field: "deptId",
           type: "tree-select",
           show: true,
           options: null,
@@ -415,7 +333,7 @@ export default {
           isAccordion: true, // 可收起（可选
           props: {
             // 配置项（必选）
-            value: "deptCode",
+            value: "id",
             label: "deptName",
             children: "children",
           },
@@ -508,11 +426,7 @@ export default {
      * */
     getJobs() {
       this.$http
-        .get("/api/sysJobs/all-list", {
-          params: {
-            dicCode: "EDUCATION",
-          },
-        })
+        .get("/api/sysJobs/all-list", {})
         .then((res) => {
           if (res.code == 0) {
             if (res.data) {
@@ -537,11 +451,7 @@ export default {
      */
     getDept() {
       this.$http
-        .get("/api/sysDept/tree-all-list", {
-          params: {
-            dicCode: "EDUCATION",
-          },
-        })
+        .get("/api/sysDept/tree-all-list", {})
         .then((res) => {
           if (res.code == 0) {
             if (res.data) {
@@ -779,7 +689,7 @@ export default {
       this.employeForm.telePhone = row.telePhone;
       this.employeForm.birthday = row.birthday;
       this.employeForm.education = row.education;
-      this.employeForm.department = row.department;
+      this.employeForm.deptId = row.deptId;
       this.employeForm.position = row.position;
       this.employeForm.entryDate = row.entryDate;
       this.employeForm.departureDate = row.departureDate;
@@ -946,8 +856,7 @@ export default {
     this.tableHeight = document.documentElement.clientHeight - 280;
     //
     this.tableColumns = this.defaultColumns;
-  },
-  activated() {
+
     this.getDicItem();
     this.getDept();
     this.getJobs();

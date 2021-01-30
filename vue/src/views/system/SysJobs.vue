@@ -31,15 +31,14 @@
                            fixed
                            :show-overflow-tooltip="true"></el-table-column>
           <template v-for="(el,i) in tableColumns">
-            <el-table-column :label="el.label"
-                             header-align="center"
-                             v-if="el.show "
-                             :width="el.width || ''"
-                             :key="el.prop"
-                             :fixed="el.fixed"
-                             :prop="el.prop"
-                             :sortable="el.sortable"
-                             show-overflow-tooltip>
+            <el-table-column :label="el.label" header-align="center" v-if="el.show && el.prop === 'level'" :width="el.width || ''" :key="el.prop" :fixed="el.fixed" :prop="el.prop"
+              :sortable="el.sortable" show-overflow-tooltip>
+              <template slot-scope="scope">{{
+                scope.row.level | dic('JOBS_LEVEL')
+              }}</template>
+            </el-table-column>
+            <el-table-column :label="el.label" header-align="center" v-else-if="el.show" :width="el.width || ''" :key="el.prop" :fixed="el.fixed" :prop="el.prop" :sortable="el.sortable"
+              show-overflow-tooltip>
             </el-table-column>
           </template>
           <el-table-column fixed="right"
@@ -177,7 +176,7 @@ export default {
               res.data.forEach(item => {
                 that.optionsArray.push({
                   label: item.dicItemName,
-                  value: item.dicItemValue
+                  value: Number(item.dicItemValue)
                 });
               });
             }

@@ -7,10 +7,15 @@ import './assets/css/global.css'
 import axios from './axios/http'
 import { store } from './store/store'
 import './plugins/dialog'
+import filters from './filter/index';
 
 Vue.use(Vuex)
 Vue.prototype.$http = axios
 Vue.config.productionTip = false
+
+for (var i in filters) {
+  Vue.filter(i, filters[i]);
+}
 
 new Vue({
   axios,

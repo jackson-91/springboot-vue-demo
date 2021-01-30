@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import lombok.extern.slf4j.Slf4j;
 import org.activiti.bpmn.converter.BpmnXMLConverter;
-import org.activiti.bpmn.model.BpmnModel;
+import org.activiti.bpmn.model.*;
 import org.activiti.bpmn.model.Process;
 import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.ProcessEngines;
@@ -16,12 +16,15 @@ import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.image.ProcessDiagramGenerator;
 import org.activiti.image.impl.DefaultProcessDiagramGenerator;
+import org.dev.basic.util.WlfowUser;
 import org.dev.common.core.page.PaginAtion;
 import org.dev.common.core.result.ResponseResult;
 import org.dev.common.exception.CustomException;
 import org.dev.common.security.jwt.JwtUtil;
 import org.dev.util.util.SequenceUtil;
 import org.dev.workflow.entity.*;
+import org.dev.workflow.util.AssigneeType;
+import org.dev.workflow.util.AttributeName;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,10 +37,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 
 @RestController
@@ -49,6 +49,10 @@ public class WflowDefineController {
 
     @Autowired
     SequenceUtil sequenceUtil;
+
+
+    @Autowired
+    WlfowUser wlfowUser;
 
     /**
      * 流程定义查询
@@ -317,8 +321,37 @@ public class WflowDefineController {
      * @return
      */
     @GetMapping("/start-process-test")
-    public ResponseResult startProcess(@RequestParam("definitionId") String processInstanceId) throws CustomException {
+    public ResponseResult startProcess(@RequestParam("definitionId") String processInstanceId,
+                                       @RequestParam("processKey") String processKey) throws CustomException {
         String FlowNo = "";
+
+
+        RepositoryService repositoryService = ProcessEngines.getDefaultProcessEngine().getRepositoryService();
+        BpmnModel bpmnModel = repositoryService.getBpmnModel(processInstanceId);
+        //process中包含所有的节点信息,包括流程线
+        Process process = bpmnModel.getProcessById(processKey);
+        //获取第一个节点信息
+        FlowElement startElement = process.getInitialFlowElement();
+        Collection<FlowElement> flowElements = process.getFlowElements();
+        //筛选流程中所有的UserTask任务节点
+        for (FlowElement flowElement : flowElements) {
+            if (flowElement instanceof UserTask) {
+                UserTask userTask = ((UserTask) flowElement);
+                Map<String, List<ExtensionAttribute>> map = userTask.getAttributes();
+                if (map != null && map.size() > 0) {
+                    if (map.containsKey(AttributeName.AssigneeType)) {
+                        if (AssigneeType.JOB.equals(map.get(AttributeName.AssigneeType).get(0).getValue())) {
+                            log.info("职位节点");
+                            log.info(userTask.getName() + "---" + userTask.getAssignee());
+                            String assignee = userTask.getAssignee();
+                            assignee = assignee.replace("${", "").replace("}", "");
+                            //
+                        }
+                    }
+                }
+            }
+        }
+
 
         Random random = new Random();
         TaskDemo taskDemo = new TaskDemo();
@@ -327,6 +360,10 @@ public class WflowDefineController {
         taskDemo.setTotal(Math.random() * 200);
         log.info("系统随机数-----------" + taskDemo.getTotal());
         Map map = JSON.parseObject(JSON.toJSONString(taskDemo), Map.class);
+        map.put("agent", "1");
+        map.put("day", random.nextInt(10));
+        Map map1 = wlfowUser.SignedPersonnel();
+        map.putAll(map1);
         log.info("系统随机数-----------" + map);
         //得到processEngine对象
         ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
