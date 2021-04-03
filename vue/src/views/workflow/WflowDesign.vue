@@ -160,7 +160,7 @@ export default {
         propertiesProviderModule,
         // 右边的工具栏
         propertiesPanelModule,
-        // 汉化
+        // 
         customTranslateModule,
         // activiti
         // activitiExtensionModule

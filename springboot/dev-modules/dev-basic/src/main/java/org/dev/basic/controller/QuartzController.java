@@ -67,10 +67,13 @@ public class QuartzController {
                     .withDescription(quartz.getDescription()).build();
             putDataMap(job, quartz);
 
+            SimpleScheduleBuilder scheduleBuilder = SimpleScheduleBuilder.simpleSchedule()
+                    .withIntervalInSeconds(1) //每一秒执行一次
+                    .repeatForever(); //永久重复，一直执行下去
             // 触发时间点
-            CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(quartz.getCronExpression().trim());
+            //CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(quartz.getCronExpression().trim());
             Trigger trigger = TriggerBuilder.newTrigger().withIdentity(TRIGGER_IDENTITY + quartz.getJobName(), quartz.getJobGroup())
-                    .startNow().withSchedule(cronScheduleBuilder).build();
+                    .startNow().withSchedule(scheduleBuilder).build();
             //交由Scheduler安排触发
             scheduler.scheduleJob(job, trigger);
             return ResponseResult.success();
