@@ -11,6 +11,7 @@ public class QuartzJob {
     private String jobGroup;//任务分组
     private String description;//任务描述
     private String jobClassName;//执行类
+    private String jobType;//执行类
     private String cronExpression;//执行时间
     private String triggerName;//执行时间
     private String triggerState;//任务状态
@@ -23,7 +24,8 @@ public class QuartzJob {
     public QuartzJob() {
         super();
     }
-    public QuartzJob(String jobName, String jobGroup, String description, String jobClassName, String cronExpression, String triggerName) {
+
+    public QuartzJob(String jobName, String jobGroup, String description, String jobClassName, String jobType, String cronExpression, String triggerName) {
         super();
         this.jobName = jobName;
         this.jobGroup = jobGroup;
@@ -31,6 +33,7 @@ public class QuartzJob {
         this.jobClassName = jobClassName;
         this.cronExpression = cronExpression;
         this.triggerName = triggerName;
+        this.jobType = jobType;
 
     }
 }

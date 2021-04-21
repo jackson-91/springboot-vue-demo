@@ -3,18 +3,20 @@
     <div>
       <!--按钮列表-->
       <el-button-group class="toolBox">
-        <el-button size="small" v-for="(item, index) in buttonGroups" :key="index" @click="dynamicMethod(item.method, item.params)" :icon="item.icon">{{ item.label }}</el-button>
+        <el-button size="small" v-for="(item, index) in buttonGroups" :key="index" @click="dynamicMethod(item.method, item.params)" :icon="item.icon">
+          {{ item.label }}</el-button>
       </el-button-group>
     </div>
     <!--数据表格-->
     <el-row>
       <el-col :span="24">
-        <el-table :data="tableData" border stripe highlight-current-row ref="multipleTable" :height="tableHeight" @row-click="handleRowClick" style="width: 100%">
+        <el-table :data="tableData" border stripe highlight-current-row ref="multipleTable" :height="tableHeight" @row-click="handleRowClick"
+          style="width: 100%">
           <el-table-column type="selection" width="55"> </el-table-column>
           <el-table-column type="index" width="65" label="序号" align="center" fixed :show-overflow-tooltip="true"></el-table-column>
           <template v-for="(el, i) in tableColumns">
-            <el-table-column :label="el.label" header-align="center" v-if="el.show" :width="el.width || ''" :key="el.prop" :fixed="el.fixed" :prop="el.prop" :sortable="el.sortable"
-              show-overflow-tooltip>
+            <el-table-column :label="el.label" header-align="center" v-if="el.show" :width="el.width || ''" :key="el.prop" :fixed="el.fixed"
+              :prop="el.prop" :sortable="el.sortable" show-overflow-tooltip>
             </el-table-column>
           </template>
           <el-table-column fixed="right" label="操作" width="300">
@@ -37,13 +39,14 @@
     <!--分页插件-->
     <el-row>
       <el-col :span="24">
-        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="current" :page-sizes="pageSizeOptions" :page-size="size"
-          layout="total, sizes, prev, pager, next, jumper" :total="total">
+        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="current" :page-sizes="pageSizeOptions"
+          :page-size="size" layout="total, sizes, prev, pager, next, jumper" :total="total">
         </el-pagination>
       </el-col>
     </el-row>
     <!--新增编辑页面-->
-    <CustomForm :show.sync="showForm" title="流程定义编辑" :control="wflowDefineControl" :model="wflowDefineForm" :rules="wflowDefineRules" @ok="saveForm" @hidden="showForm = false" />
+    <CustomForm :show.sync="showForm" title="流程定义编辑" :control="wflowDefineControl" :model="wflowDefineForm" :rules="wflowDefineRules" @ok="saveForm"
+      @hidden="showForm = false" />
     <!--列自定义-->
     <CustomTableCols :defaultCols="defaultColumns" customName="wflowDefine" @changeColumns="changeColumns" />
     <!--查询条件-->
@@ -89,13 +92,7 @@ export default {
       pageSizeOptions: [10, 20, 50, 100],
       searchForm: { name: "", key: "" },
       searchCondition: [
-        {
-          index: 0,
-          label: "流程名称",
-          field: "name",
-          type: "input",
-          show: true,
-        },
+        { index: 0, label: "流程名称", field: "name", type: "input", show: true, },
         { index: 1, label: "流程key", field: "key", type: "input", show: true },
       ],
       showSearch: false,

@@ -1,93 +1,50 @@
 <template>
   <div>
     <el-row>
-      <el-col :span="5"
-              :height="tableHeight">
+      <el-col :span="5" :height="tableHeight">
         <el-card class="box-card">
           <div slot="header">
             <el-button-group class="toolBox">
-              <el-button size="small"
-                         v-for="(item,index) in buttonGroups"
-                         :key="index"
-                         @click="dynamicMethod(item.method)"
-                         :icon="item.icon">{{item.label}}</el-button>
+              <el-button size="small" v-for="(item,index) in buttonGroups" :key="index" @click="dynamicMethod(item.method)" :icon="item.icon">
+                {{item.label}}</el-button>
             </el-button-group>
           </div>
-          <el-tree node-key="id"
-                   :style="'height:' + (tableHeight) + 'px;overflow-y: auto;'"
-                   :data="treeData"
-                   @node-click="nodeclick"
-                   :props="treeProps"
-                   :render-content="renderContent"
-                   :highlight-current="true"></el-tree>
+          <el-tree node-key="id" :style="'height:' + (tableHeight) + 'px;overflow-y: auto;'" :data="treeData" @node-click="nodeclick"
+            :props="treeProps" :render-content="renderContent" :highlight-current="true"></el-tree>
         </el-card>
       </el-col>
-      <el-col :span="19"
-              style="padding-left:10px">
+      <el-col :span="19" style="padding-left:10px">
         <!-- 功能键区 -->
         <div>
-          <el-tabs type="border-card"
-                   :style="'height:' + (tableHeight+108) + 'px;overflow-y: auto;'">
+          <el-tabs type="border-card" :style="'height:' + (tableHeight+108) + 'px;overflow-y: auto;'">
             <el-tab-pane label="方法管理">
-              <el-form :inline="true"
-                       class="demo-form-inline"
-                       style="text-align: left">
+              <el-form :inline="true" class="demo-form-inline" style="text-align: left">
                 <el-form-item label="菜单代码">
-                  <el-input v-model="menuCode"
-                            disabled="disabled"></el-input>
+                  <el-input v-model="menuCode" disabled="disabled"></el-input>
                 </el-form-item>
                 <el-form-item label="菜单名称">
-                  <el-input v-model="menuName"
-                            disabled="disabled"></el-input>
+                  <el-input v-model="menuName" disabled="disabled"></el-input>
                 </el-form-item>
               </el-form>
               <el-button-group class="toolBox">
-                <el-button size="small"
-                           v-for="(item,index) in buttonGroups2"
-                           :key="index"
-                           @click="dynamicMethod(item.method)"
-                           :render-content="renderContent"
-                           :icon="item.icon">{{item.label}}</el-button>
+                <el-button size="small" v-for="(item,index) in buttonGroups2" :key="index" @click="dynamicMethod(item.method)"
+                  :render-content="renderContent" :icon="item.icon">{{item.label}}</el-button>
               </el-button-group>
               <el-row>
                 <el-col :span="24">
-                  <el-table :data="tableData"
-                            border
-                            stripe
-                            highlight-current-row
-                            ref="multipleTable"
-                            :height="tableHeight-150"
-                            style="width: 100%">
-                    <el-table-column type="selection"
-                                     width="55">
+                  <el-table :data="tableData" border stripe highlight-current-row ref="multipleTable" :height="tableHeight-150" style="width: 100%">
+                    <el-table-column type="selection" width="55">
                     </el-table-column>
-                    <el-table-column type="index"
-                                     width="65"
-                                     label="序号"
-                                     align="center"
-                                     fixed
-                                     :show-overflow-tooltip="true"></el-table-column>
+                    <el-table-column type="index" width="65" label="序号" align="center" fixed :show-overflow-tooltip="true"></el-table-column>
                     <template v-for="(el,i) in tableColumns">
-                      <el-table-column :label="el.label"
-                                       header-align="center"
-                                       v-if="el.show "
-                                       :width="el.width || ''"
-                                       :key="el.prop"
-                                       :fixed="el.fixed"
-                                       :prop="el.prop"
-                                       show-overflow-tooltip>
+                      <el-table-column :label="el.label" header-align="center" v-if="el.show " :width="el.width || ''" :key="el.prop"
+                        :fixed="el.fixed" :prop="el.prop" show-overflow-tooltip>
                       </el-table-column>
                     </template>
-                    <el-table-column fixed="right"
-                                     label="操作"
-                                     width="200">
+                    <el-table-column fixed="right" label="操作" width="200">
                       <template slot-scope="scope">
-                        <el-button type="text"
-                                   @click="handleDelClick(scope.row)"
-                                   size="small">删除</el-button>
-                        <el-button type="text"
-                                   @click="handleEditClick(scope.row)"
-                                   size="small">编辑</el-button>
+                        <el-button type="text" @click="handleDelClick(scope.row)" size="small">删除</el-button>
+                        <el-button type="text" @click="handleEditClick(scope.row)" size="small">编辑</el-button>
                       </template>
                     </el-table-column>
                   </el-table>
@@ -97,20 +54,13 @@
               <!--分页插件-->
               <el-row>
                 <el-col :span="24">
-                  <el-pagination @size-change="handleSizeChange"
-                                 @current-change="handleCurrentChange"
-                                 :current-page="current"
-                                 :page-sizes="pageSizeOptions"
-                                 :page-size="size"
-                                 layout="total, sizes, prev, pager, next, jumper"
-                                 :total="total">
+                  <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="current"
+                    :page-sizes="pageSizeOptions" :page-size="size" layout="total, sizes, prev, pager, next, jumper" :total="total">
                   </el-pagination>
                 </el-col>
               </el-row>
               <!--列自定义-->
-              <CustomTableCols :defaultCols="defaultColumns"
-                               customName="sysfunc"
-                               @changeColumns="changeColumns" />
+              <CustomTableCols :defaultCols="defaultColumns" customName="sysfunc" @changeColumns="changeColumns" />
             </el-tab-pane>
           </el-tabs>
         </div>
@@ -118,25 +68,11 @@
       </el-col>
     </el-row>
     <!--新增编辑菜单页面-->
-    <CustomForm :show.sync="showForm"
-                title="菜单编辑"
-                :control="menuControl"
-                :model="menuForm"
-                ref="tree"
-                :rules="menuRules"
-                @check-change="handleCheckChange"
-                @ok="saveForm"
-                @hidden="showForm=false" />
+    <CustomForm :show.sync="showForm" title="菜单编辑" :control="menuControl" :model="menuForm" ref="tree" :rules="menuRules"
+      @check-change="handleCheckChange" @ok="saveForm" @hidden="showForm=false" />
     <!--新增编辑菜单方法-->
-    <CustomForm :show.sync="showFunc"
-                title="功能编辑"
-                :control="funcControl"
-                :model="funcForm"
-                ref="tree"
-                :rules="funcRules"
-                @check-change="handleCheckChange"
-                @ok="saveFunc"
-                @hidden="showFunc=false" />
+    <CustomForm :show.sync="showFunc" title="功能编辑" :control="funcControl" :model="funcForm" ref="tree" :rules="funcRules"
+      @check-change="handleCheckChange" @ok="saveFunc" @hidden="showFunc=false" />
   </div>
 
 </template>
@@ -146,7 +82,7 @@ import CustomForm from '../../components/CustomForm'
 import CustomTableCols from '../../components/CustomTableCols'
 export default {
   components: { CustomForm, CustomTableCols },
-  data () {
+  data() {
     return {
       tableHeight: '400px',
       treeData: [],
@@ -225,14 +161,14 @@ export default {
     }
   },
   methods: {
-    loadTree () {
+    loadTree() {
       this.$http.get('/api/sysMenu/tree-list', {}).then(res => {
         this.treeData = res.data
       }).catch(err => {
         console.log(err.message)
       })
     },
-    renderContent (h, { node, data, store }) {
+    renderContent(h, { node, data, store }) {
       return (
         <span class="custom-tree-node">
           <span>
@@ -255,13 +191,13 @@ export default {
     /**
      * 动态调用方法
      */
-    dynamicMethod (methodname) {
+    dynamicMethod(methodname) {
       this[methodname]()
     },
     /***
      *菜单新增
      */
-    add () {
+    add() {
       for (const item in this.menuForm) {
         this.menuForm[item] = ''
       }
@@ -271,7 +207,7 @@ export default {
     /**
      *点击节点
      */
-    nodeclick (node) {
+    nodeclick(node) {
       this.selectNode = node
       this.menuCode = this.selectNode.menuCode
       this.menuName = this.selectNode.menuName
@@ -280,7 +216,7 @@ export default {
     /**
      * 编辑修改菜单
      */
-    edit () {
+    edit() {
       if (this.selectNode == null) {
         this.$message.warning('请选择要操作的节点')
         return
@@ -294,7 +230,7 @@ export default {
     /**
      * 删除
      */
-    delete () {
+    delete() {
       if (this.selectNode == null) {
         this.$message.warning('请选择要操作的节点')
         return
@@ -321,7 +257,7 @@ export default {
     /***
    *打开新增编辑
    */
-    openAddAndEdit (func, data) {
+    openAddAndEdit(func, data) {
       switch (func) {
         case 'add':
           for (const item in this.menuForm) {
@@ -363,7 +299,7 @@ export default {
     /**
      * 节点选中事件
      */
-    handleCheckChange () {
+    handleCheckChange() {
       const res = this.$refs.tree.getCheckedNodes()
       const arr = []
       res.forEach((item) => {
@@ -374,7 +310,7 @@ export default {
     /**
      *菜单保存
      */
-    saveForm (from) {
+    saveForm(from) {
       const newData = JSON.parse(JSON.stringify(from))
       this.menuForm = newData
       this.$http.post('/api/sysMenu/save', this.menuForm).then(res => {
@@ -392,13 +328,13 @@ export default {
     /**
    * 隐藏编辑表单
    */
-    hidForm (val) {
+    hidForm(val) {
       this.showForm = val
     },
     /**
      *展示新增页面
      */
-    addFunc () {
+    addFunc() {
       if (this.selectNode == null) {
         this.$message.warning('请先选择菜单节点')
         return
@@ -413,7 +349,7 @@ export default {
     /**
     *方法保存
     */
-    saveFunc (from) {
+    saveFunc(from) {
       const newData = JSON.parse(JSON.stringify(from))
       this.funcForm = newData
       this.$http.post('/api/sysFunc/save', this.funcForm).then(res => {
@@ -431,7 +367,7 @@ export default {
     /**
      * 删除方法
      */
-    deleteFunc () {
+    deleteFunc() {
       if (this.$refs.multipleTable.selection.length <= 0) {
         this.$message.warning('请选择要操作的数据')
         return
@@ -462,7 +398,7 @@ export default {
     /**
      * 删除方法
      */
-    handleDelClick (row) {
+    handleDelClick(row) {
       // 设置账号栏位不可编辑
       this.$confirm('此操作将永久删除该方法, 是否继续?', '提示', {
         confirmButtonText: '确定',
@@ -486,7 +422,7 @@ export default {
     /**
      * 修改数据
      */
-    handleEditClick (row) {
+    handleEditClick(row) {
       // 设置账号栏位不可编辑
       for (const item in this.funcForm) {
         this.funcForm[item] = ''
@@ -504,20 +440,20 @@ export default {
     /**  deleteFunc
    * 隐藏方法保存
    */
-    hidFunc (val) {
+    hidFunc(val) {
       this.showFunc = val
     },
     /**
      * 自定义列修改
      */
-    changeColumns (val) {
+    changeColumns(val) {
       console.log('changeColumns--' + val)
       this.tableColumns = []
       this.$nextTick(() => {
         this.tableColumns = val
       })
     },
-    searchData () {
+    searchData() {
       if (this.selectNode) {
         this.$http.get('/api/sysFunc/menu-func-list', { params: this._handerParams() }).then(res => {
           if (res.code == '0') {
@@ -536,7 +472,7 @@ export default {
     /**
    * 查询条件处理
    */
-    _handerParams () {
+    _handerParams() {
       const params = {
         current: this.current,
         size: this.size,
@@ -547,7 +483,7 @@ export default {
     /**
      * table每页数字变化
      */
-    handleSizeChange (val) {
+    handleSizeChange(val) {
       console.log(`每页 ${val} 条`)
       this.size = val
       this.searchData()
@@ -555,13 +491,13 @@ export default {
     /**
      * table页数变化
      */
-    handleCurrentChange (val) {
+    handleCurrentChange(val) {
       console.log(`当前页: ${val}`)
       this.current = val
       this.searchData()
     }
   },
-  created () {
+  created() {
     this.tableHeight = document.documentElement.clientHeight - 280
     this.tableColumns = this.defaultColumns
     this.loadTree()

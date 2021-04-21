@@ -3,55 +3,27 @@
     <div>
       <!--按钮列表-->
       <el-button-group class="toolBox">
-        <el-button size="small"
-                   v-for="(item,index) in buttonGroups"
-                   :key="index"
-                   @click="dynamicMethod(item.method,item.params)"
-                   :icon="item.icon">{{item.label}}</el-button>
+        <el-button size="small" v-for="(item,index) in buttonGroups" :key="index" @click="dynamicMethod(item.method,item.params)" :icon="item.icon">
+          {{item.label}}</el-button>
       </el-button-group>
     </div>
     <!--数据表格-->
     <el-row>
       <el-col :span="24">
-        <el-table :data="tableData"
-                  border
-                  stripe
-                  highlight-current-row
-                  ref="multipleTable"
-                  :height="tableHeight"
-                  @row-click="handleRowClick"
-                  style="width: 100%">
-          <el-table-column type="selection"
-                           width="55">
+        <el-table :data="tableData" border stripe highlight-current-row ref="multipleTable" :height="tableHeight" @row-click="handleRowClick"
+          style="width: 100%">
+          <el-table-column type="selection" width="55">
           </el-table-column>
-          <el-table-column type="index"
-                           width="65"
-                           label="序号"
-                           align="center"
-                           fixed
-                           :show-overflow-tooltip="true"></el-table-column>
+          <el-table-column type="index" width="65" label="序号" align="center" fixed :show-overflow-tooltip="true"></el-table-column>
           <template v-for="(el,i) in tableColumns">
-            <el-table-column :label="el.label"
-                             header-align="center"
-                             v-if="el.show "
-                             :width="el.width || ''"
-                             :key="el.prop"
-                             :fixed="el.fixed"
-                             :prop="el.prop"
-                             :sortable="el.sortable"
-                             show-overflow-tooltip>
+            <el-table-column :label="el.label" header-align="center" v-if="el.show " :width="el.width || ''" :key="el.prop" :fixed="el.fixed"
+              :prop="el.prop" :sortable="el.sortable" show-overflow-tooltip>
             </el-table-column>
           </template>
-          <el-table-column fixed="right"
-                           label="操作"
-                           width="300">
+          <el-table-column fixed="right" label="操作" width="300">
             <template slot-scope="scope">
-              <el-button type="text"
-                         @click="handleEditClick(scope.row)"
-                         size="small">业务单据</el-button>
-              <el-button type="text"
-                         @click="handleViewProcessClick(scope.row)"
-                         size="small">查看流程图</el-button>
+              <el-button type="text" @click="handleEditClick(scope.row)" size="small">业务单据</el-button>
+              <el-button type="text" @click="handleViewProcessClick(scope.row)" size="small">查看流程图</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -60,31 +32,18 @@
     <!--分页插件-->
     <el-row>
       <el-col :span="24">
-        <el-pagination @size-change="handleSizeChange"
-                       @current-change="handleCurrentChange"
-                       :current-page="current"
-                       :page-sizes="pageSizeOptions"
-                       :page-size="size"
-                       layout="total, sizes, prev, pager, next, jumper"
-                       :total="total">
+        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="current" :page-sizes="pageSizeOptions"
+          :page-size="size" layout="total, sizes, prev, pager, next, jumper" :total="total">
         </el-pagination>
       </el-col>
     </el-row>
     <!--列自定义-->
-    <CustomTableCols :defaultCols="defaultColumns"
-                     customName="wlfowAllTask"
-                     @changeColumns="changeColumns" />
+    <CustomTableCols :defaultCols="defaultColumns" customName="wlfowAllTask" @changeColumns="changeColumns" />
     <!--查询条件-->
-    <Search :show.sync="showSearch"
-            :condition="searchCondition"
-            :form="searchForm"
-            @ok="setCondition"
-            @hidden="hidCondition" />
+    <Search :show.sync="showSearch" :condition="searchCondition" :form="searchForm" @ok="setCondition" @hidden="hidCondition" />
     <!--流程图-->
-    <el-dialog title="流程图"
-               :visible.sync="showView">
-      <img :src="imgSrc"
-           style="width: 100%; height: 100%" />
+    <el-dialog title="流程图" :visible.sync="showView">
+      <img :src="imgSrc" style="width: 100%; height: 100%" />
       <br />
     </el-dialog>
   </div>
@@ -99,7 +58,7 @@ export default {
     CustomTableCols,
     Search
   },
-  data () {
+  data() {
     return {
       initData: {},
       tableData: [],
@@ -136,7 +95,7 @@ export default {
   },
 
   methods: {
-    searchData () {
+    searchData() {
       this.$http
         .get('/api/wflowTask/all-list', {
           params: this._handerParams()
@@ -158,7 +117,7 @@ export default {
     /**
      * 查询条件处理
      */
-    _handerParams () {
+    _handerParams() {
       const params = {
         current: this.current,
         size: this.size,
@@ -171,38 +130,38 @@ export default {
     /**
      * 选择事件
      */
-    handleSelectionChange (val) {
+    handleSelectionChange(val) {
       this.multipleSelection = val
     },
     // 点击行触发，选中或不选中复选框
-    handleRowClick (row, column, event) {
+    handleRowClick(row, column, event) {
       this.$refs.multipleTable.toggleRowSelection(row)
     },
 
     /**
      * 动态调用方法
      */
-    dynamicMethod (methodname, params) {
+    dynamicMethod(methodname, params) {
       this[methodname](params)
     },
     /**
      * 展示查询条件
      */
-    showCondition () {
+    showCondition() {
       this.showSearch = true
       console.log(this.showSearch)
     },
     /**
      * 隐藏查询条件
      */
-    hidCondition (val) {
+    hidCondition(val) {
       console.log('hiddiv' + val)
       this.showSearch = val
     },
     /**
      * 设置查询条件
      */
-    setCondition (from) {
+    setCondition(from) {
       const newData = JSON.parse(JSON.stringify(from))
       this.searchForm = newData
       this.searchData()
@@ -212,7 +171,7 @@ export default {
     /**
    * 查看流程图
    */
-    handleViewProcessClick (row) {
+    handleViewProcessClick(row) {
       // 设置账号栏位不可编辑
       this.showView = true
       this.imgSrc = '/api/wflowChart/traceprocess?processInstanceId=' + row.processInstanceId
@@ -221,7 +180,7 @@ export default {
     /**
      * 自定义列修改
      */
-    changeColumns (val) {
+    changeColumns(val) {
       console.log('changeColumns--' + val)
       this.tableColumns = []
       this.$nextTick(() => {
@@ -231,7 +190,7 @@ export default {
     /**
      * table每页数字变化
      */
-    handleSizeChange (val) {
+    handleSizeChange(val) {
       console.log(`每页 ${val} 条`)
       this.size = val
       this.searchData()
@@ -239,13 +198,13 @@ export default {
     /**
      * table页数变化
      */
-    handleCurrentChange (val) {
+    handleCurrentChange(val) {
       console.log(`当前页: ${val}`)
       this.current = val
       this.searchData()
     }
   },
-  created () {
+  created() {
     this.tableHeight = document.documentElement.clientHeight - 280
     //
     this.tableColumns = this.defaultColumns

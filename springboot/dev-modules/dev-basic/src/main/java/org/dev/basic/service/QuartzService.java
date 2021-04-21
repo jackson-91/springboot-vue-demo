@@ -6,5 +6,5 @@ import org.dev.basic.entity.QuartzJob;
 
 
 public interface QuartzService {
-    IPage<QuartzJob> page(Page<?> page, String jobName);
+    IPage<QuartzJob> page(Page<?> page, String jobName,String jobType);
 }

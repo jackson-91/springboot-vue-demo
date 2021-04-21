@@ -11,9 +11,7 @@
           <img src="~@/assets/img/avatar.png" :alt="userName" />{{ userName }}
         </span>
         <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item @click.native="updatePasswordHandle()"
-            >修改密码</el-dropdown-item
-          >
+          <el-dropdown-item @click.native="updatePasswordHandle()">修改密码</el-dropdown-item>
           <el-dropdown-item @click.native="logout()">退出</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
@@ -22,63 +20,34 @@
     <el-container class="main-container">
       <!--左侧菜单-->
       <el-aside :width="isCollapse ? '64px' : '200px'">
-        <Menu
-          v-bind:isCollapse="isCollapse"
-          :BreadcrumbList="BreadcrumbList"
-          @changeBreadcrumb="changeBreadcrumb"
-          ref="menu"
-        />
+        <Menu v-bind:isCollapse="isCollapse" :BreadcrumbList="BreadcrumbList" @changeBreadcrumb="changeBreadcrumb" ref="menu" />
         <div class="toggle-button" @click="toggleCollapse">
-          <i
-            :class="
+          <i :class="
               isCollapse ? 'el-icon-d-arrow-right' : 'el-icon-d-arrow-left'
-            "
-          ></i>
+            "></i>
         </div>
       </el-aside>
       <!--右侧主体-->
       <el-main :style="setMarginLeft">
+
+        <el-dropdown class="site-tabs__tools" :show-timeout="0">
+          <i class="el-icon-arrow-down el-icon--right"></i>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item @click.native="tabsCloseCurrentHandle">关闭当前标签页</el-dropdown-item>
+            <el-dropdown-item @click.native="tabsCloseOtherHandle">关闭其它标签页</el-dropdown-item>
+            <el-dropdown-item @click.native="tabsCloseAllHandle">关闭全部标签页</el-dropdown-item>
+            <el-dropdown-item @click.native="tabsRefreshCurrentHandle">刷新当前标签页</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
         <keep-alive>
-          <el-tabs
-            v-model="mainTabsActiveName"
-            type="border-card"
-            @tab-click="tabClick"
-            @tab-remove="removeTab"
-          >
-            <!-- <el-dropdown class="site-tabs__tools" :show-timeout="0">
-            <i class="el-icon-arrow-down el-icon--right"></i>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item @click.native="tabsCloseCurrentHandle"
-                >关闭当前标签页</el-dropdown-item
-              >
-              <el-dropdown-item @click.native="tabsCloseOtherHandle"
-                >关闭其它标签页</el-dropdown-item
-              >
-              <el-dropdown-item @click.native="tabsCloseAllHandle"
-                >关闭全部标签页</el-dropdown-item
-              >
-              <el-dropdown-item @click.native="tabsRefreshCurrentHandle"
-                >刷新当前标签页</el-dropdown-item
-              >
-            </el-dropdown-menu>
-          </el-dropdown> -->
-            <el-tab-pane
-              :key="item.name"
-              v-for="(item, index) in editableTabs"
-              :label="item.title"
-              :name="item.name"
-              :closable="item.name == '/welcome' ? false : true"
-            >
+          <el-tabs v-model="mainTabsActiveName" type="border-card" @tab-click="tabClick" @tab-remove="removeTab">
+            <el-tab-pane :key="item.name" v-for="(item, index) in editableTabs" :label="item.title" :name="item.name"
+              :closable="item.name == '/welcome' ? false : true">
             </el-tab-pane>
             <el-card :body-style="siteContentViewHeight">
               <el-breadcrumb separator-class="el-icon-arrow-right">
                 <el-breadcrumb-item @click="goHome">首页</el-breadcrumb-item>
-                <el-breadcrumb-item
-                  v-for="item in BreadcrumbList"
-                  :index="item.id"
-                  :key="item.id"
-                  >{{ item.menuName }}</el-breadcrumb-item
-                >
+                <el-breadcrumb-item v-for="item in BreadcrumbList" :index="item.id" :key="item.id">{{ item.menuName }}</el-breadcrumb-item>
               </el-breadcrumb>
               <!-- <keep-alive>
                 <router-view
@@ -309,11 +278,22 @@ export default {
           min-width: 90px !important;
         }
         .site-tabs__tools {
-          position: absolute;
-          top: -15px;
+          position: absolute !important;
         }
       }
     }
   }
+}
+.site-tabs__tools {
+  position: absolute;
+  top: 0px;
+  right: 0;
+  z-index: 100;
+  height: 40px;
+  padding: 0 12px;
+  font-size: 16px;
+  line-height: 40px;
+  background-color: #ffffff;
+  cursor: pointer;
 }
 </style>

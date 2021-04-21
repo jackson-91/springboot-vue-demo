@@ -3,24 +3,26 @@
     <div>
       <!--按钮列表-->
       <el-button-group class="toolBox">
-        <el-button size="small" v-for="(item, index) in buttonGroups" :key="index" @click="dynamicMethod(item.method, item.params)" :icon="item.icon">{{ item.label }}</el-button>
+        <el-button size="small" v-for="(item, index) in buttonGroups" :key="index" @click="dynamicMethod(item.method, item.params)" :icon="item.icon">
+          {{ item.label }}</el-button>
       </el-button-group>
     </div>
     <!--数据表格-->
     <el-row>
       <el-col :span="24">
-        <el-table :data="tableData" border stripe highlight-current-row ref="multipleTable" :height="tableHeight" @row-click="handleRowClick" style="width: 100%">
+        <el-table :data="tableData" border stripe highlight-current-row ref="multipleTable" :height="tableHeight" @row-click="handleRowClick"
+          style="width: 100%">
           <el-table-column type="selection" width="55"> </el-table-column>
           <el-table-column type="index" width="65" label="序号" align="center" fixed :show-overflow-tooltip="true"></el-table-column>
           <template v-for="(el, i) in tableColumns">
-            <el-table-column :label="el.label" header-align="center" v-if="el.show && el.prop === 'education'" :width="el.width || ''" :key="el.prop" :fixed="el.fixed" :prop="el.prop"
-              :sortable="el.sortable" show-overflow-tooltip>
+            <el-table-column :label="el.label" header-align="center" v-if="el.show && el.prop === 'education'" :width="el.width || ''" :key="el.prop"
+              :fixed="el.fixed" :prop="el.prop" :sortable="el.sortable" show-overflow-tooltip>
               <template slot-scope="scope">{{
                 scope.row.education | dic('EDUCATION')
               }}</template>
             </el-table-column>
-            <el-table-column :label="el.label" header-align="center" v-else-if="el.show" :width="el.width || ''" :key="el.prop" :fixed="el.fixed" :prop="el.prop" :sortable="el.sortable"
-              show-overflow-tooltip>
+            <el-table-column :label="el.label" header-align="center" v-else-if="el.show" :width="el.width || ''" :key="el.prop" :fixed="el.fixed"
+              :prop="el.prop" :sortable="el.sortable" show-overflow-tooltip>
             </el-table-column>
           </template>
           <el-table-column fixed="right" label="操作" width="300">
@@ -38,8 +40,8 @@
     <!--分页插件-->
     <el-row>
       <el-col :span="24">
-        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="current" :page-sizes="pageSizeOptions" :page-size="size"
-          layout="total, sizes, prev, pager, next, jumper" :total="total">
+        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="current" :page-sizes="pageSizeOptions"
+          :page-size="size" layout="total, sizes, prev, pager, next, jumper" :total="total">
         </el-pagination>
       </el-col>
     </el-row>
@@ -48,11 +50,12 @@
     <!--查询条件-->
     <Search :show.sync="showSearch" :condition="searchCondition" :form="searchForm" @ok="setCondition" @hidden="showSearch = false" />
     <!--新增编辑页面-->
-    <CustomForm :show.sync="showForm" title="员工编辑" :control="employeControl" :model="employeForm" :rules="employeRules" @ok="saveForm" @hidden="showForm = false" />
+    <CustomForm :show.sync="showForm" title="员工编辑" :control="employeControl" :model="employeForm" :rules="employeRules" @ok="saveForm"
+      @hidden="showForm = false" />
     <!--分配角色-->
     <el-dialog title="角色分配" :visible.sync="visible" width="400px" @close="visible = false">
-      <el-tree node-key="id" style="height: 400px !important; overflow-y: auto" :data="treeData" :props="treeProps" ref="tree" show-checkbox :highlight-current="true"
-        :default-checked-keys="checkedKeys" :default-expand-all="true"></el-tree>
+      <el-tree node-key="id" style="height: 400px !important; overflow-y: auto" :data="treeData" :props="treeProps" ref="tree" show-checkbox
+        :highlight-current="true" :default-checked-keys="checkedKeys" :default-expand-all="true"></el-tree>
       <div slot="footer" class="dialog-footer">
         <el-button @click="visible = false">取消</el-button>
         <el-button @click="selectAll()" type="primary">全选</el-button>
@@ -106,153 +109,34 @@ export default {
       searchCondition: [
         { index: 0, label: "工号", field: "workNo", type: "input", show: true },
         { index: 1, label: "姓名", field: "name", type: "input", show: true },
-        {
-          index: 2,
-          label: "英文名",
-          field: "foreignName",
-          type: "input",
-          show: true,
-        },
-        {
-          index: 3,
-          label: "手机号",
-          field: "mobilePhone",
-          type: "input",
-          show: true,
-        },
+        { index: 2, label: "英文名", field: "foreignName", type: "input", show: true, },
+        { index: 3, label: "手机号", field: "mobilePhone", type: "input", show: true, },
         { index: 4, label: "邮箱", field: "email", type: "input", show: true },
         { index: 6, label: "状态", field: "status", type: "input", show: true },
       ],
       showSearch: false,
       buttonGroups: [
-        {
-          index: 0,
-          label: "查询",
-          method: "showCondition",
-          icon: "el-icon-search",
-        },
+        { index: 0, label: "查询", method: "showCondition", icon: "el-icon-search", },
         { index: 1, label: "新建", method: "addAndEdit", icon: "el-icon-plus" },
-        {
-          index: 2,
-          label: "离职",
-          method: "enableemploye",
-          params: false,
-          icon: "el-icon-delete",
-        },
+        { index: 2, label: "离职", method: "enableemploye", params: false, icon: "el-icon-delete", },
         { index: 5, label: "删除", method: "delete", icon: "el-icon-delete" },
-        {
-          index: 6,
-          label: "刷新",
-          method: "searchData",
-          icon: "el-icon-refresh",
-        },
+        { index: 6, label: "刷新", method: "searchData", icon: "el-icon-refresh", },
       ],
       tableColumns: [],
       defaultColumns: [
-        {
-          label: "工号",
-          prop: "workNo",
-          show: true,
-          fixed: false,
-          sortable: false,
-          width: 100,
-        },
-        {
-          label: "姓名",
-          prop: "name",
-          show: true,
-          fixed: false,
-          sortable: false,
-          width: 100,
-        },
-        {
-          label: "英文名",
-          prop: "foreignName",
-          show: true,
-          fixed: false,
-          sortable: false,
-          width: 100,
-        },
-        {
-          label: "手机",
-          prop: "mobilePhone",
-          show: true,
-          fixed: false,
-          sortable: false,
-          width: 100,
-        },
-        {
-          label: "座机号",
-          prop: "telePhone",
-          show: true,
-          fixed: false,
-          sortable: false,
-          width: 100,
-        },
-        {
-          label: "邮箱",
-          prop: "email",
-          show: true,
-          fixed: false,
-          sortable: false,
-          width: 150,
-        },
-        {
-          label: "生日",
-          prop: "birthday",
-          show: true,
-          fixed: false,
-          sortable: false,
-          width: 120,
-        },
-        {
-          label: "学历",
-          prop: "education",
-          show: true,
-          fixed: false,
-          sortable: false,
-          width: 100,
-        },
-        {
-          label: "部门",
-          prop: "deptName",
-          show: true,
-          fixed: false,
-          sortable: false,
-          width: 100,
-        },
-        {
-          label: "职位",
-          prop: "position",
-          show: true,
-          fixed: false,
-          sortable: false,
-          width: 100,
-        },
-        {
-          label: "状态",
-          prop: "status",
-          show: true,
-          fixed: false,
-          sortable: false,
-          width: 80,
-        },
-        {
-          label: "入职日期",
-          prop: "entryDate",
-          show: true,
-          fixed: false,
-          sortable: false,
-          width: 120,
-        },
-        {
-          label: "离职日期",
-          prop: "departureDate",
-          show: true,
-          fixed: false,
-          sortable: false,
-          width: 120,
-        },
+        { label: "工号", prop: "workNo", show: true, fixed: false, sortable: false, width: 100, },
+        { label: "姓名", prop: "name", show: true, fixed: false, sortable: false, width: 100, },
+        { label: "英文名", prop: "foreignName", show: true, fixed: false, sortable: false, width: 100, },
+        { label: "手机", prop: "mobilePhone", show: true, fixed: false, sortable: false, width: 100, },
+        { label: "座机号", prop: "telePhone", show: true, fixed: false, sortable: false, width: 100, },
+        { label: "邮箱", prop: "email", show: true, fixed: false, sortable: false, width: 150, },
+        { label: "生日", prop: "birthday", show: true, fixed: false, sortable: false, width: 120, },
+        { label: "学历", prop: "education", show: true, fixed: false, sortable: false, width: 100, },
+        { label: "部门", prop: "deptName", show: true, fixed: false, sortable: false, width: 100, },
+        { label: "职位", prop: "position", show: true, fixed: false, sortable: false, width: 100, },
+        { label: "状态", prop: "status", show: true, fixed: false, sortable: false, width: 80, },
+        { label: "入职日期", prop: "entryDate", show: true, fixed: false, sortable: false, width: 120, },
+        { label: "离职日期", prop: "departureDate", show: true, fixed: false, sortable: false, width: 120, },
       ],
       showForm: false,
       employeForm: {
@@ -271,101 +155,35 @@ export default {
         entryDate: "",
         departureDate: "",
       },
-      employeControl: [
-        {
-          label: "ID",
-          field: "id",
-          type: "hidden",
-          show: false,
-          readonly: true,
+      employeControl: [{ label: "ID", field: "id", type: "hidden", show: false, readonly: true, },
+      { label: "工号", field: "workNo", type: "input", show: true, readonly: true, },
+      { label: "姓名", field: "name", type: "input", show: true, readonly: false, },
+      { label: "英文名", field: "foreignName", type: "input", show: true, readonly: false, },
+      { label: "手机", field: "mobilePhone", type: "input", show: true, readonly: false, },
+      { label: "座机号", field: "telePhone", type: "input", show: true, readonly: false, },
+      { label: "邮箱", field: "email", type: "input", show: true },
+      { label: "生日", field: "birthday", type: "date", show: true },
+      { label: "学历", field: "education", type: "select", show: true, options: null, },
+      {
+        label: "部门", field: "deptId", type: "tree-select", show: true, options: null, isClearable: true, // 可清空（可选）
+        isAccordion: true, // 可收起（可选
+        props: {
+          // 配置项（必选）
+          value: "id", label: "deptName", children: "children",
         },
-        {
-          label: "工号",
-          field: "workNo",
-          type: "input",
-          show: true,
-          readonly: true,
-        },
-        {
-          label: "姓名",
-          field: "name",
-          type: "input",
-          show: true,
-          readonly: false,
-        },
-        {
-          label: "英文名",
-          field: "foreignName",
-          type: "input",
-          show: true,
-          readonly: false,
-        },
-        {
-          label: "手机",
-          field: "mobilePhone",
-          type: "input",
-          show: true,
-          readonly: false,
-        },
-        {
-          label: "座机号",
-          field: "telePhone",
-          type: "input",
-          show: true,
-          readonly: false,
-        },
-        { label: "邮箱", field: "email", type: "input", show: true },
-        { label: "生日", field: "birthday", type: "date", show: true },
-        {
-          label: "学历",
-          field: "education",
-          type: "select",
-          show: true,
-          options: null,
-        },
-        {
-          label: "部门",
-          field: "deptId",
-          type: "tree-select",
-          show: true,
-          options: null,
-          isClearable: true, // 可清空（可选）
-          isAccordion: true, // 可收起（可选
-          props: {
-            // 配置项（必选）
-            value: "id",
-            label: "deptName",
-            children: "children",
-          },
-        },
-        {
-          label: "职位",
-          field: "position",
-          type: "select",
-          show: true,
-          options: null,
-        },
-        { label: "入职日期", field: "entryDate", type: "date", show: true },
-        { label: "离职日期", field: "departureDate", type: "date", show: true },
+      },
+      { label: "职位", field: "position", type: "select", show: true, options: null, },
+      { label: "入职日期", field: "entryDate", type: "date", show: true },
+      { label: "离职日期", field: "departureDate", type: "date", show: true },
       ],
       employeRules: {
         workNo: [
           { required: true, message: "请输入工号", trigger: "blur" },
-          {
-            min: 3,
-            max: 20,
-            message: "长度在 3 到 20 个字符",
-            trigger: "blur",
-          },
+          { min: 3, max: 20, message: "长度在 3 到 20 个字符", trigger: "blur", },
         ],
         name: [
           { required: true, message: "请输入姓名", trigger: "blur" },
-          {
-            min: 1,
-            max: 50,
-            message: "长度在 3 到 50 个字符",
-            trigger: "blur",
-          },
+          { min: 1, max: 50, message: "长度在 3 到 50 个字符", trigger: "blur", },
         ],
         mobilePhone: [
           { required: true, message: "请输入手机", trigger: "blur" },
@@ -698,7 +516,7 @@ export default {
     /**
      * 授权
      */
-    handleAuthClick() {},
+    handleAuthClick() { },
     /**
      *权限查看
      */

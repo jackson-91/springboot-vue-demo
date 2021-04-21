@@ -3,72 +3,24 @@
     <div>
       <!--按钮列表-->
       <el-button-group class="toolBox">
-        <el-button
-          size="small"
-          v-for="(item, index) in buttonGroups"
-          :key="index"
-          @click="dynamicMethod(item.method, item.params)"
-          :icon="item.icon"
-          >{{ item.label }}</el-button
-        >
+        <el-button size="small" v-for="(item, index) in buttonGroups" :key="index" @click="dynamicMethod(item.method, item.params)" :icon="item.icon">{{ item.label }}</el-button>
       </el-button-group>
     </div>
     <!--数据表格-->
     <el-row>
       <el-col :span="24">
-        <el-table
-          :data="tableData"
-          border
-          stripe
-          highlight-current-row
-          ref="multipleTable"
-          :height="tableHeight"
-          @row-click="handleRowClick"
-          style="width: 100%"
-        >
+        <el-table :data="tableData" border stripe highlight-current-row ref="multipleTable" :height="tableHeight" @row-click="handleRowClick" style="width: 100%">
           <el-table-column type="selection" width="55"> </el-table-column>
-          <el-table-column
-            type="index"
-            width="65"
-            label="序号"
-            align="center"
-            fixed
-            :show-overflow-tooltip="true"
-          ></el-table-column>
+          <el-table-column type="index" width="65" label="序号" align="center" fixed :show-overflow-tooltip="true"></el-table-column>
           <template v-for="(el, i) in tableColumns">
-            <el-table-column
-              :label="el.label"
-              header-align="center"
-              v-if="el.show"
-              :width="el.width || ''"
-              :key="el.prop"
-              :fixed="el.fixed"
-              :prop="el.prop"
-              :sortable="el.sortable"
-              show-overflow-tooltip
-            >
+            <el-table-column :label="el.label" header-align="center" v-if="el.show" :width="el.width || ''" :key="el.prop" :fixed="el.fixed" :prop="el.prop" :sortable="el.sortable" show-overflow-tooltip>
             </el-table-column>
           </template>
           <el-table-column fixed="right" label="操作" width="300">
             <template slot-scope="scope">
-              <el-button
-                @click="handleItemClick(scope.row)"
-                type="text"
-                size="small"
-                >字典配置</el-button
-              >
-              <el-button
-                type="text"
-                @click="handleDelClick(scope.row)"
-                size="small"
-                >删除</el-button
-              >
-              <el-button
-                type="text"
-                @click="handleEditClick(scope.row)"
-                size="small"
-                >编辑</el-button
-              >
+              <el-button @click="handleItemClick(scope.row)" type="text" size="small">字典配置</el-button>
+              <el-button type="text" @click="handleDelClick(scope.row)" size="small">删除</el-button>
+              <el-button type="text" @click="handleEditClick(scope.row)" size="small">编辑</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -77,115 +29,40 @@
     <!--分页插件-->
     <el-row>
       <el-col :span="24">
-        <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="current"
-          :page-sizes="pageSizeOptions"
-          :page-size="size"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="total"
-        >
+        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="current" :page-sizes="pageSizeOptions" :page-size="size" layout="total, sizes, prev, pager, next, jumper" :total="total">
         </el-pagination>
       </el-col>
     </el-row>
     <!--列自定义-->
-    <CustomTableCols
-      :defaultCols="defaultColumns"
-      customName="sysdic"
-      @changeColumns="changeColumns"
-    />
+    <CustomTableCols :defaultCols="defaultColumns" customName="sysdic" @changeColumns="changeColumns" />
     <!--查询条件-->
-    <Search
-      :show.sync="showSearch"
-      :condition="searchCondition"
-      :form="searchForm"
-      @ok="setCondition"
-      @hidden="showSearch = false"
-    />
+    <Search :show.sync="showSearch" :condition="searchCondition" :form="searchForm" @ok="setCondition" @hidden="showSearch = false" />
     <!--新增编辑页面-->
-    <CustomForm
-      :show.sync="showForm"
-      title="字典编辑"
-      :control="dicControl"
-      :model="dicForm"
-      :rules="dicRules"
-      @ok="saveForm"
-      @hidden="showForm = false"
-    />
+    <CustomForm :show.sync="showForm" title="字典编辑" :control="dicControl" :model="dicForm" :rules="dicRules" @ok="saveForm" @hidden="showForm = false" />
 
     <!--字典子列表页面-->
-    <el-drawer
-      title="字典列表"
-      :visible.sync="showDrawer"
-      custom-class="demo-drawer"
-      ref="drawer"
-      size="40%"
-    >
+    <el-drawer title="字典列表" :visible.sync="showDrawer" custom-class="demo-drawer" ref="drawer" size="40%">
       <div class="demo-drawer__content">
         <div>
           <!--按钮列表-->
           <el-button-group class="toolBox">
-            <el-button
-              size="small"
-              v-for="(item, index) in itemButtonGroups"
-              :key="index"
-              @click="dynamicMethod(item.method, item.params)"
-              :icon="item.icon"
-              >{{ item.label }}</el-button
-            >
+            <el-button size="small" v-for="(item, index) in itemButtonGroups" :key="index" @click="dynamicMethod(item.method, item.params)" :icon="item.icon">{{ item.label }}</el-button>
           </el-button-group>
         </div>
         <!--数据表格-->
         <el-row>
           <el-col :span="24">
-            <el-table
-              :data="itemTableData"
-              border
-              stripe
-              highlight-current-row
-              ref="multipleItemTable"
-              :height="itemTableHeight"
-              @row-click="handleItemRowClick"
-              style="width: 100%"
-            >
+            <el-table :data="itemTableData" border stripe highlight-current-row ref="multipleItemTable" :height="itemTableHeight" @row-click="handleItemRowClick" style="width: 100%">
               <el-table-column type="selection" width="55"> </el-table-column>
-              <el-table-column
-                type="index"
-                width="65"
-                label="序号"
-                align="center"
-                fixed
-                :show-overflow-tooltip="true"
-              ></el-table-column>
+              <el-table-column type="index" width="65" label="序号" align="center" fixed :show-overflow-tooltip="true"></el-table-column>
               <template v-for="(el, i) in itemTableColumns">
-                <el-table-column
-                  :label="el.label"
-                  header-align="center"
-                  v-if="el.show"
-                  :width="el.width || ''"
-                  :key="el.prop"
-                  :fixed="el.fixed"
-                  :prop="el.prop"
-                  :sortable="el.sortable"
-                  show-overflow-tooltip
-                >
+                <el-table-column :label="el.label" header-align="center" v-if="el.show" :width="el.width || ''" :key="el.prop" :fixed="el.fixed" :prop="el.prop" :sortable="el.sortable" show-overflow-tooltip>
                 </el-table-column>
               </template>
               <el-table-column fixed="right" label="操作">
                 <template slot-scope="scope">
-                  <el-button
-                    type="text"
-                    @click="handleDicItemDelClick(scope.row)"
-                    size="small"
-                    >删除</el-button
-                  >
-                  <el-button
-                    type="text"
-                    @click="handleDicItemEditClick(scope.row)"
-                    size="small"
-                    >编辑</el-button
-                  >
+                  <el-button type="text" @click="handleDicItemDelClick(scope.row)" size="small">删除</el-button>
+                  <el-button type="text" @click="handleDicItemEditClick(scope.row)" size="small">编辑</el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -194,42 +71,16 @@
         <!--分页插件-->
         <el-row>
           <el-col :span="24">
-            <el-pagination
-              @size-change="handleItemSizeChange"
-              @current-change="handleItemCurrentChange"
-              :current-page="itemCurrent"
-              :page-sizes="pageSizeOptions"
-              :page-size="itemSize"
-              layout="total, sizes, prev, pager, next, jumper"
-              :total="itemTotal"
-            >
+            <el-pagination @size-change="handleItemSizeChange" @current-change="handleItemCurrentChange" :current-page="itemCurrent" :page-sizes="pageSizeOptions" :page-size="itemSize" layout="total, sizes, prev, pager, next, jumper" :total="itemTotal">
             </el-pagination>
           </el-col>
         </el-row>
         <!--列自定义-->
-        <CustomTableCols
-          :defaultCols="itemDefaultColumns"
-          customName="sysdic_item"
-          @changeColumns="itemChangeColumns"
-        />
+        <CustomTableCols :defaultCols="itemDefaultColumns" customName="sysdic_item" @changeColumns="itemChangeColumns" />
         <!--查询条件-->
-        <Search
-          :show.sync="showItemSearch"
-          :condition="searchItemCondition"
-          :form="searchItemForm"
-          @ok="setItemCondition"
-          @hidden="showItemSearch = false"
-        />
+        <Search :show.sync="showItemSearch" :condition="searchItemCondition" :form="searchItemForm" @ok="setItemCondition" @hidden="showItemSearch = false" />
         <!--新增编辑页面-->
-        <CustomForm
-          :show.sync="showItemForm"
-          title="字典编辑"
-          :control="dicItemControl"
-          :model="dicItemForm"
-          :rules="dicItemRules"
-          @ok="saveDicItemForm"
-          @hidden="showItemForm = false"
-        />
+        <CustomForm :show.sync="showItemForm" title="字典编辑" :control="dicItemControl" :model="dicItemForm" :rules="dicItemRules" @ok="saveDicItemForm" @hidden="showItemForm = false" />
       </div>
     </el-drawer>
   </div>

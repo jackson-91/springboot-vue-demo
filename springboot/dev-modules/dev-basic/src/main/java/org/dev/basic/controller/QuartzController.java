@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.dev.basic.entity.QuartzJob;
 import org.dev.basic.service.QuartzService;
+import org.dev.common.contant.ScheduleType;
 import org.dev.common.core.page.PaginAtion;
 import org.dev.common.core.result.ResponseResult;
 import org.quartz.*;
@@ -39,7 +40,7 @@ public class QuartzController {
     @GetMapping("list")
     public ResponseResult<IPage<QuartzJob>> list(QuartzJob quartz, PaginAtion pagination) {
         Page<QuartzJob> page = pagination.getPage();
-        return ResponseResult.success(this.quartzService.page(page, quartz.getJobName()));
+        return ResponseResult.success(this.quartzService.page(page, quartz.getJobName(), quartz.getJobType()));
     }
 
 
@@ -66,16 +67,27 @@ public class QuartzController {
                     quartz.getJobGroup())
                     .withDescription(quartz.getDescription()).build();
             putDataMap(job, quartz);
+            //定时执行 Cron表达式
+            if (ScheduleType.CRON.equals(quartz.getJobType())) {
+                CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(quartz.getCronExpression().trim());
+                Trigger trigger = TriggerBuilder.newTrigger().withIdentity(TRIGGER_IDENTITY + quartz.getJobName(), quartz.getJobGroup())
+                        .startNow().withSchedule(cronScheduleBuilder).build();
+                //交由Scheduler安排触发
+                scheduler.scheduleJob(job, trigger);
+            } else {
+                //触发器模式
+                int seconds = Integer.valueOf(quartz.getCronExpression());
+                SimpleScheduleBuilder scheduleBuilder = SimpleScheduleBuilder.simpleSchedule()
+                        .withIntervalInSeconds(seconds) //每一秒执行一次
+                        .repeatForever(); //永久重复，一直执行下去
+                Trigger trigger = TriggerBuilder.newTrigger().withIdentity(TRIGGER_IDENTITY + quartz.getJobName(), quartz.getJobGroup())
+                        .startNow().withSchedule(scheduleBuilder).build();
+                //交由Scheduler安排触发
+                scheduler.scheduleJob(job, trigger);
+            }
 
-            SimpleScheduleBuilder scheduleBuilder = SimpleScheduleBuilder.simpleSchedule()
-                    .withIntervalInSeconds(1) //每一秒执行一次
-                    .repeatForever(); //永久重复，一直执行下去
             // 触发时间点
-            //CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(quartz.getCronExpression().trim());
-            Trigger trigger = TriggerBuilder.newTrigger().withIdentity(TRIGGER_IDENTITY + quartz.getJobName(), quartz.getJobGroup())
-                    .startNow().withSchedule(scheduleBuilder).build();
-            //交由Scheduler安排触发
-            scheduler.scheduleJob(job, trigger);
+
             return ResponseResult.success();
         } catch (Exception e) {
             e.printStackTrace();
@@ -92,7 +104,7 @@ public class QuartzController {
      */
     @PostMapping("delete")
     @Transactional
-    public ResponseResult delete(@RequestBody  List<QuartzJob> quartzs) {
+    public ResponseResult delete(@RequestBody List<QuartzJob> quartzs) {
         try {
             for (QuartzJob quartz : quartzs) {
                 TriggerKey triggerKey = TriggerKey.triggerKey(TRIGGER_IDENTITY + quartz.getJobName(), quartz.getJobGroup());
@@ -159,7 +171,7 @@ public class QuartzController {
      * @return
      */
     @GetMapping("pause-all")
-    public ResponseResult pauseAll( ) {
+    public ResponseResult pauseAll() {
         try {
             // 启动JOB
             scheduler.pauseAll();
@@ -178,7 +190,7 @@ public class QuartzController {
      * @return
      */
     @PostMapping("resume")
-    public ResponseResult resume( @RequestBody List<QuartzJob> quartzs) {
+    public ResponseResult resume(@RequestBody List<QuartzJob> quartzs) {
         try {
             for (QuartzJob quartz : quartzs) {
                 // 启动JOB

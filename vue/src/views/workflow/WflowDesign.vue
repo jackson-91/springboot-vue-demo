@@ -5,36 +5,18 @@
       <div id="js-properties-panel" class="panel"></div>
       <ul class="buttons">
         <li>
-          <el-upload
-            :show-file-list="false"
-            action=""
-            :auto-upload="false"
-            :on-change="handleOpenFile"
-            class="import"
-          >
-            <a
-              slot="trigger"
-              ref="import"
-              href="javascript:"
-              title="import BPMN diagram"
-              >导入 BPMN diagram</a
-            >
+          <el-upload :show-file-list="false" action="" :auto-upload="false" :on-change="handleOpenFile" class="import">
+            <a slot="trigger" ref="import" href="javascript:" title="import BPMN diagram">导入 BPMN diagram</a>
           </el-upload>
         </li>
         <li>
-          <a ref="saveDiagram" href="javascript:" title="download BPMN diagram"
-            >下载 BPMN diagram</a
-          >
+          <a ref="saveDiagram" href="javascript:" title="download BPMN diagram">下载 BPMN diagram</a>
         </li>
         <li>
-          <a ref="saveSvg" href="javascript:" title="download as SVG image"
-            >下载 SVG image</a
-          >
+          <a ref="saveSvg" href="javascript:" title="download as SVG image">下载 SVG image</a>
         </li>
         <li style="display: none">
-          <a ref="deployBpm" class="active" @click="deployBpm" title="部署流程"
-            >部署</a
-          >
+          <a ref="deployBpm" class="active" @click="deployBpm" title="部署流程">部署</a>
         </li>
       </ul>
     </div>

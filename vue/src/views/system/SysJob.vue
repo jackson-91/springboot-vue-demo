@@ -3,84 +3,29 @@
     <div>
       <!--按钮列表-->
       <el-button-group class="toolBox">
-        <el-button
-          size="small"
-          v-for="(item, index) in buttonGroups"
-          :key="index"
-          @click="dynamicMethod(item.method, item.params)"
-          :icon="item.icon"
-          >{{ item.label }}</el-button
-        >
+        <el-button size="small" v-for="(item, index) in buttonGroups" :key="index" @click="dynamicMethod(item.method, item.params)" :icon="item.icon">
+          {{ item.label }}</el-button>
       </el-button-group>
     </div>
     <!--数据表格-->
     <el-row>
       <el-col :span="24">
-        <el-table
-          :data="tableData"
-          border
-          stripe
-          highlight-current-row
-          ref="multipleTable"
-          :height="tableHeight"
-          @row-click="handleRowClick"
-          style="width: 100%"
-        >
+        <el-table :data="tableData" border stripe highlight-current-row ref="multipleTable" :height="tableHeight" @row-click="handleRowClick"
+          style="width: 100%">
           <el-table-column type="selection" width="55"> </el-table-column>
-          <el-table-column
-            type="index"
-            width="65"
-            label="序号"
-            align="center"
-            fixed
-            :show-overflow-tooltip="true"
-          ></el-table-column>
+          <el-table-column type="index" width="65" label="序号" align="center" fixed :show-overflow-tooltip="true"></el-table-column>
           <template v-for="(el, i) in tableColumns">
-            <el-table-column
-              :label="el.label"
-              header-align="center"
-              v-if="el.show"
-              :width="el.width || ''"
-              :key="el.prop"
-              :fixed="el.fixed"
-              :prop="el.prop"
-              :sortable="el.sortable"
-              show-overflow-tooltip
-            >
+            <el-table-column :label="el.label" header-align="center" v-if="el.show" :width="el.width || ''" :key="el.prop" :fixed="el.fixed"
+              :prop="el.prop" :sortable="el.sortable" show-overflow-tooltip>
             </el-table-column>
           </template>
           <el-table-column fixed="right" label="操作" width="300">
             <template slot-scope="scope">
-              <el-button
-                @click="handleRunClick(scope.row)"
-                type="text"
-                size="small"
-                >执行</el-button
-              >
-              <el-button
-                @click="handleEnableClick(scope.row)"
-                type="text"
-                size="small"
-                >开启</el-button
-              >
-              <el-button
-                @click="handleDisableClick(scope.row)"
-                type="text"
-                size="small"
-                >暂停</el-button
-              >
-              <el-button
-                type="text"
-                @click="handleDelClick(scope.row)"
-                size="small"
-                >删除</el-button
-              >
-              <el-button
-                type="text"
-                @click="handleEditClick(scope.row)"
-                size="small"
-                >编辑</el-button
-              >
+              <el-button @click="handleRunClick(scope.row)" type="text" size="small">执行</el-button>
+              <el-button @click="handleEnableClick(scope.row)" type="text" size="small">开启</el-button>
+              <el-button @click="handleDisableClick(scope.row)" type="text" size="small">暂停</el-button>
+              <el-button type="text" @click="handleDelClick(scope.row)" size="small">删除</el-button>
+              <el-button type="text" @click="handleEditClick(scope.row)" size="small">编辑</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -89,42 +34,17 @@
     <!--分页插件-->
     <el-row>
       <el-col :span="24">
-        <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="current"
-          :page-sizes="pageSizeOptions"
-          :page-size="size"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="total"
-        >
+        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="current" :page-sizes="pageSizeOptions"
+          :page-size="size" layout="total, sizes, prev, pager, next, jumper" :total="total">
         </el-pagination>
       </el-col>
     </el-row>
     <!--列自定义-->
-    <CustomTableCols
-      :defaultCols="defaultColumns"
-      customName="sysjob"
-      @changeColumns="changeColumns"
-    />
+    <CustomTableCols :defaultCols="defaultColumns" customName="sysjob" @changeColumns="changeColumns" />
     <!--查询条件-->
-    <Search
-      :show.sync="showSearch"
-      :condition="searchCondition"
-      :form="searchForm"
-      @ok="setCondition"
-      @hidden="hidCondition"
-    />
+    <Search :show.sync="showSearch" :condition="searchCondition" :form="searchForm" @ok="setCondition" @hidden="hidCondition" />
     <!--新增编辑页面-->
-    <CustomForm
-      :show.sync="showForm"
-      title="任务编辑"
-      :control="jobControl"
-      :model="jobForm"
-      :rules="jobRules"
-      @ok="saveForm"
-      @hidden="hidForm"
-    />
+    <CustomForm :show.sync="showForm" title="任务编辑" :control="jobControl" :model="jobForm" :rules="jobRules" @ok="saveForm" @hidden="hidForm" />
   </div>
 </template>
 
@@ -147,115 +67,40 @@ export default {
       size: 10,
       total: 0,
       pageSizeOptions: [10, 20, 50, 100],
-      searchForm: { jobName: "" },
+      searchForm: { jobName: "", jobType: "" },
       searchCondition: [
-        {
-          index: 0,
-          label: "任务名称",
-          field: "jobName",
-          type: "input",
-          show: true,
-        },
+        { index: 0, label: "任务名称", field: "jobName", type: "input", show: true, },
+        { index: 0, label: "任务类型", field: "jobType", type: "select", show: true, options: null, },
       ],
+      JobTypeArray: [{ label: '定时器(指定时间运行)', value: 'CRON' }, { label: '触发器', value: 'SIMPLE' }],
       showSearch: false,
       buttonGroups: [
-        {
-          index: 0,
-          label: "查询",
-          method: "showCondition",
-          icon: "el-icon-search",
-        },
+        { index: 0, label: "查询", method: "showCondition", icon: "el-icon-search", },
         { index: 1, label: "新建", method: "addAndEdit", icon: "el-icon-plus" },
         { index: 5, label: "删除", method: "delete", icon: "el-icon-delete" },
-        {
-          index: 1,
-          label: "执行",
-          method: "start",
-          icon: "el-icon-caret-right",
-        },
-        {
-          index: 1,
-          label: "启用",
-          method: "enable",
-          icon: "el-icon-video-play",
-        },
-        {
-          index: 1,
-          label: "禁用",
-          method: "disable",
-          icon: "el-icon-video-pause",
-        },
-        {
-          index: 1,
-          label: "全部启用",
-          method: "enableAll",
-          icon: "el-icon-video-play",
-        },
-        {
-          index: 1,
-          label: "全部禁用",
-          method: "disableAll",
-          icon: "el-icon-video-pause",
-        },
-        {
-          index: 6,
-          label: "刷新",
-          method: "searchData",
-          icon: "el-icon-refresh",
-        },
+        { index: 1, label: "执行", method: "start", icon: "el-icon-caret-right", },
+        { index: 1, label: "启用", method: "enable", icon: "el-icon-video-play", },
+        { index: 1, label: "禁用", method: "disable", icon: "el-icon-video-pause", },
+        { index: 1, label: "全部启用", method: "enableAll", icon: "el-icon-video-play", },
+        { index: 1, label: "全部禁用", method: "disableAll", icon: "el-icon-video-pause", },
+        { index: 6, label: "刷新", method: "searchData", icon: "el-icon-refresh", },
       ],
       tableColumns: [],
       defaultColumns: [
-        {
-          label: "任务名称",
-          prop: "jobName",
-          show: true,
-          fixed: false,
-          sortable: false,
-          width: 200,
-        },
-        {
-          label: "任务分组",
-          prop: "jobGroup",
-          show: true,
-          fixed: false,
-          sortable: false,
-          width: 200,
-        },
-        {
-          label: "任务描述",
-          prop: "description",
-          show: true,
-          fixed: false,
-          sortable: false,
-        },
-        {
-          label: "类路径",
-          prop: "jobClassName",
-          show: true,
-          fixed: false,
-          sortable: false,
-        },
-        {
-          label: "执行频率",
-          prop: "cronExpression",
-          show: true,
-          fixed: false,
-          sortable: false,
-        },
-        {
-          label: "状态",
-          prop: "triggerState",
-          show: true,
-          fixed: false,
-          sortable: false,
-        },
+        { label: "任务名称", prop: "jobName", show: true, fixed: false, sortable: false, width: 200, },
+        { label: "任务分组", prop: "jobGroup", show: true, fixed: false, sortable: false, width: 200, },
+        { label: "任务类型", prop: "jobType", show: true, fixed: false, sortable: false, width: 200, },
+        { label: "任务描述", prop: "description", show: true, fixed: false, sortable: false, },
+        { label: "类路径", prop: "jobClassName", show: true, fixed: false, sortable: false, },
+        { label: "执行频率", prop: "cronExpression", show: true, fixed: false, sortable: false, },
+        { label: "状态", prop: "triggerState", show: true, fixed: false, sortable: false, },
       ],
       showForm: false,
       jobForm: {
         id: "",
         jobName: "",
         jobGroup: "",
+        jobType: "",
         description: "",
         jobClassName: "",
         cronExpression: "",
@@ -263,90 +108,25 @@ export default {
         oldJobName: "",
         oldJobGroup: "",
       },
-      jobControl: [
-        {
-          label: "ID",
-          field: "id",
-          type: "hidden",
-          show: false,
-          readonly: true,
-        },
-        {
-          index: 0,
-          label: "任务名称",
-          field: "jobName",
-          type: "input",
-          show: true,
-          readonly: false,
-        },
-        {
-          index: 1,
-          label: "任务分组",
-          field: "jobGroup",
-          type: "input",
-          show: true,
-          readonly: false,
-        },
-        {
-          index: 2,
-          label: "任务描述",
-          field: "description",
-          type: "input",
-          show: true,
-          readonly: false,
-        },
-        {
-          index: 3,
-          label: "类路径",
-          field: "jobClassName",
-          type: "input",
-          show: true,
-          readonly: false,
-        },
-        {
-          index: 4,
-          label: "执行频率",
-          field: "cronExpression",
-          type: "input",
-          show: true,
-          readonly: false,
-        },
-        // { index: 4, label: '执行参数', field: 'jobDataParam', type: 'input', show: true, readonly: false },
-        {
-          index: 4,
-          label: "任务名称",
-          field: "oldJobName",
-          type: "hidden",
-          show: false,
-          readonly: false,
-        },
-        {
-          index: 4,
-          label: "任务分组",
-          field: "oldJobGroup",
-          type: "hidden",
-          show: false,
-          readonly: false,
-        },
+      jobControl: [{ label: "ID", field: "id", type: "hidden", show: false, readonly: true, },
+      { index: 0, label: "任务名称", field: "jobName", type: "input", show: true, readonly: false, },
+      { index: 1, label: "任务分组", field: "jobGroup", type: "input", show: true, readonly: false, },
+      { index: 2, label: "任务描述", field: "description", type: "input", show: true, readonly: false, },
+      { index: 3, label: "类路径", field: "jobClassName", type: "input", show: true, readonly: false, },
+      { index: 4, label: "任务类型", field: "jobType", type: "select", show: true, readonly: false, options: null, },
+      { index: 5, label: "执行频率", field: "cronExpression", type: "input", show: true, readonly: false, },
+      { index: 6, label: '执行参数', field: 'jobDataParam', type: 'input', show: true, readonly: false },
+      { index: 7, label: "任务名称", field: "oldJobName", type: "hidden", show: false, readonly: false, },
+      { index: 8, label: "任务分组", field: "oldJobGroup", type: "hidden", show: false, readonly: false, },
       ],
       jobRules: {
         jobName: [
           { required: true, message: "请输入任务名称", trigger: "blur" },
-          {
-            min: 3,
-            max: 20,
-            message: "长度在 3 到 20 个字符",
-            trigger: "blur",
-          },
+          { min: 3, max: 20, message: "长度在 3 到 20 个字符", trigger: "blur", },
         ],
         jobGroup: [
           { required: true, message: "请输入任务分组", trigger: "blur" },
-          {
-            min: 1,
-            max: 50,
-            message: "长度在 3 到 50 个字符",
-            trigger: "blur",
-          },
+          { min: 1, max: 50, message: "长度在 3 到 50 个字符", trigger: "blur", },
         ],
         jobClassName: [
           { required: true, message: "请输入任类路径", trigger: "blur" },
@@ -362,6 +142,7 @@ export default {
 
   methods: {
     searchData() {
+      this.searchCondition[1].options = this.JobTypeArray;
       this.$http
         .get("/api/quartz/list", {
           params: this._handerParams(),
@@ -387,8 +168,8 @@ export default {
       const params = {
         current: this.current,
         size: this.size,
-        code: this.searchForm.code,
-        name: this.searchForm.name,
+        jobType: this.searchForm.jobType,
+        jobName: this.searchForm.jobName,
       };
       return params;
     },
@@ -401,6 +182,7 @@ export default {
         this.jobForm[item] = "";
       }
       this.jobControl[1].readonly = false;
+      this.jobControl[5].options = this.JobTypeArray;
       this.showForm = true;
     },
 
@@ -560,6 +342,7 @@ export default {
       this.showForm = true;
       this.jobForm.jobName = row.jobName;
       this.jobForm.jobGroup = row.jobGroup;
+      this.jobForm.jobType = row.jobType;
       this.jobForm.description = row.description;
       this.jobForm.jobClassName = row.jobClassName;
       this.jobForm.cronExpression = row.cronExpression;
@@ -743,9 +526,9 @@ export default {
     this.tableHeight = document.documentElement.clientHeight - 280;
     //
     this.tableColumns = this.defaultColumns;
+    this.searchData();
   },
   activated() {
-    this.searchData();
   },
 };
 </script>

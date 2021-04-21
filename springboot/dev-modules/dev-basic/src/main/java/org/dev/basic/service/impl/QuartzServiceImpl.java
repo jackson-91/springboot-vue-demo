@@ -22,7 +22,7 @@ public class QuartzServiceImpl implements QuartzService {
      * @return
      */
     @Override
-    public IPage<QuartzJob> page(Page<?> page, String jobName) {
-        return quartzMapper.page(page, jobName);
+    public IPage<QuartzJob> page(Page<?> page, String jobName, String jobType) {
+        return quartzMapper.page(page, jobName, jobType);
     }
 }

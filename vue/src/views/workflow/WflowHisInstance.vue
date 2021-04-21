@@ -3,66 +3,26 @@
     <div>
       <!--按钮列表-->
       <el-button-group class="toolBox">
-        <el-button
-          size="small"
-          v-for="(item, index) in buttonGroups"
-          :key="index"
-          @click="dynamicMethod(item.method, item.params)"
-          :icon="item.icon"
-          >{{ item.label }}</el-button
-        >
+        <el-button size="small" v-for="(item, index) in buttonGroups" :key="index" @click="dynamicMethod(item.method, item.params)" :icon="item.icon">
+          {{ item.label }}</el-button>
       </el-button-group>
     </div>
     <!--数据表格-->
     <el-row>
       <el-col :span="24">
-        <el-table
-          :data="tableData"
-          border
-          stripe
-          highlight-current-row
-          ref="multipleTable"
-          :height="tableHeight"
-          @row-click="handleRowClick"
-          style="width: 100%"
-        >
+        <el-table :data="tableData" border stripe highlight-current-row ref="multipleTable" :height="tableHeight" @row-click="handleRowClick"
+          style="width: 100%">
           <el-table-column type="selection" width="55"> </el-table-column>
-          <el-table-column
-            type="index"
-            width="65"
-            label="序号"
-            align="center"
-            fixed
-            :show-overflow-tooltip="true"
-          ></el-table-column>
+          <el-table-column type="index" width="65" label="序号" align="center" fixed :show-overflow-tooltip="true"></el-table-column>
           <template v-for="(el, i) in tableColumns">
-            <el-table-column
-              :label="el.label"
-              header-align="center"
-              v-if="el.show"
-              :width="el.width || ''"
-              :key="el.prop"
-              :fixed="el.fixed"
-              :prop="el.prop"
-              :sortable="el.sortable"
-              show-overflow-tooltip
-            >
+            <el-table-column :label="el.label" header-align="center" v-if="el.show" :width="el.width || ''" :key="el.prop" :fixed="el.fixed"
+              :prop="el.prop" :sortable="el.sortable" show-overflow-tooltip>
             </el-table-column>
           </template>
           <el-table-column fixed="right" label="操作" width="300">
             <template slot-scope="scope">
-              <el-button
-                type="text"
-                @click="handleEditClick(scope.row)"
-                size="small"
-                >业务单据</el-button
-              >
-              <el-button
-                type="text"
-                @click="handleViewProcessClick(scope.row)"
-                size="small"
-                >查看流程图</el-button
-              >
+              <el-button type="text" @click="handleEditClick(scope.row)" size="small">业务单据</el-button>
+              <el-button type="text" @click="handleViewProcessClick(scope.row)" size="small">查看流程图</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -71,32 +31,15 @@
     <!--分页插件-->
     <el-row>
       <el-col :span="24">
-        <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="current"
-          :page-sizes="pageSizeOptions"
-          :page-size="size"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="total"
-        >
+        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="current" :page-sizes="pageSizeOptions"
+          :page-size="size" layout="total, sizes, prev, pager, next, jumper" :total="total">
         </el-pagination>
       </el-col>
     </el-row>
     <!--列自定义-->
-    <CustomTableCols
-      :defaultCols="defaultColumns"
-      customName="wflowHisInstance"
-      @changeColumns="changeColumns"
-    />
+    <CustomTableCols :defaultCols="defaultColumns" customName="wflowHisInstance" @changeColumns="changeColumns" />
     <!--查询条件-->
-    <Search
-      :show.sync="showSearch"
-      :condition="searchCondition"
-      :form="searchForm"
-      @ok="setCondition"
-      @hidden="hidCondition"
-    />
+    <Search :show.sync="showSearch" :condition="searchCondition" :form="searchForm" @ok="setCondition" @hidden="hidCondition" />
     <!--流程图-->
     <el-dialog title="流程图" :visible.sync="showView">
       <img :src="imgSrc" style="width: 100%; height: 100%" />
@@ -124,45 +67,25 @@ export default {
       pageSizeOptions: [10, 20, 50, 100],
       searchForm: { name: "", key: "" },
       searchCondition: [
-        {
-          index: 0,
-          label: "流程名称",
-          field: "name",
-          type: "input",
-          show: true,
-        },
+        { index: 0, label: "流程名称", field: "name", type: "input", show: true, },
         { index: 1, label: "流程key", field: "key", type: "input", show: true },
       ],
       showSearch: false,
       buttonGroups: [
         {
-          index: 0,
-          label: "查询",
-          method: "showCondition",
-          icon: "el-icon-search",
+          index: 0, label: "查询", method: "showCondition", icon: "el-icon-search",
         },
         {
-          index: 6,
-          label: "刷新",
-          method: "searchData",
-          icon: "el-icon-refresh",
+          index: 6, label: "刷新", method: "searchData", icon: "el-icon-refresh",
         },
       ],
       tableColumns: [],
       defaultColumns: [
         {
-          label: "任务id",
-          prop: "id",
-          show: true,
-          fixed: false,
-          sortable: false,
-          width: 200,
+          label: "任务id", prop: "id", show: true, fixed: false, sortable: false, width: 200,
         },
         {
-          label: "流程名称",
-          prop: "processDefinitionName",
-          show: true,
-          fixed: false,
+          label: "流程名称", prop: "processDefinitionName", show: true, fixed: false,
           sortable: false,
           width: 200,
         },
