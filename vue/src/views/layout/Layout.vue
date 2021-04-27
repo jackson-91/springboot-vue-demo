@@ -36,7 +36,7 @@
             <el-dropdown-item @click.native="tabsCloseCurrentHandle">关闭当前标签页</el-dropdown-item>
             <el-dropdown-item @click.native="tabsCloseOtherHandle">关闭其它标签页</el-dropdown-item>
             <el-dropdown-item @click.native="tabsCloseAllHandle">关闭全部标签页</el-dropdown-item>
-            <el-dropdown-item @click.native="tabsRefreshCurrentHandle">刷新当前标签页</el-dropdown-item>
+            <!-- <el-dropdown-item @click.native="tabsRefreshCurrentHandle">刷新当前标签页</el-dropdown-item> -->
           </el-dropdown-menu>
         </el-dropdown>
         <keep-alive>
@@ -180,6 +180,38 @@ export default {
       this.$router.push({ path: "/welcome" });
       this.$refs.menu.defaultActive = "/welcome";
     },
+    // tabs, 关闭当前
+    tabsCloseCurrentHandle() {
+      this.removeTab(this.mainTabsActiveName)
+    },
+    // tabs, 关闭其它
+    tabsCloseOtherHandle() {
+      this.editableTabs = this.editableTabs.filter(item => item.name === this.mainTabsActiveName || item.name == '/welcome')
+      let path = this.editableTabs[this.editableTabs.length - 1].name;
+      this.mainTabsActiveName = path;
+      this.$router.push({
+        path: path,
+      });
+      this.$refs.menu.defaultActive = path;
+    },
+    // tabs, 关闭全部
+    tabsCloseAllHandle() {
+      this.editableTabs = this.editableTabs.filter(item => item.name === '/welcome')
+      let path = this.editableTabs[this.editableTabs.length - 1].name;
+      this.mainTabsActiveName = path;
+      this.$router.push({
+        path: path,
+      });
+      this.$refs.menu.defaultActive = path;
+    },
+    // tabs, 刷新当前
+    tabsRefreshCurrentHandle() {
+      let path = this.mainTabsActiveName;
+      this.removeTab(this.mainTabsActiveName)
+      this.$router.push({
+        path: path,
+      });
+    }
   },
   computed: {
     siteContentViewHeight() {
