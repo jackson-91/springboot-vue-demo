@@ -2,36 +2,22 @@
   <el-container class="home-container">
     <el-header>
       <div>
-        <img src="../assets/logo.png"
-             alt />
+        <img src="../assets/logo.png" alt />
         <span>后台管理系统</span>
       </div>
-      <el-button type="info"
-                 @click="logout()">退出</el-button>
+      <el-button type="info" @click="logout()">退出</el-button>
     </el-header>
     <el-container>
       <el-aside :width="isCollapse ? '64px' : '200px'">
-        <div class="toggle-button"
-             @click="toggleCollapse">|||</div>
-        <el-menu background-color="#333744"
-                 text-color="#fff"
-                 active-text-color="#409BFF"
-                 :unique-opened="true"
-                 :collapse="isCollapse"
-                 :collapse-transition="false"
-                 :router="true"
-                 :default-active="$router.path">
-          <el-submenu v-for="item in menuList"
-                      :index="item.id"
-                      :key="item.id">
+        <div class="toggle-button" @click="toggleCollapse">|||</div>
+        <el-menu background-color="#333744" text-color="#fff" active-text-color="#409BFF" :unique-opened="true" :collapse="isCollapse"
+          :collapse-transition="false" :router="true" :default-active="$router.path">
+          <el-submenu v-for="item in menuList" :index="item.id" :key="item.id">
             <template slot="title">
               <i class="el-icon-location"></i>
               <span>{{item.authName}}</span>
             </template>
-            <el-menu-item :index="subitem.path"
-                          v-for="subitem in item.children"
-                          :key="subitem.id"
-                          @click="saveNavState()">
+            <el-menu-item :index="subitem.path" v-for="subitem in item.children" :key="subitem.id" @click="saveNavState()">
               <template slot="title">
                 <i class="el-icon-menu"></i>
                 <span>{{subitem.authName}}</span>
@@ -48,14 +34,14 @@
 </template>
 <script>
 export default {
-  data () {
+  data() {
     return {
       menuList: [],
       isCollapse: false
     }
   },
   methods: {
-    toggleCollapse () {
+    toggleCollapse() {
       this.isCollapse = !this.isCollapse
     }
   }

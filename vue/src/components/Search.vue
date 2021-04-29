@@ -8,7 +8,7 @@
         <el-input v-if="item.type===null" v-model="conditionForm[item.field]"></el-input>
         <!--下拉框-->
         <el-select v-if="item.type==='select'" v-model="conditionForm[item.field]" placeholder="请选择">
-          <el-option v-for="option in item.options" :key="option.value" :label="option.label" :value="option.value" :disabled="option.disabled"/>
+          <el-option v-for="option in item.options" :key="option.value" :label="option.label" :value="option.value" :disabled="option.disabled" />
         </el-select>
         <!--复选框-->
         <!--日期选择器-->

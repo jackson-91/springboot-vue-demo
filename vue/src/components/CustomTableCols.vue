@@ -1,60 +1,37 @@
 <template>
   <div class="colEditBox">
-    <el-button class="colEdit"
-               size="small"
-               @click="showCustom=true">
+    <el-button class="colEdit" size="small" @click="showCustom=true">
       <slot>
         <i class="fa fa-gear"></i>
         列设置
       </slot>
     </el-button>
-    <el-dialog title="列设置"
-               top="5%"
-               @close="cancelCustom"
-               :modal="true"
-               size="small"
-               custom-class="colPop"
-               append-to-body
-               :visible.sync="showCustom">
+    <el-dialog title="列设置" top="5%" @close="cancelCustom" :modal="true" size="small" custom-class="colPop" append-to-body :visible.sync="showCustom">
       <!-- 工具栏 -->
       <el-button-group class="toolBox">
-        <el-button @click="moveFirst"
-                   :disabled="cur===-1 || cur===0">
+        <el-button @click="moveFirst" :disabled="cur===-1 || cur===0">
           <i class="fa fa-fast-forward fa-rotate-270"></i>
           移至顶部
         </el-button>
-        <el-button @click="up(cur)"
-                   :disabled="cur===-1 || cur===0">
+        <el-button @click="up(cur)" :disabled="cur===-1 || cur===0">
           <i class="fa fa-arrow-up"></i>
           上移
         </el-button>
-        <el-button @click="down(cur)"
-                   :disabled="cur===-1 || cur===(columns.length-1)">
+        <el-button @click="down(cur)" :disabled="cur===-1 || cur===(columns.length-1)">
           <i class="fa fa-arrow-down"></i>
           下移
         </el-button>
-        <el-button @click="moveLast"
-                   :disabled="cur===-1 || cur===(columns.length-1)">
+        <el-button @click="moveLast" :disabled="cur===-1 || cur===(columns.length-1)">
           <i class="fa fa-fast-forward fa-rotate-90"></i>
           移至末尾
         </el-button>
       </el-button-group>
-      <el-table :height="320"
-                :data="columns"
-                :row-class-name="rowClass"
-                @row-click="curRow"
-                border
-                v-loading="saveLoading">
-        <el-table-column prop="label"
-                         label="列名"></el-table-column>
+      <el-table :height="320" :data="columns" :row-class-name="rowClass" @row-click="curRow" border v-loading="saveLoading">
+        <el-table-column prop="label" label="列名"></el-table-column>
         <!-- <el-table-column :prop="cus" label="自定义列名"></el-table-column> -->
-        <el-table-column label="列宽(0或空为自适应)"
-                         width="200">
+        <el-table-column label="列宽(0或空为自适应)" width="200">
           <template slot-scope="scope">
-            <el-input-number :controls="false"
-                             :min="0"
-                             :max="9999"
-                             v-model="scope.row.width"></el-input-number>
+            <el-input-number :controls="false" :min="0" :max="9999" v-model="scope.row.width"></el-input-number>
           </template>
         </el-table-column>
         <el-table-column label="是否显示">
@@ -69,22 +46,15 @@
         </el-table-column>
         <el-table-column label="排序">
           <template slot-scope="scope">
-            <el-button size="large"
-                       @click="up(scope.$index)"
-                       :disabled="scope.$index===0"
-                       type="text"><i class="el-icon-caret-top"></i></el-button>
-            <el-button size="large"
-                       @click="down(scope.$index)"
-                       :disabled="scope.$index===(columns.length-1)"
-                       type="text"><i class="el-icon-caret-bottom"></i></el-button>
+            <el-button size="large" @click="up(scope.$index)" :disabled="scope.$index===0" type="text"><i class="el-icon-caret-top"></i></el-button>
+            <el-button size="large" @click="down(scope.$index)" :disabled="scope.$index===(columns.length-1)" type="text"><i
+                class="el-icon-caret-bottom"></i></el-button>
           </template>
         </el-table-column>
       </el-table>
-      <div slot="footer"
-           class="dialog-footer">
+      <div slot="footer" class="dialog-footer">
         <el-button @click="showCustom=false">取 消</el-button>
-        <el-button type="primary"
-                   @click="saveCustom(false)">确 定</el-button>
+        <el-button type="primary" @click="saveCustom(false)">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -104,7 +74,7 @@ export default {
       default: ''
     }
   },
-  data () {
+  data() {
     return {
       cur: -1, // 选中的行
       showCustom: false,
@@ -117,15 +87,15 @@ export default {
     }
   },
   methods: {
-    curRow (val) {
+    curRow(val) {
       const i = this.columns.indexOf(val)
       this.cur = i
     },
-    rowClass (row, index) {
+    rowClass(row, index) {
       return index === this.cur ? 'current-row' : ''
     },
     // 上移
-    up (i) {
+    up(i) {
       const row = JSON.parse(JSON.stringify(this.columns[i]))
       const row2 = JSON.parse(JSON.stringify(this.columns[i - 1]))
       this.columns.splice(i, 1, row2)
@@ -133,7 +103,7 @@ export default {
       if (this.cur !== -1) this.cur -= 1
     },
     // 下移
-    down (i) {
+    down(i) {
       const row = JSON.parse(JSON.stringify(this.columns[i]))
       const row2 = JSON.parse(JSON.stringify(this.columns[i + 1]))
       this.columns.splice(i, 1, row2)
@@ -141,19 +111,19 @@ export default {
       if (this.cur !== -1) this.cur += 1
     },
     // 置顶
-    moveFirst () {
+    moveFirst() {
       const obj = this.columns.splice(this.cur, 1)
       this.columns.unshift(obj[0])
       this.cur = 0
     },
     // 置尾
-    moveLast () {
+    moveLast() {
       const obj = this.columns.splice(this.cur, 1)
       this.columns.push(obj[0])
       this.cur = this.columns.length - 1
     },
     // 保存列设置
-    saveCustom (columns) {
+    saveCustom(columns) {
       const md5Cols = md5(JSON.stringify(this.defaultCols))
       const column = columns || this.columns
       const params = {
@@ -176,11 +146,11 @@ export default {
       )
     },
     // 取消列设置
-    cancelCustom () {
+    cancelCustom() {
       this.columns = JSON.parse(JSON.stringify(this.colsSource))
     },
     // 过滤col，将为0的宽度置为空
-    filterColumns () {
+    filterColumns() {
       const arr = JSON.parse(JSON.stringify(this.columns))
       arr.map(n => {
         if (n.width === 0) n.width = ''
@@ -188,7 +158,7 @@ export default {
       return arr
     }
   },
-  created () {
+  created() {
     console.log(this.defaultCols)
     const md5Cols = md5(JSON.stringify(this.defaultCols))
     this.$http

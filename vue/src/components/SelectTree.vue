@@ -1,8 +1,8 @@
 <template>
   <el-select :value="valueTitle" :clearable="clearable" @clear="clearHandle">
     <el-option :value="valueTitle" :label="valueTitle">
-      <el-tree id="tree-option" ref="selectTree" :accordion="accordion" :data="options" :props="props" :node-key="props.value" :default-expanded-keys="defaultExpandedKey"
-        @node-click="handleNodeClick">
+      <el-tree id="tree-option" ref="selectTree" :accordion="accordion" :data="options" :props="props" :node-key="props.value"
+        :default-expanded-keys="defaultExpandedKey" @node-click="handleNodeClick">
       </el-tree>
     </el-option>
   </el-select>

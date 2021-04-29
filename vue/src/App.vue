@@ -6,11 +6,11 @@
 <script>
 export default {
   methods: {
-    saveState () {
+    saveState() {
       localStorage.setItem('state', JSON.stringify(this.$store.state))
     }
   },
-  created () {
+  created() {
     this.saveState()
     // 在页面加载时读取sessionStorage里的状态信息
     if (localStorage.getItem('state')) {

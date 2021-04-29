@@ -5,19 +5,13 @@
       <div id="js-properties-panel" class="panel"></div>
       <ul class="buttons">
         <li>
-          <a ref="saveDiagram" href="javascript:" title="download BPMN diagram"
-            >下载 BPMN diagram</a
-          >
+          <a ref="saveDiagram" href="javascript:" title="download BPMN diagram">下载 BPMN diagram</a>
         </li>
         <li>
-          <a ref="saveSvg" href="javascript:" title="download as SVG image"
-            >下载 SVG image</a
-          >
+          <a ref="saveSvg" href="javascript:" title="download as SVG image">下载 SVG image</a>
         </li>
         <li>
-          <a ref="deployBpm" class="active" @click="deployBpm" title="部署流程"
-            >部署</a
-          >
+          <a ref="deployBpm" class="active" @click="deployBpm" title="部署流程">部署</a>
         </li>
       </ul>
     </div>
@@ -94,7 +88,7 @@ export default {
     /**
      * 设置默认模板
      */
-    createNewDiagram() {},
+    createNewDiagram() { },
     // 下载为SVG格式,done是个函数，调用的时候传入的
     saveSVG(done) {
       // 把传入的done再传给bpmn原型的saveSVG函数调用

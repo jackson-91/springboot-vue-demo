@@ -8,20 +8,11 @@
         <el-input v-model="form.name" @input="nameChange"></el-input>
       </el-form-item>
       <el-form-item label="描述">
-        <el-input
-          v-model="form.description"
-          type="textarea"
-          rows="4"
-          @input="descriptionChange"
-        ></el-input>
+        <el-input v-model="form.description" type="textarea" rows="4" @input="descriptionChange"></el-input>
       </el-form-item>
       <!-- 任务节点允许选择人员 -->
       <el-form-item label="审核人员" v-if="userTask">
-        <el-select
-          v-model="form.assigneeType"
-          placeholder="请选择"
-          @change="typeChange"
-        >
+        <el-select v-model="form.assigneeType" placeholder="请选择" @change="typeChange">
           <el-option value="user" label="指定人员"></el-option>
           <el-option value="role" label="角色"></el-option>
           <el-option value="job" label="岗位"></el-option>
@@ -29,92 +20,48 @@
         </el-select>
       </el-form-item>
       <!-- 指定人员 -->
-      <el-form-item
-        label="指定人员"
-        v-if="userTask && form.assigneeType === 'user'"
-      >
-        <el-select
-          v-model="form.assigneeSelect"
-          placeholder="请选择"
-          key="1"
-          @change="
+      <el-form-item label="指定人员" v-if="userTask && form.assigneeType === 'user'">
+        <el-select v-model="form.assigneeSelect" placeholder="请选择" key="1" @change="
             (value) =>
               addUser({
                 'activiti:assignee': value,
                 'activiti:assigneeSelect': value,
               })
-          "
-        >
-          <el-option
-            v-for="item in users"
-            :key="item.id"
-            :label="item.nickName"
-            :value="item.id"
-          ></el-option>
+          ">
+          <el-option v-for="item in users" :key="item.id" :label="item.nickName" :value="item.id"></el-option>
         </el-select>
       </el-form-item>
       <!-- 指定角色 候选组 -->
-      <el-form-item
-        label="角色"
-        v-else-if="userTask && form.assigneeType === 'role'"
-      >
-        <el-select
-          v-model="form.candidateUsersSelect"
-          placeholder="请选择"
-          key="2"
-          @change="
+      <el-form-item label="角色" v-else-if="userTask && form.assigneeType === 'role'">
+        <el-select v-model="form.candidateUsersSelect" placeholder="请选择" key="2" @change="
             (value) =>
               addUser({
                 'activiti:candidateGroups': value,
                 'activiti:candidateUsersSelect': value,
               })
-          "
-        >
-          <el-option
-            v-for="item in roles"
-            :key="item.id"
-            :label="item.roleName"
-            :value="item.roleCode"
-          ></el-option>
+          ">
+          <el-option v-for="item in roles" :key="item.id" :label="item.roleName" :value="item.roleCode"></el-option>
         </el-select>
       </el-form-item>
       <!-- 指定岗位 -->
-      <el-form-item
-        label="岗位"
-        v-else-if="userTask && form.assigneeType === 'job'"
-      >
-        <el-select
-          v-model="form.candidateGroupsSelect"
-          placeholder="请选择"
-          @change="
+      <el-form-item label="岗位" v-else-if="userTask && form.assigneeType === 'job'">
+        <el-select v-model="form.candidateGroupsSelect" placeholder="请选择" @change="
             (value) =>
               addUser({
                 'activiti:assignee': '${' + value + '}',
                 'activiti:candidateGroupsSelect': value,
               })
-          "
-        >
-          <el-option
-            v-for="item in jobs"
-            :key="item.code"
-            :label="item.name"
-            :value="item.code"
-          ></el-option>
+          ">
+          <el-option v-for="item in jobs" :key="item.code" :label="item.name" :value="item.code"></el-option>
         </el-select>
       </el-form-item>
       <!-- 自定义 -->
-      <el-form-item
-        label="自定义"
-        v-else-if="userTask && form.assigneeType === 'custom'"
-      >
+      <el-form-item label="自定义" v-else-if="userTask && form.assigneeType === 'custom'">
         <el-input v-model="form.assignee" @input="assigneeChange"></el-input>
       </el-form-item>
       <!-- 分支允许添加条件 -->
       <el-form-item label="分支条件" v-if="sequenceFlow">
-        <el-input
-          v-model="form.conditionExpression.body"
-          @input="expressionChange"
-        ></el-input>
+        <el-input v-model="form.conditionExpression.body" @input="expressionChange"></el-input>
       </el-form-item>
     </el-form>
   </div>

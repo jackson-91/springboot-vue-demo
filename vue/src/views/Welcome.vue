@@ -5,13 +5,13 @@
 </template>
 <script>
 export default {
-  data () {
+  data() {
     return {
       userList: []
     }
   },
   methods: {
-    loadUser () {
+    loadUser() {
       const _this = this
       this.$http
         .get('/api/sysUser/list', {})
@@ -30,7 +30,7 @@ export default {
         })
     }
   },
-  created () {
+  created() {
     //this.loadUser()
   }
 }
