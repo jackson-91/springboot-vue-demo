@@ -33,17 +33,17 @@ module.exports = {
       .set('@plugins', resolve('src/plugins'))
     // 压缩图片
     // 需要 npm i -D image-webpack-loader
-    config.module
-      .rule('images')
-      .use('image-webpack-loader')
-      .loader('image-webpack-loader')
-      .options({
-        mozjpeg: { progressive: true, quality: 65 },
-        optipng: { enabled: false },
-        pngquant: { quality: [0.65, 0.9], speed: 4 },
-        gifsicle: { interlaced: false },
-        webp: { quality: 75 }
-      })
+    // config.module
+    //   .rule('images')
+    //   .use('image-webpack-loader')
+    //   .loader('image-webpack-loader')
+    //   .options({
+    //     mozjpeg: { progressive: true, quality: 65 },
+    //     optipng: { enabled: false },
+    //     pngquant: { quality: [0.65, 0.9], speed: 4 },
+    //     gifsicle: { interlaced: false },
+    //     webp: { quality: 75 }
+    //   })
     // 打包分析, 打包之后自动生成一个名叫report.html文件(可忽视)
     if (IS_PROD) {
       config.plugin('webpack-report').use(BundleAnalyzerPlugin, [
