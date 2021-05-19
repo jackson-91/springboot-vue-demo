@@ -16,7 +16,13 @@
           </el-table-column>
           <el-table-column type="index" width="65" label="序号" align="center" fixed :show-overflow-tooltip="true"></el-table-column>
           <template v-for="(el,i) in tableColumns">
-            <el-table-column :label="el.label" header-align="center" v-if="el.show " :width="el.width || ''" :key="el.prop" :fixed="el.fixed"
+            <el-table-column :label="el.label" header-align="center" v-if="el.show && el.prop === 'isEnable'" :width="el.width || ''" :key="el.prop"
+              :fixed="el.fixed" :prop="el.prop" :sortable="el.sortable" show-overflow-tooltip>
+              <template slot-scope="scope">{{
+                scope.row.isEnable | dic('IS_ENABLE')
+              }}</template>
+            </el-table-column>
+            <el-table-column :label="el.label" header-align="center" v-else-if="el.show " :width="el.width || ''" :key="el.prop" :fixed="el.fixed"
               :prop="el.prop" :sortable="el.sortable" show-overflow-tooltip>
             </el-table-column>
           </template>
@@ -393,9 +399,11 @@ export default {
     setRole() {
       if (this.$refs.multipleTable.selection.length <= 0) {
         this.$message.warning('请选择要操作的用户')
+        return;
       }
       if (this.$refs.multipleTable.selection.length > 1) {
         this.$message.warning('只能选择一个用户')
+        return;
       }
       const id = this.$refs.multipleTable.selection[0].id
       this.userId = id

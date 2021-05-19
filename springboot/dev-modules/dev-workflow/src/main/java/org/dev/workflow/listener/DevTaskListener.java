@@ -5,6 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.activiti.engine.delegate.DelegateTask;
 import org.activiti.engine.delegate.TaskListener;
 
+/**
+ * 任务监听器
+ */
 @Slf4j
 public class DevTaskListener implements TaskListener {
     @Override

@@ -5,6 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.activiti.engine.delegate.DelegateExecution;
 import org.activiti.engine.delegate.ExecutionListener;
 
+/**
+ * 流程监听器
+ */
 @Slf4j
 public class DevExecutionListener implements ExecutionListener {
     @Override

@@ -28,7 +28,7 @@ public class DevGenerator {
     public static void generateCode() {
         String packageName = "org.dev.basic";
         boolean serviceNameStartWithI = false;//user -> UserService, 设置成true: user -> IUserService
-        generateByTables(serviceNameStartWithI, packageName, "sys_dept");
+        generateByTables(serviceNameStartWithI, packageName, "sys_parameter");
     }
 
     private static void generateByTables(boolean serviceNameStartWithI, String packageName, String... tableNames) {
