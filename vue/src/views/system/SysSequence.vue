@@ -43,7 +43,7 @@
     <!--查询条件-->
     <Search :show.sync="showSearch" :condition="searchCondition" :form="searchForm" @ok="setCondition" @hidden="hidCondition" />
     <!--新增编辑页面-->
-    <CustomForm :show.sync="showForm" title="流水码编辑" :control="codeControl" :model="codeForm" :rules="codeRules" @ok="saveForm" @hidden="hidForm" />
+    <CustomForm :show.sync="showForm" title="流水码编辑" :control="formControl" :model="formField" :rules="formRules" @ok="saveForm" @hidden="hidForm" />
     <!--字典子列表页面-->
     <el-drawer title="流水码日志" :visible.sync="showDrawer" custom-class="demo-drawer" ref="drawer" size="40%">
       <div class="demo-drawer__content">
@@ -131,8 +131,8 @@ export default {
         { label: '初始值', prop: 'initValue', show: true, fixed: false, sortable: false }
       ],
       showForm: false,
-      codeForm: { id: '', code: '', name: '', prefix: '', separator: '', dateFormat: '', numLength: 4, initValue: 1 },
-      codeControl: [
+      formField: { id: '', code: '', name: '', prefix: '', separator: '', dateFormat: '', numLength: 4, initValue: 1 },
+      formControl: [
         { label: 'ID', field: 'id', type: 'hidden', show: false, readonly: true },
         { index: 0, label: '编码', field: 'code', type: 'input', show: true, readonly: false },
         { index: 1, label: '名称', field: 'name', type: 'input', show: true, readonly: false },
@@ -150,7 +150,7 @@ export default {
         { index: 5, label: '数字长度', field: 'numLength', type: 'number', show: true, readonly: false, min: 3, max: 5 },
         { index: 5, label: '初始值', field: 'initValue', type: 'number', show: true, readonly: false, min: 3, max: 100 }
       ],
-      codeRules: {
+      formRules: {
         code: [
           { required: true, message: '请输入编码', trigger: 'blur' },
           { min: 3, max: 20, message: '长度在 3 到 20 个字符', trigger: 'blur' }
@@ -226,10 +226,10 @@ export default {
      */
     addAndEdit() {
       // 设置账号栏位可编辑
-      for (const item in this.codeForm) {
-        this.codeForm[item] = ''
+      for (const item in this.formField) {
+        this.formField[item] = ''
       }
-      this.codeControl[1].readonly = false
+      this.formControl[1].readonly = false
       this.showForm = true
     },
 
@@ -278,8 +278,8 @@ export default {
      */
     saveForm(from) {
       const newData = JSON.parse(JSON.stringify(from))
-      this.codeForm = newData
-      this.$http.post('/api/sysSequence/save', this.codeForm).then(res => {
+      this.formField = newData
+      this.$http.post('/api/sysSequence/save', this.formField).then(res => {
         if (res.code == 0) {
           this.showForm = false
           this.searchData()
@@ -334,19 +334,19 @@ export default {
      */
     handleEditClick(row) {
       // 设置账号栏位不可编辑
-      for (const item in this.codeForm) {
-        this.codeForm[item] = ''
+      for (const item in this.formField) {
+        this.formField[item] = ''
       }
-      this.codeControl[1].readonly = true
+      this.formControl[1].readonly = true
       this.showForm = true
-      this.codeForm.id = row.id
-      this.codeForm.code = row.code
-      this.codeForm.name = row.name
-      this.codeForm.prefix = row.prefix
-      this.codeForm.separator = row.separator
-      this.codeForm.dateFormat = row.dateFormat
-      this.codeForm.numLength = row.numLength
-      this.codeForm.initValue = row.initValue
+      this.formField.id = row.id
+      this.formField.code = row.code
+      this.formField.name = row.name
+      this.formField.prefix = row.prefix
+      this.formField.separator = row.separator
+      this.formField.dateFormat = row.dateFormat
+      this.formField.numLength = row.numLength
+      this.formField.initValue = row.initValue
     },
     /**
      * 隐藏编辑表单

@@ -43,7 +43,7 @@
     <!--查询条件-->
     <Search :show.sync="showSearch" :condition="searchCondition" :form="searchForm" @ok="setCondition" @hidden="showSearch=false" />
     <!--新增编辑页面-->
-    <CustomForm :show.sync="showForm" title="角色编辑" :control="roleControl" :model="roleForm" :rules="roleRules" @ok="saveForm"
+    <CustomForm :show.sync="showForm" title="角色编辑" :control="formControl" :model="formField" :rules="formRules" @ok="saveForm"
       @hidden="showForm=false" />
     <!--赋权页面-->
     <treelist :show.sync="showTree" title="角色赋权" ptype="role" :pid="roleId" @ok="saveTree" @hidden="showTree=false" />
@@ -92,13 +92,13 @@ export default {
         { label: '创建人', prop: 'createBy', show: true, fixed: false, sortable: true }
       ],
       showForm: false,
-      roleForm: { id: '', roleCode: '', roleName: '' },
-      roleControl: [
+      formField: { id: '', roleCode: '', roleName: '' },
+      formControl: [
         { label: 'ID', field: 'id', type: 'hidden', show: false, readonly: true },
         { label: '角色代码', field: 'roleCode', type: 'input', show: true, readonly: true },
         { label: '角色名称', field: 'roleName', type: 'input', show: true, readonly: false }
       ],
-      roleRules: {
+      formRules: {
         roleCode: [
           { required: true, message: '请输入角色代码', trigger: 'blur' },
           { min: 3, max: 20, message: '长度在 3 到 20 个字符', trigger: 'blur' }
@@ -174,10 +174,10 @@ export default {
      */
     add() {
       // 设置账号栏位可编辑
-      for (const item in this.roleForm) {
-        this.roleForm[item] = ''
+      for (const item in this.formField) {
+        this.formField[item] = ''
       }
-      this.roleControl[1].readonly = false
+      this.formControl[1].readonly = false
       this.showForm = true
     },
     /**
@@ -185,8 +185,8 @@ export default {
    */
     saveForm(from) {
       const newData = JSON.parse(JSON.stringify(from))
-      this.roleForm = newData
-      this.$http.post('/api/sysRole/save', this.roleForm).then(res => {
+      this.formField = newData
+      this.$http.post('/api/sysRole/save', this.formField).then(res => {
         if (res.code == '0') {
           this.$message.success(res.msg)
           this.showForm = false
@@ -234,14 +234,14 @@ export default {
      */
     handleEditClick(row) {
       // 设置账号栏位不可编辑
-      for (const item in this.roleForm) {
-        this.roleForm[item] = ''
+      for (const item in this.formField) {
+        this.formField[item] = ''
       }
-      this.roleControl[1].readonly = true
+      this.formControl[1].readonly = true
       this.showForm = true
-      this.roleForm.id = row.id
-      this.roleForm.roleCode = row.roleCode
-      this.roleForm.roleName = row.roleName
+      this.formField.id = row.id
+      this.formField.roleCode = row.roleCode
+      this.formField.roleName = row.roleName
     },
     /**
      * 删除数

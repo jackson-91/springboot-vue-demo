@@ -50,7 +50,7 @@
     <!--查询条件-->
     <Search :show.sync="showSearch" :condition="searchCondition" :form="searchForm" @ok="setCondition" @hidden="showSearch = false" />
     <!--新增编辑页面-->
-    <CustomForm :show.sync="showForm" title="员工编辑" :control="employeControl" :model="employeForm" :rules="employeRules" @ok="saveForm"
+    <CustomForm :show.sync="showForm" title="员工编辑" :control="formControl" :model="formField" :rules="formRules" @ok="saveForm"
       @hidden="showForm = false" />
     <!--分配角色-->
     <el-dialog title="角色分配" :visible.sync="visible" width="400px" @close="visible = false">
@@ -81,7 +81,7 @@ export default {
   },
   data() {
     var validateComfirmPwd = (rule, value, callback) => {
-      if (this.employeForm.cmfPassWord !== value) {
+      if (this.formField.cmfPassWord !== value) {
         callback(new Error("确认密码与新密码不一致！"));
       } else {
         callback();
@@ -98,14 +98,7 @@ export default {
       size: 10,
       total: 0,
       pageSizeOptions: [10, 20, 50, 100],
-      searchForm: {
-        workNo: "",
-        name: "",
-        foreignName: "",
-        mobilePhone: "",
-        email: "",
-        status: "",
-      },
+      searchForm: { workNo: "", name: "", foreignName: "", mobilePhone: "", email: "", status: "", },
       searchCondition: [
         { index: 0, label: "工号", field: "workNo", type: "input", show: true },
         { index: 1, label: "姓名", field: "name", type: "input", show: true },
@@ -139,44 +132,33 @@ export default {
         { label: "离职日期", prop: "departureDate", show: true, fixed: false, sortable: false, width: 120, },
       ],
       showForm: false,
-      employeForm: {
-        id: "",
-        workNo: "",
-        name: "",
-        foreignName: "",
-        mobilePhone: "",
-        telePhone: "",
-        email: "",
-        birthday: "",
-        education: "",
-        deptId: "",
-        position: "",
-        status: "",
-        entryDate: "",
-        departureDate: "",
+      formField: {
+        id: "", workNo: "", name: "", foreignName: "", mobilePhone: "",
+        telePhone: "", email: "", birthday: "", education: "", deptId: "", position: "", status: "", entryDate: "", departureDate: "",
       },
-      employeControl: [{ label: "ID", field: "id", type: "hidden", show: false, readonly: true, },
-      { label: "工号", field: "workNo", type: "input", show: true, readonly: true, },
-      { label: "姓名", field: "name", type: "input", show: true, readonly: false, },
-      { label: "英文名", field: "foreignName", type: "input", show: true, readonly: false, },
-      { label: "手机", field: "mobilePhone", type: "input", show: true, readonly: false, },
-      { label: "座机号", field: "telePhone", type: "input", show: true, readonly: false, },
-      { label: "邮箱", field: "email", type: "input", show: true },
-      { label: "生日", field: "birthday", type: "date", show: true },
-      { label: "学历", field: "education", type: "select", show: true, options: null, },
-      {
-        label: "部门", field: "deptId", type: "tree-select", show: true, options: null, isClearable: true, // 可清空（可选）
-        isAccordion: true, // 可收起（可选
-        props: {
-          // 配置项（必选）
-          value: "id", label: "deptName", children: "children",
+      formControl: [
+        { label: "ID", field: "id", type: "hidden", show: false, readonly: true, },
+        { label: "工号", field: "workNo", type: "input", show: true, readonly: true, },
+        { label: "姓名", field: "name", type: "input", show: true, readonly: false, },
+        { label: "英文名", field: "foreignName", type: "input", show: true, readonly: false, },
+        { label: "手机", field: "mobilePhone", type: "input", show: true, readonly: false, },
+        { label: "座机号", field: "telePhone", type: "input", show: true, readonly: false, },
+        { label: "邮箱", field: "email", type: "input", show: true },
+        { label: "生日", field: "birthday", type: "date", show: true },
+        { label: "学历", field: "education", type: "select", show: true, options: null, },
+        {
+          label: "部门", field: "deptId", type: "tree-select", show: true, options: null, isClearable: true, // 可清空（可选）
+          isAccordion: true, // 可收起（可选
+          props: {
+            // 配置项（必选）
+            value: "id", label: "deptName", children: "children",
+          },
         },
-      },
-      { label: "职位", field: "position", type: "select", show: true, options: null, },
-      { label: "入职日期", field: "entryDate", type: "date", show: true },
-      { label: "离职日期", field: "departureDate", type: "date", show: true },
+        { label: "职位", field: "position", type: "select", show: true, options: null, },
+        { label: "入职日期", field: "entryDate", type: "date", show: true },
+        { label: "离职日期", field: "departureDate", type: "date", show: true },
       ],
-      employeRules: {
+      formRules: {
         workNo: [
           { required: true, message: "请输入工号", trigger: "blur" },
           { min: 3, max: 20, message: "长度在 3 到 20 个字符", trigger: "blur", },
@@ -189,13 +171,21 @@ export default {
           { required: true, message: "请输入手机", trigger: "blur" },
           { min: 11, max: 11, message: "长度11 个字符", trigger: "blur" },
         ],
-        email: [{ required: true, message: "请输入邮箱", trigger: "blur" }],
-        birthday: [{ required: true, message: "请输入生日", trigger: "blur" }],
-        education: [{ required: true, message: "请输入学历", trigger: "blur" }],
+        email: [
+          { required: true, message: "请输入邮箱", trigger: "blur" }
+        ],
+        birthday: [
+          { required: true, message: "请输入生日", trigger: "blur" }
+        ],
+        education: [
+          { required: true, message: "请输入学历", trigger: "blur" }
+        ],
         department: [
           { required: true, message: "请输入部门", trigger: "blur" },
         ],
-        position: [{ required: true, message: "请输入职位", trigger: "blur" }],
+        position: [
+          { required: true, message: "请输入职位", trigger: "blur" }
+        ],
       },
       multipleSelection: [],
       visible: false,
@@ -325,13 +315,13 @@ export default {
      */
     addAndEdit() {
       // 设置账号栏位可编辑
-      for (const item in this.employeForm) {
-        this.employeForm[item] = "";
+      for (const item in this.formField) {
+        this.formField[item] = "";
       }
-      this.employeControl[1].readonly = false;
-      this.employeControl[8].options = this.educationArray;
-      this.employeControl[9].options = this.deptArray;
-      this.employeControl[10].options = this.jobsArray;
+      this.formControl[1].readonly = false;
+      this.formControl[8].options = this.educationArray;
+      this.formControl[9].options = this.deptArray;
+      this.formControl[10].options = this.jobsArray;
       this.showForm = true;
     },
     /**
@@ -400,9 +390,9 @@ export default {
      */
     saveForm(from) {
       const newData = JSON.parse(JSON.stringify(from));
-      this.employeForm = newData;
+      this.formField = newData;
       this.$http
-        .post("/api/sysEmploye/save", this.employeForm)
+        .post("/api/sysEmploye/save", this.formField)
         .then((res) => {
           if (res.code == "0") {
             this.$message.success(res.msg);
@@ -491,27 +481,27 @@ export default {
      */
     handleEditClick(row) {
       // 设置账号栏位不可编辑
-      for (const item in this.employeForm) {
-        this.employeForm[item] = "";
+      for (const item in this.formField) {
+        this.formField[item] = "";
       }
-      this.employeControl[1].readonly = true;
-      this.employeControl[8].options = this.educationArray;
-      this.employeControl[9].options = this.deptArray;
-      this.employeControl[10].options = this.jobsArray;
+      this.formControl[1].readonly = true;
+      this.formControl[8].options = this.educationArray;
+      this.formControl[9].options = this.deptArray;
+      this.formControl[10].options = this.jobsArray;
       this.showForm = true;
-      this.employeForm.workNo = row.workNo;
-      this.employeForm.name = row.name;
-      this.employeForm.foreignName = row.foreignName;
-      this.employeForm.email = row.email;
-      this.employeForm.mobilePhone = row.mobilePhone;
-      this.employeForm.telePhone = row.telePhone;
-      this.employeForm.birthday = row.birthday;
-      this.employeForm.education = row.education;
-      this.employeForm.deptId = row.deptId;
-      this.employeForm.position = row.position;
-      this.employeForm.entryDate = row.entryDate;
-      this.employeForm.departureDate = row.departureDate;
-      this.employeForm.id = row.id;
+      this.formField.workNo = row.workNo;
+      this.formField.name = row.name;
+      this.formField.foreignName = row.foreignName;
+      this.formField.email = row.email;
+      this.formField.mobilePhone = row.mobilePhone;
+      this.formField.telePhone = row.telePhone;
+      this.formField.birthday = row.birthday;
+      this.formField.education = row.education;
+      this.formField.deptId = row.deptId;
+      this.formField.position = row.position;
+      this.formField.entryDate = row.entryDate;
+      this.formField.departureDate = row.departureDate;
+      this.formField.id = row.id;
     },
     /**
      * 授权

@@ -42,7 +42,7 @@
     <!--查询条件-->
     <Search :show.sync="showSearch" :condition="searchCondition" :form="searchForm" @ok="setCondition" @hidden="showSearch = false" />
     <!--新增编辑页面-->
-    <CustomForm :show.sync="showForm" title="部门编辑" :control="deptControl" :model="deptForm" :rules="deptRules" @ok="saveForm"
+    <CustomForm :show.sync="showForm" title="部门编辑" :control="formControl" :model="formField" :rules="formRules" @ok="saveForm"
       @hidden="showForm = false" />
   </div>
 </template>
@@ -73,144 +73,46 @@ export default {
       pageSizeOptions: [10, 20, 50, 100],
       searchForm: { deptCode: "", deptName: "" },
       searchCondition: [
-        {
-          index: 0,
-          label: "部门代码",
-          field: "deptCode",
-          type: "input",
-          show: true,
-        },
-        {
-          index: 1,
-          label: "部门名称",
-          field: "deptName",
-          type: "input",
-          show: true,
-        },
+        { index: 0, label: "部门代码", field: "deptCode", type: "input", show: true, },
+        { index: 1, label: "部门名称", field: "deptName", type: "input", show: true, },
       ],
       showSearch: false,
       buttonGroups: [
-        {
-          index: 0,
-          label: "查询",
-          method: "showCondition",
-          icon: "el-icon-search",
-        },
+        { index: 0, label: "查询", method: "showCondition", icon: "el-icon-search", },
         { index: 1, label: "新建", method: "addAndEdit", icon: "el-icon-plus" },
         { index: 5, label: "删除", method: "delete", icon: "el-icon-delete" },
-        {
-          index: 6,
-          label: "刷新",
-          method: "searchData",
-          icon: "el-icon-refresh",
-        },
+        { index: 6, label: "刷新", method: "searchData", icon: "el-icon-refresh", },
       ],
       tableColumns: [],
       defaultColumns: [
-        {
-          label: "部门代码",
-          prop: "deptCode",
-          show: true,
-          fixed: false,
-          sortable: false,
-          width: 200,
-        },
-        {
-          label: "部门名称",
-          prop: "deptName",
-          show: true,
-          fixed: false,
-          sortable: false,
-          width: 200,
-        },
-        {
-          label: "负责人",
-          prop: "deptHeaderName",
-          show: true,
-          fixed: false,
-          sortable: false,
-          width: 200,
-        },
-        {
-          label: "创建时间",
-          prop: "createTime",
-          show: true,
-          fixed: false,
-          sortable: false,
-        },
+        { label: "部门代码", prop: "deptCode", show: true, fixed: false, sortable: false, width: 200, },
+        { label: "部门名称", prop: "deptName", show: true, fixed: false, sortable: false, width: 200, },
+        { label: "负责人", prop: "deptHeaderName", show: true, fixed: false, sortable: false, width: 200, },
+        { label: "创建时间", prop: "createTime", show: true, fixed: false, sortable: false, },
       ],
       showForm: false,
-      deptForm: {
-        id: "",
-        deptCode: "",
-        deptName: "",
-        parentId: "",
-        deptHeader: "",
-      },
-      deptControl: [
+      formField: { id: "", deptCode: "", deptName: "", parentId: "", deptHeader: "", },
+      formControl: [
+        { label: "ID", field: "id", type: "hidden", show: false, readonly: true, },
+        { label: "部门代码", field: "deptCode", type: "input", show: true, readonly: true, },
+        { label: "部门名称", field: "deptName", type: "input", show: true, readonly: false, },
         {
-          label: "ID",
-          field: "id",
-          type: "hidden",
-          show: false,
-          readonly: true,
-        },
-        {
-          label: "部门代码",
-          field: "deptCode",
-          type: "input",
-          show: true,
-          readonly: true,
-        },
-        {
-          label: "部门名称",
-          field: "deptName",
-          type: "input",
-          show: true,
-          readonly: false,
-        },
-        {
-          label: "上级部门",
-          field: "parentId",
-          type: "tree-select",
-          show: true,
-          options: null,
-          isClearable: true, // 可清空（可选）
+          label: "上级部门", field: "parentId", type: "tree-select", show: true, options: null, isClearable: true, // 可清空（可选）
           isAccordion: true, // 可收起（可选
-          props: {
-            // 配置项（必选）
-            value: "id",
-            label: "deptName",
-            children: "children",
+          props: {            // 配置项（必选）
+            value: "id", label: "deptName", children: "children",
           },
         },
-        {
-          label: "负责人",
-          field: "deptHeaderJobs",
-          type: "select",
-          show: true,
-          readonly: false,
-          options: null,
-        },
+        { label: "负责人", field: "deptHeaderJobs", type: "select", show: true, readonly: false, options: null, },
       ],
-      deptRules: {
+      formRules: {
         deptCode: [
           { required: true, message: "请输入部门代码", trigger: "blur" },
-          {
-            min: 3,
-            max: 20,
-            message: "长度在 3 到 20 个字符",
-            trigger: "blur",
-          },
+          { min: 3, max: 20, message: "长度在 3 到 20 个字符", trigger: "blur", },
         ],
         deptName: [
           { required: true, message: "请输入部门名称", trigger: "blur" },
-          {
-            min: 1,
-            max: 50,
-            message: "长度在 3 到 50 个字符",
-            trigger: "blur",
-          },
+          { min: 1, max: 50, message: "长度在 3 到 50 个字符", trigger: "blur", },
         ],
         parentId: [
           { required: true, message: "请选择上级部门", trigger: "blur" },
@@ -317,12 +219,12 @@ export default {
      */
     addAndEdit() {
       // 设置账号栏位可编辑
-      for (const item in this.deptForm) {
-        this.deptForm[item] = "";
+      for (const item in this.formField) {
+        this.formField[item] = "";
       }
-      this.deptControl[1].readonly = false;
-      this.deptControl[3].options = this.deptArray;
-      this.deptControl[4].options = this.jobsArray;
+      this.formControl[1].readonly = false;
+      this.formControl[3].options = this.deptArray;
+      this.formControl[4].options = this.jobsArray;
       this.showForm = true;
     },
 
@@ -388,9 +290,9 @@ export default {
      */
     saveForm(from) {
       const newData = JSON.parse(JSON.stringify(from));
-      this.deptForm = newData;
+      this.formField = newData;
       this.$http
-        .post("/api/sysDept/save", this.deptForm)
+        .post("/api/sysDept/save", this.formField)
         .then((res) => {
           if (res.code == "0") {
             this.$message.success(res.msg);
@@ -444,18 +346,18 @@ export default {
      */
     handleEditClick(row) {
       // 设置账号栏位不可编辑
-      for (const item in this.deptForm) {
-        this.deptForm[item] = "";
+      for (const item in this.formField) {
+        this.formField[item] = "";
       }
-      this.deptControl[1].readonly = true;
-      this.deptControl[3].options = this.deptArray;
-      this.deptControl[4].options = this.jobsArray;
+      this.formControl[1].readonly = true;
+      this.formControl[3].options = this.deptArray;
+      this.formControl[4].options = this.jobsArray;
       this.showForm = true;
-      this.deptForm.deptCode = row.deptCode;
-      this.deptForm.deptName = row.deptName;
-      this.deptForm.parentId = row.parentId;
-      this.deptForm.deptHeaderJobs = row.deptHeaderJobs;
-      this.deptForm.id = row.id;
+      this.formField.deptCode = row.deptCode;
+      this.formField.deptName = row.deptName;
+      this.formField.parentId = row.parentId;
+      this.formField.deptHeaderJobs = row.deptHeaderJobs;
+      this.formField.id = row.id;
     },
     /**
      * 授权

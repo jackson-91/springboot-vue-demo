@@ -88,41 +88,6 @@ export default {
         { label: '描述', prop: 'description', show: true, fixed: false, sortable: false }
       ],
       showForm: false,
-      userForm: { id: '', loginName: '', nickName: '', passWord: '', cmfPassWord: '', mobilePhone: '', qq: '', email: '', isEnable: '' },
-      userControl: [
-        { label: 'ID', field: 'id', type: 'hidden', show: false, readonly: true },
-        { label: '账号', field: 'loginName', type: 'input', show: true, readonly: true },
-        { label: '昵称', field: 'nickName', type: 'input', show: true, readonly: false },
-        { label: '密码', field: 'passWord', type: 'password', show: true, readonly: false },
-        { label: '密码确认', field: 'cmfPassWord', type: 'password', show: true, readonly: false },
-        { label: '手机', field: 'mobilePhone', type: 'input', show: true, readonly: false },
-        { label: 'QQ', field: 'qq', type: 'input', show: true },
-        { label: '邮箱', field: 'email', type: 'input', show: true }
-      ],
-      userRules: {
-        loginName: [
-          { required: true, message: '请输入账号', trigger: 'blur' },
-          { min: 3, max: 20, message: '长度在 3 到 20 个字符', trigger: 'blur' }
-        ],
-        nickName: [
-          { required: true, message: '请输入昵称', trigger: 'blur' },
-          { min: 1, max: 50, message: '长度在 3 到 50 个字符', trigger: 'blur' }
-        ],
-        passWord: [
-          { required: true, message: '请输入密码', trigger: 'blur' },
-          { min: 3, max: 20, message: '长度在 3 到 20 个字符', trigger: 'blur' }
-        ],
-        cmfPassWord: [
-          { required: true, message: '请输入密码', trigger: 'blur' },
-          { min: 3, max: 20, message: '长度在 3 到 20 个字符', trigger: 'blur' }
-        ],
-        mobilePhone: [
-          { required: true, message: '请输入手机号', trigger: 'blur' }
-        ],
-        email: [
-          { required: true, message: '请输入邮箱', trigger: 'blur' }
-        ]
-      },
       multipleSelection: [],
       visible: false,
       showView: false,
@@ -241,24 +206,7 @@ export default {
     },
 
     /**
-     * 保存表单
-     */
-    saveForm(from) {
-      const newData = JSON.parse(JSON.stringify(from))
-      this.userForm = newData
-      this.$http.post('/api/wflowDefine/save', this.userForm).then(res => {
-        if (res.code == '0') {
-          this.$message.success(res.msg)
-          this.searchData()
-        } else {
-          this.$message.error(res.msg)
-        }
-      }).catch(err => {
-        console.log(err.message)
-      })
-    },
-    /**
-     * 删除用户
+     * 删除
      */
     handleDelClick(row) {
       // 设置账号栏位不可编辑
@@ -313,7 +261,7 @@ export default {
       })
     },
     /**
-     * 删除用户
+     * 删除
      */
     delete() {
       if (this.$refs.multipleTable.selection.length <= 0) {

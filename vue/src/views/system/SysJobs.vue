@@ -48,7 +48,7 @@
     <!--查询条件-->
     <Search :show.sync="showSearch" :condition="searchCondition" :form="searchForm" @ok="setCondition" @hidden="showSearch=false" />
     <!--新增编辑页面-->
-    <CustomForm :show.sync="showForm" title="职务编辑" :control="jobsControl" :model="jobsForm" :rules="jobsRules" @ok="saveForm"
+    <CustomForm :show.sync="showForm" title="职务编辑" :control="formControl" :model="formField" :rules="formRules" @ok="saveForm"
       @hidden="showForm=false" />
   </div>
 
@@ -96,16 +96,16 @@ export default {
         { label: '创建时间', prop: 'createTime', show: true, fixed: false, sortable: false }
       ],
       showForm: false,
-      jobsForm: {
+      formField: {
         id: '', code: '', name: '', level: ''
       },
-      jobsControl: [
+      formControl: [
         { label: 'ID', field: 'id', type: 'hidden', show: false, readonly: true },
         { label: '职务编码', field: 'code', type: 'input', show: true, readonly: true },
         { label: '职务名称', field: 'name', type: 'input', show: true, readonly: false },
         { label: '职务级别', field: 'level', type: 'select', show: true, readonly: false, options: null }
       ],
-      jobsRules: {
+      formRules: {
         code: [
           { required: true, message: '请输入职务编码', trigger: 'blur' },
           { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }
@@ -190,11 +190,11 @@ export default {
      */
     addAndEdit() {
       // 设置账号栏位可编辑
-      for (const item in this.jobsForm) {
-        this.jobsForm[item] = ''
+      for (const item in this.formField) {
+        this.formField[item] = ''
       }
-      this.jobsControl[1].readonly = false
-      this.jobsControl[3].options = this.optionsArray
+      this.formControl[1].readonly = false
+      this.formControl[3].options = this.optionsArray
       this.showForm = true
     },
     /**
@@ -260,8 +260,8 @@ export default {
      */
     saveForm(from) {
       const newData = JSON.parse(JSON.stringify(from))
-      this.jobsForm = newData
-      this.$http.post('/api/sysJobs/save', this.jobsForm).then(res => {
+      this.formField = newData
+      this.$http.post('/api/sysJobs/save', this.formField).then(res => {
         if (res.code == '0') {
           this.$message.success(res.msg)
           this.showForm = false
@@ -307,16 +307,16 @@ export default {
      */
     handleEditClick(row) {
       // 设置账号栏位不可编辑
-      for (const item in this.jobsForm) {
-        this.jobsForm[item] = ''
+      for (const item in this.formField) {
+        this.formField[item] = ''
       }
-      this.jobsControl[1].readonly = true
+      this.formControl[1].readonly = true
       this.showForm = true
-      this.jobsForm.id = row.id
-      this.jobsForm.name = row.name
-      this.jobsForm.code = row.code
-      this.jobsForm.level = row.level;
-      this.jobsControl[3].options = this.optionsArray
+      this.formField.id = row.id
+      this.formField.name = row.name
+      this.formField.code = row.code
+      this.formField.level = row.level;
+      this.formControl[3].options = this.optionsArray
     },
 
 

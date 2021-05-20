@@ -42,7 +42,7 @@
     <!--查询条件-->
     <Search :show.sync="showSearch" :condition="searchCondition" :form="searchForm" @ok="setCondition" @hidden="hidCondition" />
     <!--新增编辑页面-->
-    <CustomForm :show.sync="showForm" title="用户编辑" :control="formControl" :model="formData" :rules="formRules" @ok="saveForm" @hidden="hidForm" />
+    <CustomForm :show.sync="showForm" title="用户编辑" :control="formControl" :model="formField" :rules="formRules" @ok="saveForm" @hidden="hidForm" />
   </div>
 
 </template>
@@ -90,7 +90,7 @@ export default {
         { label: '参数值2', prop: 'pValue2', show: true, fixed: false, sortable: false },
       ],
       showForm: false,
-      formData: { id: '', pCode: '', pName: '', pDesc: '', pValue: '', pValue1: '', pValue2: '' },
+      formField: { id: '', pCode: '', pName: '', pDesc: '', pValue: '', pValue1: '', pValue2: '' },
       formControl: [
         { label: 'ID', field: 'id', type: 'hidden', show: false, readonly: true },
         { label: '参数代码', field: 'pCode', type: 'input', show: true, readonly: true },
@@ -161,8 +161,8 @@ export default {
      */
     addAndEdit() {
       // 设置账号栏位可编辑
-      for (const item in this.formData) {
-        this.formData[item] = ''
+      for (const item in this.formField) {
+        this.formField[item] = ''
       }
       this.formControl[1].readonly = false
       this.showForm = true
@@ -213,8 +213,8 @@ export default {
      */
     saveForm(from) {
       const newData = JSON.parse(JSON.stringify(from))
-      this.formData = newData
-      this.$http.post('/api/sysParameter/save', this.formData).then(res => {
+      this.formField = newData
+      this.$http.post('/api/sysParameter/save', this.formField).then(res => {
         if (res.code == '0') {
           this.$message.success('保存成功')
           this.showForm = false;
@@ -261,18 +261,18 @@ export default {
      */
     handleEditClick(row) {
       // 设置账号栏位不可编辑
-      for (const item in this.formData) {
-        this.formData[item] = ''
+      for (const item in this.formField) {
+        this.formField[item] = ''
       }
       this.formControl[1].readonly = true
       this.showForm = true
-      this.formData.pCode = row.pCode
-      this.formData.pName = row.pName
-      this.formData.pDesc = row.pDesc
-      this.formData.pValue = row.pValue
-      this.formData.pValue1 = row.pValue1
-      this.formData.pValue2 = row.pValue2
-      this.formData.id = row.id
+      this.formField.pCode = row.pCode
+      this.formField.pName = row.pName
+      this.formField.pDesc = row.pDesc
+      this.formField.pValue = row.pValue
+      this.formField.pValue1 = row.pValue1
+      this.formField.pValue2 = row.pValue2
+      this.formField.id = row.id
     },
     /**
      * 隐藏编辑表单

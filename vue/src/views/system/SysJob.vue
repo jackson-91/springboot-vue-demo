@@ -44,7 +44,7 @@
     <!--查询条件-->
     <Search :show.sync="showSearch" :condition="searchCondition" :form="searchForm" @ok="setCondition" @hidden="hidCondition" />
     <!--新增编辑页面-->
-    <CustomForm :show.sync="showForm" title="任务编辑" :control="jobControl" :model="jobForm" :rules="jobRules" @ok="saveForm" @hidden="hidForm" />
+    <CustomForm :show.sync="showForm" title="任务编辑" :control="formControl" :model="formField" :rules="formRules" @ok="saveForm" @hidden="hidForm" />
   </div>
 </template>
 
@@ -96,19 +96,11 @@ export default {
         { label: "状态", prop: "triggerState", show: true, fixed: false, sortable: false, },
       ],
       showForm: false,
-      jobForm: {
-        id: "",
-        jobName: "",
-        jobGroup: "",
-        jobType: "",
-        description: "",
-        jobClassName: "",
-        cronExpression: "",
-        jobDataParam: "",
-        oldJobName: "",
-        oldJobGroup: "",
+      formField: {
+        id: "", jobName: "", jobGroup: "", jobType: "", description: "", jobClassName: "", cronExpression: "",
+        jobDataParam: "", oldJobName: "", oldJobGroup: "",
       },
-      jobControl: [{ label: "ID", field: "id", type: "hidden", show: false, readonly: true, },
+      formControl: [{ label: "ID", field: "id", type: "hidden", show: false, readonly: true, },
       { index: 0, label: "任务名称", field: "jobName", type: "input", show: true, readonly: false, },
       { index: 1, label: "任务分组", field: "jobGroup", type: "input", show: true, readonly: false, },
       { index: 2, label: "任务描述", field: "description", type: "input", show: true, readonly: false, },
@@ -119,7 +111,7 @@ export default {
       { index: 7, label: "任务名称", field: "oldJobName", type: "hidden", show: false, readonly: false, },
       { index: 8, label: "任务分组", field: "oldJobGroup", type: "hidden", show: false, readonly: false, },
       ],
-      jobRules: {
+      formRules: {
         jobName: [
           { required: true, message: "请输入任务名称", trigger: "blur" },
           { min: 3, max: 20, message: "长度在 3 到 20 个字符", trigger: "blur", },
@@ -178,11 +170,11 @@ export default {
      */
     addAndEdit() {
       // 设置账号栏位可编辑
-      for (const item in this.jobForm) {
-        this.jobForm[item] = "";
+      for (const item in this.formField) {
+        this.formField[item] = "";
       }
-      this.jobControl[1].readonly = false;
-      this.jobControl[5].options = this.JobTypeArray;
+      this.formControl[1].readonly = false;
+      this.formControl[5].options = this.JobTypeArray;
       this.showForm = true;
     },
 
@@ -231,9 +223,9 @@ export default {
      */
     saveForm(from) {
       const newData = JSON.parse(JSON.stringify(from));
-      this.jobForm = newData;
+      this.formField = newData;
       this.$http
-        .post("/api/quartz/save", this.jobForm)
+        .post("/api/quartz/save", this.formField)
         .then((res) => {
           if (res.code == 0) {
             this.showForm = false;
@@ -336,19 +328,19 @@ export default {
      * 修改数据
      */
     handleEditClick(row) {
-      for (const item in this.jobForm) {
-        this.jobForm[item] = "";
+      for (const item in this.formField) {
+        this.formField[item] = "";
       }
       this.showForm = true;
-      this.jobForm.jobName = row.jobName;
-      this.jobForm.jobGroup = row.jobGroup;
-      this.jobForm.jobType = row.jobType;
-      this.jobForm.description = row.description;
-      this.jobForm.jobClassName = row.jobClassName;
-      this.jobForm.cronExpression = row.cronExpression;
-      // this.jobForm.jobDataParam = row.jobDataParam
-      this.jobForm.oldJobName = row.oldJobName;
-      this.jobForm.oldJobGroup = row.oldJobGroup;
+      this.formField.jobName = row.jobName;
+      this.formField.jobGroup = row.jobGroup;
+      this.formField.jobType = row.jobType;
+      this.formField.description = row.description;
+      this.formField.jobClassName = row.jobClassName;
+      this.formField.cronExpression = row.cronExpression;
+      // this.formField.jobDataParam = row.jobDataParam
+      this.formField.oldJobName = row.oldJobName;
+      this.formField.oldJobGroup = row.oldJobGroup;
     },
     /**
      * 隐藏编辑表单

@@ -45,7 +45,7 @@
     <!--查询条件-->
     <Search :show.sync="showSearch" :condition="searchCondition" :form="searchForm" @ok="setCondition" @hidden="hidCondition" />
     <!--新增编辑页面-->
-    <CustomForm :show.sync="showForm" title="用户编辑" :control="userControl" :model="userForm" :rules="userRules" @ok="saveForm" @hidden="hidForm" />
+    <CustomForm :show.sync="showForm" title="用户编辑" :control="formControl" :model="formField" :rules="formRules" @ok="saveForm" @hidden="hidForm" />
   </div>
 
 </template>
@@ -97,8 +97,8 @@ export default {
         { label: '到期时间', prop: 'expireTime', show: true, fixed: false, sortable: false }
       ],
       showForm: false,
-      userForm: { id: '', loginName: '', nickName: '', passWord: '', cmfPassWord: '', mobilePhone: '', qq: '', email: '', isEnable: '' },
-      userControl: [
+      formField: { id: '', loginName: '', nickName: '', passWord: '', cmfPassWord: '', mobilePhone: '', qq: '', email: '', isEnable: '' },
+      formControl: [
         { label: 'ID', field: 'id', type: 'hidden', show: false, readonly: true },
         { label: '账号', field: 'loginName', type: 'input', show: true, readonly: true },
         { label: '昵称', field: 'nickName', type: 'input', show: true, readonly: false },
@@ -108,7 +108,7 @@ export default {
         { label: 'QQ', field: 'qq', type: 'input', show: true },
         { label: '邮箱', field: 'email', type: 'input', show: true }
       ],
-      userRules: {
+      formRules: {
         loginName: [
           { required: true, message: '请输入账号', trigger: 'blur' },
           { min: 3, max: 20, message: '长度在 3 到 20 个字符', trigger: 'blur' }
@@ -185,10 +185,10 @@ export default {
      */
     addAndEdit() {
       // 设置账号栏位可编辑
-      for (const item in this.userForm) {
-        this.userForm[item] = ''
+      for (const item in this.formField) {
+        this.formField[item] = ''
       }
-      this.userControl[1].readonly = false
+      this.formControl[1].readonly = false
       this.showForm = true
     },
 
@@ -237,8 +237,8 @@ export default {
      */
     saveForm(from) {
       const newData = JSON.parse(JSON.stringify(from))
-      this.userForm = newData
-      this.$http.post('/api/sysUser/save', this.userForm).then(res => {
+      this.formField = newData
+      this.$http.post('/api/sysUser/save', this.formField).then(res => {
         this.searchData()
       }).catch(err => {
         console.log(err.message)
@@ -277,17 +277,17 @@ export default {
      */
     handleEditClick(row) {
       // 设置账号栏位不可编辑
-      for (const item in this.userForm) {
-        this.userForm[item] = ''
+      for (const item in this.formField) {
+        this.formField[item] = ''
       }
-      this.userControl[1].readonly = true
+      this.formControl[1].readonly = true
       this.showForm = true
-      this.userForm.loginName = row.loginName
-      this.userForm.nickName = row.nickName
-      this.userForm.qq = row.qq
-      this.userForm.email = row.email
-      this.userForm.mobilePhone = row.mobilePhone
-      this.userForm.id = row.id
+      this.formField.loginName = row.loginName
+      this.formField.nickName = row.nickName
+      this.formField.qq = row.qq
+      this.formField.email = row.email
+      this.formField.mobilePhone = row.mobilePhone
+      this.formField.id = row.id
     },
     /**
      * 隐藏编辑表单
