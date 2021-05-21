@@ -236,6 +236,15 @@ export default {
 .el-input--small .el-input__inner {
   width: 200px !important;
 }
+.el-input,
+.el-input--small {
+  width: 200px !important;
+}
+.el-input-number,
+.el-input-number--small,
+.is-controls-right {
+  width: 200px !important;
+}
 .el-select {
   width: 200px;
 }

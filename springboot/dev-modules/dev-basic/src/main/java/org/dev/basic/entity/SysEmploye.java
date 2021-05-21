@@ -1,6 +1,9 @@
 package org.dev.basic.entity;
 
+import com.baomidou.mybatisplus.annotation.FieldStrategy;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -10,7 +13,7 @@ import org.dev.common.core.entity.TenantEntity;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author dean.x.liu
@@ -20,7 +23,7 @@ import org.dev.common.core.entity.TenantEntity;
 @EqualsAndHashCode(callSuper = true)
 public class SysEmploye extends TenantEntity {
 
-    private static final long serialVersionUID=1L;
+    private static final long serialVersionUID = 1L;
 
     /**
      * ID
@@ -70,7 +73,7 @@ public class SysEmploye extends TenantEntity {
     /**
      * 生日
      */
-    @JsonFormat(pattern="yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime birthday;
 
     /**
@@ -94,7 +97,6 @@ public class SysEmploye extends TenantEntity {
     private String deptName;
 
 
-
     /**
      * 职位
      */
@@ -108,13 +110,14 @@ public class SysEmploye extends TenantEntity {
     /**
      * 入职日期
      */
-    @JsonFormat(pattern="yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime entryDate;
 
     /**
      * 离职日期
      */
-    @JsonFormat(pattern="yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @TableField(updateStrategy = FieldStrategy.IGNORED)
     private LocalDateTime departureDate;
 
 

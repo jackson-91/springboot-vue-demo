@@ -61,7 +61,7 @@
             <el-table :data="itemTableData" border stripe highlight-current-row ref="multipleItemTable" :height="itemTableHeight"
               @row-click="handleItemRowClick" style="width: 100%">
               <el-table-column type="selection" width="55"> </el-table-column>
-              <el-table-column type="index" width="65" label="序号" align="center" fixed :show-overflow-tooltip="true"></el-table-column>
+              <!-- <el-table-column type="index" width="65" label="序号" align="center" fixed :show-overflow-tooltip="true"></el-table-column> -->
               <template v-for="(el, i) in itemTableColumns">
                 <el-table-column :label="el.label" header-align="center" v-if="el.show" :width="el.width || ''" :key="el.prop" :fixed="el.fixed"
                   :prop="el.prop" :sortable="el.sortable" show-overflow-tooltip>
@@ -182,16 +182,18 @@ export default {
       ],
       itemTableColumns: [],
       itemDefaultColumns: [
+        { label: "排序", prop: "sort", show: true, fixed: false, sortable: false, width: 60, },
         { label: "编码", prop: "dicItemCode", show: true, fixed: false, sortable: false, width: 200, },
         { label: "名称", prop: "dicItemName", show: true, fixed: false, sortable: false, width: 200, },
-        { label: "值", prop: "dicItemValue", show: true, fixed: false, sortable: false, },
+        { label: "值", prop: "dicItemValue", show: true, fixed: false, sortable: false },
       ],
-      dicItemForm: { id: "", dicId: "", dicItemCode: "", dicItemName: "", dicItemValue: "", description: "", },
+      dicItemForm: { id: "", dicId: "", dicItemCode: "", dicItemName: "", dicItemValue: "", sort: "", description: "", },
       dicItemControl: [
         { label: "ID", field: "id", type: "hidden", show: false, readonly: true, },
         { label: "编码", field: "dicItemCode", type: "input", show: true, readonly: true, },
         { label: "名称", field: "dicItemName", type: "input", show: true, readonly: false, },
-        { label: "值", field: "dicItemValue", type: "input", show: true, readonly: false, },
+        { label: "值", field: "dicItemValue", type: "input", show: true, readonly: false, min: 1 },
+        { label: "排序", field: "sort", type: "number", show: true, readonly: false, },
         { label: "描述", field: "description", type: "input", show: true, readonly: false, },
       ],
       dicItemRules: {
@@ -597,6 +599,7 @@ export default {
       this.dicItemForm.dicItemName = row.dicItemName;
       this.dicItemForm.dicId = row.dicId;
       this.dicItemForm.dicItemValue = row.dicItemValue;
+      this.dicItemForm.sort = row.sort;
     },
     /**
      * 字典子项查询页面

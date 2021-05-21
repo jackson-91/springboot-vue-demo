@@ -3,6 +3,7 @@ package org.dev.common.security.handler;
 import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.dev.common.core.entity.CurrentUser;
 import org.dev.common.core.result.ResponseResult;
 import org.dev.common.security.jwt.JwtTokenUtil;
@@ -22,6 +23,7 @@ import java.io.PrintWriter;
  * 认证成功处理类
  */
 @Component
+@Slf4j
 public class MyAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
     @Autowired
     JwtTokenUtil jwtTokenUtils;
@@ -36,7 +38,7 @@ public class MyAuthenticationSuccessHandler implements AuthenticationSuccessHand
             throws IOException, ServletException {
         // 所以就是JwtUser啦
         CurrentUser jwtUser = (CurrentUser) authentication.getPrincipal();
-        System.out.println("jwtUser:" + jwtUser.toString());
+        log.info("jwtUser:" + jwtUser.toString());
         //生成token
         String token = jwtTokenUtils.generateToken(jwtUser);
         //token 放入redis中

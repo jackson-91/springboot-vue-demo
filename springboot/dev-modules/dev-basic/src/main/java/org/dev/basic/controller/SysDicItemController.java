@@ -45,8 +45,9 @@ public class SysDicItemController {
     @GetMapping("/list")
     @OperLog(description = "数据字典集合")
     public ResponseResult<IPage<SysDicItem>> list(SysDicItem sysDicItem, PaginAtion pagination) {
-        return ResponseResult.success(sysDicItemService.page(pagination.getPage(),
-                new QueryWrapper<>(sysDicItem)));
+        QueryWrapper<SysDicItem> queryWrapper = new QueryWrapper<>(sysDicItem);
+        queryWrapper.orderByAsc("sort");
+        return ResponseResult.success(sysDicItemService.page(pagination.getPage(), queryWrapper));
     }
 
 
@@ -64,7 +65,9 @@ public class SysDicItemController {
         SysDic sysDic1 = this.sysDicService.getOne(queryWrapper);
         SysDicItem sysDicItem = new SysDicItem();
         sysDicItem.setDicId(sysDic1.getId());
-        return ResponseResult.success(sysDicItemService.list(new QueryWrapper<>(sysDicItem)));
+        QueryWrapper<SysDicItem> dicItemQueryWrapper = new QueryWrapper<>(sysDicItem);
+        dicItemQueryWrapper.orderByAsc("sort");
+        return ResponseResult.success(sysDicItemService.list(dicItemQueryWrapper));
     }
 
 
@@ -83,6 +86,7 @@ public class SysDicItemController {
         List<Long> dicLongs = sysDicList.stream().map(SysDic::getId).distinct().collect(Collectors.toList());
         QueryWrapper queryWrapper1 = new QueryWrapper();
         queryWrapper1.in("dicId", dicLongs);
+        queryWrapper1.orderByAsc("sort");
         List<SysDicItem> sysDicItems = sysDicItemService.list(queryWrapper1);
         for (String dicCode : dicCodes) {
             Optional<SysDic> sysDicOptional = sysDicList.stream().filter(x -> x.getDicCode().equals(dicCode)).findFirst();

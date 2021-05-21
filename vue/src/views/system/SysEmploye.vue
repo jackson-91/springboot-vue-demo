@@ -21,6 +21,12 @@
                 scope.row.education | dic('EDUCATION')
               }}</template>
             </el-table-column>
+            <el-table-column :label="el.label" header-align="center" v-else-if="el.show && el.prop === 'birthday'" :width="el.width || ''"
+              :key="el.prop" :fixed="el.fixed" :prop="el.prop" :sortable="el.sortable" show-overflow-tooltip>
+              <template slot-scope="scope">{{
+                scope.row.birthday | dateFormat
+              }}</template>
+            </el-table-column>
             <el-table-column :label="el.label" header-align="center" v-else-if="el.show" :width="el.width || ''" :key="el.prop" :fixed="el.fixed"
               :prop="el.prop" :sortable="el.sortable" show-overflow-tooltip>
             </el-table-column>
@@ -52,18 +58,6 @@
     <!--新增编辑页面-->
     <CustomForm :show.sync="showForm" title="员工编辑" :control="formControl" :model="formField" :rules="formRules" @ok="saveForm"
       @hidden="showForm = false" />
-    <!--分配角色-->
-    <el-dialog title="角色分配" :visible.sync="visible" width="400px" @close="visible = false">
-      <el-tree node-key="id" style="height: 400px !important; overflow-y: auto" :data="treeData" :props="treeProps" ref="tree" show-checkbox
-        :highlight-current="true" :default-checked-keys="checkedKeys" :default-expand-all="true"></el-tree>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="visible = false">取消</el-button>
-        <el-button @click="selectAll()" type="primary">全选</el-button>
-        <el-button @click="submitRole()" type="primary">确定</el-button>
-      </div>
-    </el-dialog>
-    <!--赋权页面-->
-    <treelist :show.sync="showTree" title="权限查看" ptype="employe" :pid="employeId" @ok="showTree = false" @hidden="showTree = false" />
   </div>
 </template>
 
@@ -121,7 +115,7 @@ export default {
         { label: "姓名", prop: "name", show: true, fixed: false, sortable: false, width: 100, },
         { label: "英文名", prop: "foreignName", show: true, fixed: false, sortable: false, width: 100, },
         { label: "手机", prop: "mobilePhone", show: true, fixed: false, sortable: false, width: 100, },
-        { label: "座机号", prop: "telePhone", show: true, fixed: false, sortable: false, width: 100, },
+        { label: "座机号", prop: "telephone", show: true, fixed: false, sortable: false, width: 100, },
         { label: "邮箱", prop: "email", show: true, fixed: false, sortable: false, width: 150, },
         { label: "生日", prop: "birthday", show: true, fixed: false, sortable: false, width: 120, },
         { label: "学历", prop: "education", show: true, fixed: false, sortable: false, width: 100, },
@@ -134,7 +128,7 @@ export default {
       showForm: false,
       formField: {
         id: "", workNo: "", name: "", foreignName: "", mobilePhone: "",
-        telePhone: "", email: "", birthday: "", education: "", deptId: "", position: "", status: "", entryDate: "", departureDate: "",
+        telephone: "", email: "", birthday: "", education: "", deptId: "", position: "", status: "", entryDate: "", departureDate: "",
       },
       formControl: [
         { label: "ID", field: "id", type: "hidden", show: false, readonly: true, },
@@ -142,7 +136,7 @@ export default {
         { label: "姓名", field: "name", type: "input", show: true, readonly: false, },
         { label: "英文名", field: "foreignName", type: "input", show: true, readonly: false, },
         { label: "手机", field: "mobilePhone", type: "input", show: true, readonly: false, },
-        { label: "座机号", field: "telePhone", type: "input", show: true, readonly: false, },
+        { label: "座机号", field: "telephone", type: "input", show: true, readonly: false, },
         { label: "邮箱", field: "email", type: "input", show: true },
         { label: "生日", field: "birthday", type: "date", show: true },
         { label: "学历", field: "education", type: "select", show: true, options: null, },
@@ -189,10 +183,6 @@ export default {
       },
       multipleSelection: [],
       visible: false,
-      treeData: [],
-      treeProps: {
-        label: "roleName",
-      },
       checkedKeys: [],
       employeId: null,
       showTree: false,
@@ -458,25 +448,6 @@ export default {
         });
     },
     /**
-     * 角色分配
-     */
-    handleRoleClick(row) {
-      this.visible = true;
-      this.employeId = row.id;
-      this.$http
-        .get("/api/sysRoleemploye/role-list-set", {
-          params: { employeId: row.id },
-        })
-        .then((res) => {
-          console.log(res);
-          this.treeData = res.data.tree;
-          this.checkedKeys = res.data.checkIds;
-        })
-        .catch((err) => {
-          console.log(err.message);
-        });
-    },
-    /**
      * 修改数据
      */
     handleEditClick(row) {
@@ -494,7 +465,7 @@ export default {
       this.formField.foreignName = row.foreignName;
       this.formField.email = row.email;
       this.formField.mobilePhone = row.mobilePhone;
-      this.formField.telePhone = row.telePhone;
+      this.formField.telephone = row.telephone;
       this.formField.birthday = row.birthday;
       this.formField.education = row.education;
       this.formField.deptId = row.deptId;
@@ -503,100 +474,7 @@ export default {
       this.formField.departureDate = row.departureDate;
       this.formField.id = row.id;
     },
-    /**
-     * 授权
-     */
-    handleAuthClick() { },
-    /**
-     *权限查看
-     */
-    handleAuthVClick(row) {
-      this.employeId = row.id;
-      this.showTree = true;
-    },
-    /**
-     * 分配角色
-     */
-    setRole() {
-      if (this.$refs.multipleTable.selection.length <= 0) {
-        this.$message.warning("请选择要操作的员工");
-      }
-      if (this.$refs.multipleTable.selection.length > 1) {
-        this.$message.warning("只能选择一个员工");
-      }
-      const id = this.$refs.multipleTable.selection[0].id;
-      this.employeId = id;
-      this.visible = true;
-      this.$http
-        .get("/api/sysRoleemploye/role-list-set", { params: { employeId: id } })
-        .then((res) => {
-          console.log(res);
-          this.treeData = res.data.tree;
-          this.checkedKeys = res.data.checkIds;
-        })
-        .catch((err) => {
-          console.log(err.message);
-        });
-    },
-    // 树形全选操作
-    selectAll() {
-      var keys = [];
-      if (this.treeData.length > this.$refs.tree.getCheckedNodes().length) {
-        this.treeData.map(function (item) {
-          keys.push(item.id);
-        });
-        this.$refs.tree.setCheckedKeys(keys);
-      } else {
-        this.$refs.tree.setCheckedKeys([]);
-      }
-    },
 
-    /**
-     * 角色分配提交
-     */
-    submitRole() {
-      const nodes = this.$refs.tree.getCheckedNodes();
-      this.$http
-        .post("/api/sysRoleemploye/save?employeId=" + this.employeId, nodes)
-        .then((res) => {
-          this.visible = false;
-          if (res.code == "0") {
-            this.$message.success(res.msg);
-            this.searchData();
-          } else {
-            this.$message.error(res.msg);
-          }
-        })
-        .catch((err) => {
-          console.log(err.message);
-        });
-    },
-    /**
-     * 重置密码
-     */
-    restPwd() {
-      if (this.$refs.multipleTable.selection.length <= 0) {
-        this.$message.warning("请选择要操作的员工");
-        return;
-      }
-      const idArray = [];
-      this.$refs.multipleTable.selection.forEach((element) => {
-        idArray.push(element.id);
-      });
-      this.$http
-        .post("/api/sysEmploye/rest-password", idArray)
-        .then((res) => {
-          if (res.code == "0") {
-            this.$message.success(res.msg);
-            this.searchData();
-          } else {
-            this.$message.error(res.msg);
-          }
-        })
-        .catch((err) => {
-          console.log(err.message);
-        });
-    },
     /**
      * 删除员工
      */

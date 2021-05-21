@@ -24,6 +24,10 @@ public class SysDicItem extends TenantEntity {
     private Long id;
 
     /**
+     * sort
+     */
+    private Integer sort;
+    /**
      * 数据字典id
      */
     private Long dicId;
