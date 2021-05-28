@@ -224,6 +224,11 @@ export default {
       } else {
         return { marginLeft: "200px" };
       }
+      // if (this.isCollapse) {
+      //   return { marginLeft: "0px" };
+      // } else {
+      //   return { marginLeft: "0px" };
+      // }
     },
   },
   components: {
@@ -277,6 +282,8 @@ export default {
   .el-aside {
     background-color: white;
     position: fixed;
+    max-width: 200px;
+
     .el-menu {
       border-right: none;
       text-align: left;

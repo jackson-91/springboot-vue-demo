@@ -24,6 +24,7 @@
             <template slot-scope="scope">
               <el-button type="text" @click="handleEditClick(scope.row)" size="small">业务单据</el-button>
               <el-button type="text" @click="handleViewProcessClick(scope.row)" size="small">查看流程图</el-button>
+              <el-button type="text" @click="handleBpmViewerProcessClick(scope.row)" size="small">查看流程</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -46,6 +47,9 @@
       <img :src="imgSrc" style="width: 100%; height: 100%" />
       <br />
     </el-dialog>
+    <el-drawer title="流程图" :visible.sync="showViewer" :with-header="true" size="85%">
+      <FlowBpmnViewer :instanceId="instanceId" :taskId='taskId'></FlowBpmnViewer>
+    </el-drawer>
   </div>
 
 </template>
@@ -53,10 +57,12 @@
 <script>
 import CustomTableCols from '../../components/CustomTableCols'
 import Search from '../../components/Search'
+import FlowBpmnViewer from "../../components/activiti/FlowBpmnViewer";
 export default {
   components: {
     CustomTableCols,
-    Search
+    Search,
+    FlowBpmnViewer
   },
   data() {
     return {
@@ -127,7 +133,10 @@ export default {
       multipleSelection: [],
       visible: false,
       showView: false,
-      imgSrc: ''
+      showViewer: false,
+      imgSrc: '',
+      instanceId: '',
+      taskId: ''
     }
   },
 
@@ -293,6 +302,12 @@ export default {
       // 设置账号栏位不可编辑
       this.showView = true
       this.imgSrc = '/api/wflowChart/traceprocess?processInstanceId=' + row.processInstanceId
+    },
+    handleBpmViewerProcessClick(row) {
+      this.instanceId = row.processInstanceId;
+      this.taskId = row.id;
+      // 设置账号栏位不可编辑
+      this.showViewer = true
     },
     /**
      * 隐藏编辑表单
