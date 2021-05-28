@@ -47,7 +47,7 @@
       <br />
     </el-dialog>
     <el-drawer title="流程图" :visible.sync="showViewer" :with-header="true" size="85%">
-      <FlowBpmnViewer :instanceId="instanceId"></FlowBpmnViewer>
+      <FlowBpmnViewer :instanceId="instanceId" :taskId="taskId"></FlowBpmnViewer>
     </el-drawer>
   </div>
 </template>
@@ -98,6 +98,7 @@ export default {
       showViewer: false,
       imgSrc: '',
       instanceId: '',
+      taskId: ''
     };
   },
 
@@ -263,6 +264,7 @@ export default {
     },
     handleBpmViewerProcessClick(row) {
       this.instanceId = row.processInstanceId;
+      this.taskId = row.id;
       // 设置账号栏位不可编辑
       this.showViewer = true
     },

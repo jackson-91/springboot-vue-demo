@@ -105,40 +105,41 @@ export default {
                         }
                       }
                     } else {
-                      if (shapeAttrs.status == '1') {
-                        //已完成任务结点
-                        modeling.setColor([element], {
-                          stroke: 'black',
-                          fill: '#d7f6ce'
-                        });
-                      } else if (shapeAttrs.status == '0') {
-                        //当前任务结点
-                        modeling.setColor([element], {
-                          stroke: 'green',
-                          fill: '#faa755'
-                        });
-                      } else {
-                        //已完成结点
-                        if (that.flowEndId) {
-                          let flowElement = that.flowEndId.filter(x => x == shapeId);
-                          if (flowElement.length > 0) {
-                            modeling.setColor([element], {
-                              stroke: 'black',
-                              fill: '#d7f6ce'
-                            });
-                          }
-                        }
-                        //当前任务结点
-                        if (that.flowCurrentId) {
-                          let flowElement = that.flowCurrentId.filter(x => x == shapeId);
-                          if (flowElement.length > 0) {
-                            modeling.setColor([element], {
-                              stroke: 'green',
-                              fill: '#faa755'
-                            });
-                          }
+                      //已完成结点
+                      if (that.flowEndId) {
+                        let flowElement = that.flowEndId.filter(x => x == shapeId);
+                        if (flowElement && flowElement.length > 0) {
+                          modeling.setColor([element], {
+                            stroke: 'black',
+                            fill: '#d7f6ce'
+                          });
                         }
                       }
+                      //当前任务结点
+                      if (that.flowCurrentId) {
+                        let flowElement = that.flowCurrentId.filter(x => x == shapeId);
+                        if (flowElement && flowElement.length > 0) {
+                          modeling.setColor([element], {
+                            stroke: 'green',
+                            fill: '#faa755'
+                          });
+                        }
+                      }
+                      // if (shapeAttrs.status == '1') {
+                      //   //已完成任务结点
+                      //   modeling.setColor([element], {
+                      //     stroke: 'black',
+                      //     fill: '#d7f6ce'
+                      //   });
+                      // } else if (shapeAttrs.status == '0') {
+                      //   //当前任务结点
+                      //   modeling.setColor([element], {
+                      //     stroke: 'green',
+                      //     fill: '#faa755'
+                      //   });
+                      // } else {
+
+                      // }
                     }
                   }
                 });
@@ -224,7 +225,7 @@ export default {
   },
 };
 </script>
-<style  lang="less"  scoped>
+<style lang="less" scoped>
 .flow-container {
   display: flex;
 }
