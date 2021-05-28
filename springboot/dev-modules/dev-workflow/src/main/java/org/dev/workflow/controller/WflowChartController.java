@@ -2,18 +2,20 @@ package org.dev.workflow.controller;
 
 
 import lombok.extern.slf4j.Slf4j;
-import org.activiti.bpmn.model.BpmnModel;
-import org.activiti.bpmn.model.FlowNode;
-import org.activiti.bpmn.model.SequenceFlow;
+import org.activiti.bpmn.converter.BpmnXMLConverter;
+import org.activiti.bpmn.model.*;
+import org.activiti.bpmn.model.Process;
 import org.activiti.engine.*;
 import org.activiti.engine.history.HistoricActivityInstance;
 import org.activiti.engine.history.HistoricActivityInstanceQuery;
 import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.impl.RepositoryServiceImpl;
 import org.activiti.engine.impl.persistence.entity.ProcessDefinitionEntity;
+import org.activiti.engine.task.Task;
 import org.activiti.image.ProcessDiagramGenerator;
 import org.activiti.image.impl.DefaultProcessDiagramGenerator;
 import org.apache.commons.lang3.StringUtils;
+import org.dev.common.core.result.ResponseResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.util.CollectionUtils;
@@ -22,12 +24,10 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import org.activiti.engine.TaskService;
 import org.dev.workflow.util.*;
 
 /**
@@ -50,6 +50,9 @@ public class WflowChartController {
     ProcessEngineConfiguration processEngineConfiguration;
     @Autowired
     ProcessEngine processEngine;
+
+    @Autowired
+    TaskService taskService;
 
 
     /**
@@ -294,6 +297,127 @@ public class WflowChartController {
 
         }
         return highLightedFlowIds;
+    }
+
+
+    @RequestMapping(value = "/bpmn-traceprocess", method = RequestMethod.GET)
+    public ResponseResult<Map<String, Object>> getFlowByInstanceId(@RequestParam("processInstanceId") String processInstanceId,
+                                                                   @RequestParam("taskId") String taskId) {
+
+        if (StringUtils.isEmpty(processInstanceId)) {
+            log.error("processInstanceId is null");
+            return ResponseResult.success(null);
+        }
+        Map<String, Object> objectMap = new HashMap<>();
+        List<String> nodeIdList = new ArrayList<>();
+        List<String> currentNodeIdList = new ArrayList<>();
+        ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
+        // 获取历史流程实例
+        HistoricProcessInstance historicProcessInstance = processEngine.getHistoryService()
+                .createHistoricProcessInstanceQuery()
+                .processInstanceId(processInstanceId).singleResult();
+        // 获取流程中已经执行的节点，按照执行先后顺序排序
+        List<HistoricActivityInstance> historicActivityInstances = processEngine.getHistoryService()
+                .createHistoricActivityInstanceQuery()
+                .processInstanceId(processInstanceId)
+                .finished()
+                .orderByHistoricActivityInstanceId()
+                .asc().list();
+        // 高亮已经执行流程节点ID集合
+        List<String> highLightedActivitiIds = new ArrayList<>();
+        int index = 1;
+        for (HistoricActivityInstance historicActivityInstance : historicActivityInstances) {
+
+            // 用默认颜色
+            highLightedActivitiIds.add(historicActivityInstance.getActivityId());
+            nodeIdList.add(historicActivityInstance.getActivityId());
+            index++;
+        }
+        BpmnModel bpmnModel = processEngine.getRepositoryService()
+                .getBpmnModel(historicProcessInstance.getProcessDefinitionId());
+        // 高亮流程已发生流转的线id集合
+        List<String> highLightedFlowIds = getHighLightedFlows(bpmnModel, historicActivityInstances);
+        nodeIdList.addAll(highLightedFlowIds);
+
+        if (StringUtils.isNoneEmpty(taskId)) {
+
+            //获取当前结点
+            Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
+            if (task != null) {
+                log.info("----已不存在当前任务结点-------");
+                try {
+                    // 获取当前节点
+                    FlowElement currentFlowElement = bpmnModel.getFlowElement(task.getTaskDefinitionKey());
+                    // 这里不转也有方法拿到，我这是为了后人阅读方便
+                    UserTask userTask = (UserTask) currentFlowElement;
+                    //获取节点入口线段
+                    List<SequenceFlow> incomingFlows = userTask.getIncomingFlows();
+                    if (incomingFlows != null && incomingFlows.size() > 0) {
+                        for (SequenceFlow sequenceFlow : incomingFlows) {
+                            highLightedFlowIds.add(sequenceFlow.getId());
+                            nodeIdList.add(sequenceFlow.getId());
+                        }
+                    }
+                    currentNodeIdList.add(currentFlowElement.getId());
+                } catch (Exception ee) {
+                    ee.printStackTrace();
+                }
+            }
+        }
+
+        //设置节点属性
+        List<Process> processList = bpmnModel.getProcesses();
+
+        for (Process process : processList) {
+            Collection<FlowElement> flowElementCollection = process.getFlowElements();
+            for (FlowElement flowElement : flowElementCollection) {
+                //已完成结点
+                Optional<String> optionalS = highLightedActivitiIds.stream().filter(x -> x.equals(flowElement.getId())).findFirst();
+                if (optionalS.isPresent()) {
+                    Map<String, List<ExtensionAttribute>> map = flowElement.getAttributes();
+                    ExtensionAttribute extensionAttribute = new ExtensionAttribute();
+                    extensionAttribute.setName("activiti:status");
+                    extensionAttribute.setValue("1");
+                    List<ExtensionAttribute> list = new ArrayList<>();
+                    list.add(extensionAttribute);
+                    map.put("task_status", list);
+                    flowElement.setAttributes(map);
+                }
+                //已完成结点之间的线
+                Optional<String> optionalS1 = highLightedFlowIds.stream().filter(x -> x.equals(flowElement.getId())).findFirst();
+                if (optionalS1.isPresent()) {
+                    Map<String, List<ExtensionAttribute>> map = flowElement.getAttributes();
+                    ExtensionAttribute extensionAttribute = new ExtensionAttribute();
+                    extensionAttribute.setName("status");
+                    extensionAttribute.setValue("1");
+                    List<ExtensionAttribute> list = new ArrayList<>();
+                    list.add(extensionAttribute);
+                    map.put("task_status", list);
+                    flowElement.setAttributes(map);
+                }
+                //正在进行结点
+                Optional<String> optionalS3 = currentNodeIdList.stream().filter(x -> x.equals(flowElement.getId())).findFirst();
+                if (optionalS3.isPresent()) {
+                    Map<String, List<ExtensionAttribute>> map = flowElement.getAttributes();
+                    ExtensionAttribute extensionAttribute = new ExtensionAttribute();
+                    extensionAttribute.setName("activiti:status");
+                    extensionAttribute.setValue("0");
+                    List<ExtensionAttribute> list = new ArrayList<>();
+                    list.add(extensionAttribute);
+                    map.put("task_status", list);
+                    flowElement.setAttributes(map);
+                }
+            }
+        }
+        BpmnXMLConverter converter = new BpmnXMLConverter();
+        //把bpmnModel对象转换成字符
+        byte[] bytes = converter.convertToXML(bpmnModel);
+        String xmlContenxt = new String(bytes);
+        log.info(xmlContenxt);
+        objectMap.put("bpmXml", xmlContenxt);
+        objectMap.put("flowElementPassed", nodeIdList);
+        objectMap.put("flowElementGoIng", currentNodeIdList);
+        return ResponseResult.success(objectMap);
     }
 
 }
