@@ -420,7 +420,8 @@ export default {
     searchLog() {
       this.$http.get('/api/sysSequenceLog/list', {
         params: {
-          sequenceId: this.sequenceId
+          sequenceId: this.sequenceId,
+          current: this.logCurrent, size: this.logSize,
         }
       }).then(res => {
         if (res.code == '0') {
@@ -473,7 +474,7 @@ export default {
   */
     handleLogSizeChange(val) {
       console.log(`每页 ${val} 条`)
-      this.LogSize = val
+      this.logSize = val
       this.searchLog()
     },
     /**
@@ -481,7 +482,7 @@ export default {
      */
     handleLogCurrentChange(val) {
       console.log(`当前页: ${val}`)
-      this.LogCurrent = val
+      this.logCurrent = val
       this.searchLog()
     }
   },
