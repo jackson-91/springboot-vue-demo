@@ -10,6 +10,7 @@ import org.dev.common.core.result.ResponseResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.dev.common.core.aop.OperLog;
 
 import java.util.List;
 
@@ -25,6 +26,7 @@ public class ${entity}Controller {
      * @return ResponseResult转换结果
      */
     @RequestMapping(value="/save",method= RequestMethod.POST)
+    @OperLog(description = "${table.entityPath}保存和修改")
     public ResponseResult<String> save(@RequestBody ${entity} ${table.entityPath}) {
         boolean result = false;
         try {
@@ -47,6 +49,7 @@ public class ${entity}Controller {
      * @return
      */
     @GetMapping("/get")
+    @OperLog(description = "${table.entityPath}获取对象信息")
     public  ResponseResult<${entity}> get(@RequestParam("id") Long id) {
         ${entity} ${table.entityPath} = ${table.entityPath}Service.getById(id);
         return ResponseResult.success(${table.entityPath});
@@ -58,6 +61,7 @@ public class ${entity}Controller {
      * @return
      */
     @PostMapping("/delete")
+    @OperLog(description = "${table.entityPath}删除对象信息")
     public ResponseResult<String> delete(@RequestBody List<Long> ids) {
         try {
             ${table.entityPath}Service.removeByIds(ids);
@@ -75,6 +79,7 @@ public class ${entity}Controller {
      * @return
      */
     @RequestMapping("/list")
+    @OperLog(description = "${table.entityPath}分页查询数据信息")
     public ResponseResult<IPage<${entity}>> list(${entity} ${table.entityPath} , PaginAtion pagination) {
         Page page = pagination.getPage();
         return ResponseResult.success(${table.entityPath}Service.page(page, new QueryWrapper<${entity}>(${table.entityPath})));

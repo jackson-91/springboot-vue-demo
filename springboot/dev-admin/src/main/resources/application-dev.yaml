@@ -157,11 +157,15 @@ mybatis-plus:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   configuration-properties:
     isLogicDel: 'true'
+    #实体扫描，多个package用逗号或者分号分隔
+  typeAliasesPackage: org.dev.**.entity.**
 #日志
 logging:
   level:
-    org.dev.framework.modules.**.mapper: DEBUG
-    org.dev.framework.modules: INFO
+    org.dev.framework.**.mapper: DEBUG
+    org.dev.framework.**: INFO
+    com.baomidou.example.mapper: DEBUG
+  config: classpath:logback/logback-spring.xml
 # 自定义配置
 springboot_vue:
   upload:
