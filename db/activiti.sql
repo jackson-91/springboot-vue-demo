@@ -63,6 +63,14 @@ CREATE TABLE `act_ge_property` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ----------------------------
+-- Records of act_ge_property
+-- ----------------------------
+INSERT INTO `act_ge_property` VALUES ('cfg.execution-related-entities-count', 'false', 1);
+INSERT INTO `act_ge_property` VALUES ('next.dbid', '1', 1);
+INSERT INTO `act_ge_property` VALUES ('schema.history', 'create(7.1.0-M6)', 1);
+INSERT INTO `act_ge_property` VALUES ('schema.version', '7.1.0-M6', 1);
+
+-- ----------------------------
 -- Table structure for act_hi_actinst
 -- ----------------------------
 DROP TABLE IF EXISTS `act_hi_actinst`;
