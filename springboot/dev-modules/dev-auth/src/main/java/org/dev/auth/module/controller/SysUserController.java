@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.dev.auth.module.entity.SysUser;
 import org.dev.auth.module.service.SysUserService;
+import org.dev.common.core.aop.DuplicateSubmit;
 import org.dev.common.core.page.PaginAtion;
 import org.dev.common.core.result.ResponseResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,7 @@ public class SysUserController {
      * @return
      */
     @RequestMapping("/list")
+    @DuplicateSubmit
     public ResponseResult<IPage<SysUser>> list(SysUser sysUser, PaginAtion pagination) {
         Page page = pagination.getPage();
         return ResponseResult.success(sysUserService.page(page, new QueryWrapper<SysUser>(sysUser)));

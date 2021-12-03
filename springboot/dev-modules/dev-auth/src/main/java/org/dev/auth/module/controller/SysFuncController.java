@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.dev.auth.module.entity.SysFunc;
 import org.dev.auth.module.service.SysFuncService;
+import org.dev.common.core.aop.DuplicateSubmit;
 import org.dev.common.core.page.PaginAtion;
 import org.dev.common.core.result.ResponseResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,7 @@ public class SysFuncController {
      * @return
      */
     @RequestMapping("/menu-func-list")
+    @DuplicateSubmit
     public ResponseResult<IPage<SysFunc>> menuFuncList(@RequestParam("menuId") Long menuId, PaginAtion pagination) {
         SysFunc sysFunc = new SysFunc();
         sysFunc.setMenuId(menuId);
