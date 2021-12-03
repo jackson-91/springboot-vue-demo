@@ -25,4 +25,7 @@ public @interface DuplicateSubmit {
      * 参数名称
      */
     String name() default "";
+
+    //保存重复提交标记 默认为需要保存
+    boolean save() default true;
 }

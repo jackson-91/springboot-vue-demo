@@ -4,9 +4,9 @@ server:
 spring:
   #数据库配置
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/springboot_vue?autoReconnect=true&useUnicode=true&characterEncoding=utf8&serverTimezone=UTC&zeroDateTimeBehavior=convertToNull&useSSL=false&nullCatalogMeansCurrent=true
+    url: jdbc:mysql://47.104.140.48:3586/springboot_vue?autoReconnect=true&useUnicode=true&characterEncoding=utf8&serverTimezone=UTC&zeroDateTimeBehavior=convertToNull&useSSL=false&nullCatalogMeansCurrent=true
     username: root
-    password: root
+    password: alyALY123$%^
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource #切换数据源，如果不写，会使用默认的
     # 以下是DuriDataSource的基本配置，如果不写，使用springboot默认的
@@ -57,7 +57,7 @@ spring:
       time-to-live: 60s
     type: redis
   redis:
-    host: 127.0.0.1
+    host: 47.104.140.48
     port: 6379
     #password: bqcBQC123
     timeout: 10000ms
