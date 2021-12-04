@@ -55,4 +55,15 @@ public class GlobalExceptionHandler {
         //把错误输出到日志
         return ResponseResult.error(HttpStatus.NOT_FOUND.value(), "服务器异常" + e.getMessage(), null);
     }
+
+
+    /**
+     * 演示模式异常
+     */
+    @ExceptionHandler(PreviewException.class)
+    @ResponseBody
+    public ResponseResult<Exception> previewException(PreviewException e) {
+        //把错误输出到日志
+        return ResponseResult.error(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage(), null);
+    }
 }
