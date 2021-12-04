@@ -17,7 +17,6 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * 演示环境拦截器
- * 
  */
 @Slf4j
 @Aspect
@@ -27,6 +26,14 @@ public class PreviewAspect {
     @Value("${springboot_vue.isPreview}")
     private boolean isPreview = false;
 
+    /**
+     * 对controller中返回结果未ResponseResult的方法进行拦截，如果方法是POST PUT DELETE请求类型
+     * 并且配置环境是演示环境，则不允许进行操作
+     *
+     * @param point
+     * @return
+     * @throws Throwable
+     */
     @Around(
             "execution(static org.dev.common.core.result.ResponseResult *(..)) || " +
                     "(@within(org.springframework.stereotype.Controller) || " +
