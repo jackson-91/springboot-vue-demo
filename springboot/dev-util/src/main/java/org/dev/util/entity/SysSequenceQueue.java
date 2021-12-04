@@ -39,7 +39,7 @@ public class SysSequenceQueue extends TenantEntity {
     /**
      * 当前数值
      */
-    private Integer currentValue;
+    private Long currentValue;
 
     /**
      * 当前数值

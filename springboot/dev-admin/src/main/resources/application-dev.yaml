@@ -171,4 +171,4 @@ springboot_vue:
   upload:
     local-upload-path: E:\Temp\upload
     suffix: .jpg,.bmp,.jpeg,.png,.zip,.rar,.xls,.xlsx,.doc,.docx,.pdf,.txt,.ci,.vi,bpmn,xml
-  isPreview: true # 是否演示环境
+  isPreview: false # 是否演示环境
