@@ -13,6 +13,11 @@
         <el-form-item prop="password">
           <el-input v-model="loginForm.password" type="password" prefix-icon="el-icon-star-on"></el-input>
         </el-form-item>
+        <!--密码-->
+        <el-form-item prop="password">
+          <el-input v-model="loginForm.verifyCode" type="password"></el-input>
+          <img style="height:28px;" id="verifyCode" alt="点击更换" title="点击更换" src="api/captcha/verifyCode?type=char" />
+        </el-form-item>
         <!--按钮-->
         <el-form-item class="btns">
           <el-button type="primary" @click="onSubmit">登录</el-button>

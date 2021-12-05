@@ -82,7 +82,7 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
         </dependency>
-
+    
         <!-- mybatis-plus begin -->
         <dependency>
             <groupId>com.baomidou</groupId>
@@ -140,7 +140,12 @@
             <artifactId>spring-boot-starter-quartz</artifactId>
             <version>2.3.5.RELEASE</version>
         </dependency>
-
+        <!-- google验证码 -->
+        <dependency>
+            <groupId>com.github.penggle</groupId>
+            <artifactId>kaptcha</artifactId>
+            <version>2.3.2</version>
+        </dependency>
         <!--测试依赖-->
         <dependency>
             <groupId>org.springframework.boot</groupId>

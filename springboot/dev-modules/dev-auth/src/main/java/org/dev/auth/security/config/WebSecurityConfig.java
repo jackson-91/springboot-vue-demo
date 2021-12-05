@@ -43,7 +43,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     protected UserDetailsService userDetailsService() {
-
         return new SysUserServiceImpl();
     }
 
@@ -138,7 +137,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/wflowDefine/view","/wflowChart/traceprocess","/wflowChart/showImg","/wflowDefine/export")
+        web.ignoring().antMatchers("/wflowDefine/view", "/wflowChart/traceprocess", "/wflowChart/showImg", "/wflowDefine/export","/captcha/verifyCode")
                 .antMatchers("/favicon.ico");
     }
 
