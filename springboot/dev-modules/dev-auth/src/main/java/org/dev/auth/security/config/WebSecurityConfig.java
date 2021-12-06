@@ -4,6 +4,7 @@ package org.dev.auth.security.config;
 import org.dev.auth.module.service.impl.SysUserServiceImpl;
 import org.dev.auth.security.MySecurityMetadataSource;
 import org.dev.auth.security.filter.JWTAuthorizationFilter;
+import org.dev.common.kaptcha.VerifyCodeFilter;
 import org.dev.common.security.MyAccessDecisionManager;
 import org.dev.common.security.filter.LoginAuthenticationFilter;
 import org.dev.common.security.handler.*;
@@ -40,6 +41,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     JWTAuthorizationFilter jwtAuthorizationFilter;
+
+    @Autowired
+    VerifyCodeFilter verifyCodeFilter;
 
     @Bean
     protected UserDetailsService userDetailsService() {
@@ -137,7 +141,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/wflowDefine/view", "/wflowChart/traceprocess", "/wflowChart/showImg", "/wflowDefine/export","/captcha/verifyCode")
+        web.ignoring().antMatchers("/wflowDefine/view", "/wflowChart/traceprocess", "/wflowChart/showImg", "/wflowDefine/export",
+                        "/captcha/verifyCode", "/captcha/verifyCodeFlag")
                 .antMatchers("/favicon.ico");
     }
 
@@ -166,7 +171,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-        http.authorizeRequests().antMatchers("/login").permitAll()
+        http.addFilterBefore(verifyCodeFilter, UsernamePasswordAuthenticationFilter.class)
+                .authorizeRequests().antMatchers("/login").permitAll()
                 .withObjectPostProcessor(new ObjectPostProcessor<FilterSecurityInterceptor>() {
                     @Override
                     public <O extends FilterSecurityInterceptor> O postProcess(O o) {

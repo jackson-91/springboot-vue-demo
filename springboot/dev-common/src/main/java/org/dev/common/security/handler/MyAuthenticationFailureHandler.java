@@ -2,6 +2,7 @@ package org.dev.common.security.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.dev.common.core.result.ResponseResult;
+import org.dev.common.exception.ValidateCodeException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.AuthenticationException;
@@ -41,6 +42,8 @@ public class MyAuthenticationFailureHandler implements AuthenticationFailureHand
             responseResult.setMsg("账户过期，登录失败");
         } else if (e instanceof CredentialsExpiredException) {
             responseResult.setMsg("密码过期，登录失败");
+        } else if (e instanceof ValidateCodeException) {
+            responseResult.setMsg(e.getMessage());
         } else {
             responseResult.setMsg("登录失败");
         }

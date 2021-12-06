@@ -3,7 +3,10 @@ package org.dev.common.kaptcha;
 import com.google.code.kaptcha.Constants;
 import com.google.code.kaptcha.Producer;
 import io.swagger.annotations.Api;
+import lombok.extern.slf4j.Slf4j;
+import org.dev.common.core.result.ResponseResult;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,6 +23,7 @@ import java.io.IOException;
 @Controller
 @Api(value = "验证码")
 @RequestMapping("/captcha")
+@Slf4j
 public class CaptchaController {
 
     @Autowired
@@ -28,8 +32,15 @@ public class CaptchaController {
     @Autowired
     private Producer captchaProducerMath;
 
+    @Value("${springboot_vue.verifyCode}")
+    private boolean verifyFlag = true;
+
     /**
      * 验证码生成
+     *
+     * @param request
+     * @param response
+     * @return
      */
     @GetMapping(value = "/verifyCode")
     public ModelAndView verifyCode(HttpServletRequest request, HttpServletResponse response) {
@@ -46,18 +57,18 @@ public class CaptchaController {
             String capStr = null;
             String code = null;
             BufferedImage bi = null;
-            if ("math".equals(type))//验证码为算数 8*9 类型
-            {
+            if ("math".equals(type)) {//验证码为算数 8*9 类型
                 String capText = captchaProducerMath.createText();
                 capStr = capText.substring(0, capText.lastIndexOf("@"));
                 code = capText.substring(capText.lastIndexOf("@") + 1);
                 bi = captchaProducerMath.createImage(capStr);
-            } else if ("char".equals(type))//验证码为 abcd类型
-            {
+            } else if ("char".equals(type)) {//验证码为 abcd类型
                 capStr = code = captchaProducer.createText();
                 bi = captchaProducer.createImage(capStr);
             }
             session.setAttribute(Constants.KAPTCHA_SESSION_KEY, code);
+            request.getServletContext().setAttribute(Constants.KAPTCHA_SESSION_KEY, code);
+            log.info("----SESSIONID" + session.getId());
             out = response.getOutputStream();
             ImageIO.write(bi, "jpg", out);
             System.out.println("bi = " + bi);
@@ -76,5 +87,15 @@ public class CaptchaController {
             }
         }
         return null;
+    }
+
+    /**
+     * 获取是否开启验证码
+     *
+     * @return
+     */
+    @GetMapping(value = "/verifyCodeFlag")
+    public ResponseResult<Boolean> verifyCodeFlag() {
+        return ResponseResult.success(verifyFlag);
     }
 }

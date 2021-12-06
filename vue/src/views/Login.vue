@@ -14,9 +14,13 @@
           <el-input v-model="loginForm.password" type="password" prefix-icon="el-icon-star-on"></el-input>
         </el-form-item>
         <!--密码-->
-        <el-form-item prop="password">
-          <el-input v-model="loginForm.verifyCode" type="password"></el-input>
-          <img style="height:28px;" id="verifyCode" alt="点击更换" title="点击更换" src="api/captcha/verifyCode?type=char" />
+        <el-form-item prop="verifyCode">
+          <el-input v-model="loginForm.verifyCode" prefix-icon="el-icon-picture-outline" auto-complete="off" placeholder="验证码" style="width: 67%"
+            @keyup.enter.native="onSubmit" />
+          <div class="login-code">
+            <img src="api/captcha/verifyCode?type=char" ref="verifyCodeImg" onclick="this.src='api/captcha/verifyCode?type=char&d='+new Date()*1"
+              class="login-code-img" />
+          </div>
         </el-form-item>
         <!--按钮-->
         <el-form-item class="btns">
@@ -41,16 +45,24 @@ export default {
           { required: true, message: "请输入用户名称", trigger: "blur" },
         ],
         password: [{ required: true, message: "请输入密码", trigger: "blur" }],
+        verifyCode: [{ required: true, message: "请输入验证码", trigger: "blur" }],
       },
+      // 验证码开关
+      captchaOnOff: true,
+      codeUrl: 'api/captcha/verifyCode?type=char',
     };
   },
   methods: {
     onSubmit() {
+      if (this.captchaOnOff) {
+        this.loginFormRules.verifyCode['required'] = false;
+      }
       this.$refs.loginFormRef.validate((valid) => {
         if (valid) {
           const formData = new FormData();
           formData.append("username", this.loginForm.username);
           formData.append("password", this.loginForm.password);
+          formData.append("verifyCode", this.loginForm.verifyCode);
           const _this = this;
           this.$http
             .post("/api/login", formData)
@@ -62,14 +74,17 @@ export default {
                 vue.$router.push("/home");
                 _this.loadDic();
               } else {
+                _this.$refs.verifyCodeImg.onclick();
                 _this.$message.error(res.msg);
               }
             })
             .catch((err) => {
               debugger;
+              _this.$refs.verifyCodeImg.onclick();
               console.log(err.message);
             });
         } else {
+          this.$refs.verifyCodeImg.onclick();
           console.log("error submit!!");
           return false;
         }
@@ -136,5 +151,17 @@ export default {
 .btns {
   display: flex;
   justify-content: flex-end;
+}
+.login-code {
+  width: 33%;
+  height: 38px;
+  float: right;
+  img {
+    cursor: pointer;
+    vertical-align: middle;
+  }
+}
+.login-code-img {
+  height: 32px;
 }
 </style>
