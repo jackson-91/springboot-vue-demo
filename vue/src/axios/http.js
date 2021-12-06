@@ -24,7 +24,9 @@ axios.interceptors.request.use(
         localStorage.setItem('token', '')
         config.headers.Authorization = ''
       } else {
-        config.headers.Authorization = 'Bearer ' + store.state.token
+        if (config.url.indexOf('verifyCodeFlag') <= 0) {
+          config.headers.Authorization = 'Bearer ' + store.state.token
+        }
       }
     }
     if (config.url.indexOf('/sysUserColumn/get') <= 0) {

@@ -42,8 +42,8 @@ public class VerifyCodeFilter extends OncePerRequestFilter {
             if (verifyCode) {
                 try {
                     String requestCaptcha = request.getParameter("verifyCode");
-                    if (requestCaptcha == null) {
-                        throw new ValidateCodeException("验证码不存在");
+                    if (StringUtils.isEmpty(requestCaptcha)) {
+                        throw new ValidateCodeException("验证码不能为空");
                     }
                     HttpSession httpSession = request.getSession();
                     logger.info("----SESSIONID" + httpSession.getId());

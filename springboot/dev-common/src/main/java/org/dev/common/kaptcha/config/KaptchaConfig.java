@@ -43,7 +43,7 @@ public class KaptchaConfig {
         properties.setProperty("kaptcha.image.height", "30");
         properties.setProperty("kaptcha.textproducer.font.size", "30");
         properties.setProperty("kaptcha.session.key", "kaptchaCodeMath");
-        properties.setProperty("kaptcha.textproducer.impl", "com.lhf.springboot.support.KaptchaTextCreator");
+        properties.setProperty("kaptcha.textproducer.impl", "org.dev.common.kaptcha.KaptchaTextCreator");
         properties.setProperty("kaptcha.textproducer.char.spac", "5");
         properties.setProperty("kaptcha.textproducer.char.length", "6");
         properties.setProperty("kaptcha.textproducer.font.names", "Arial,Courier");

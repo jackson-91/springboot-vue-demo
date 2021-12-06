@@ -43,7 +43,7 @@ public class PreviewAspect {
         //　获取request
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = attributes.getRequest();
-        log.error("进入演示环境拦截器－－－－－－－－－－－－－－－");
+        log.info("进入演示环境拦截器－－－－－－－－－－－－－－－");
         if ((StringUtils.equalsIgnoreCase(request.getMethod(), HttpMethod.POST.name()) ||
                 StringUtils.equalsIgnoreCase(request.getMethod(), HttpMethod.DELETE.name())
                 || StringUtils.equalsIgnoreCase(request.getMethod(), HttpMethod.PUT.name())) && isPreview) {

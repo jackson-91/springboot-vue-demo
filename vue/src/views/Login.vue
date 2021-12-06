@@ -18,7 +18,7 @@
           <el-input v-model="loginForm.verifyCode" prefix-icon="el-icon-picture-outline" auto-complete="off" placeholder="验证码" style="width: 67%"
             @keyup.enter.native="onSubmit" />
           <div class="login-code">
-            <img src="api/captcha/verifyCode?type=char" ref="verifyCodeImg" onclick="this.src='api/captcha/verifyCode?type=char&d='+new Date()*1"
+            <img src="api/captcha/verifyCode?type=math" ref="verifyCodeImg" onclick="this.src='api/captcha/verifyCode?type=math&d='+new Date()*1"
               class="login-code-img" />
           </div>
         </el-form-item>
@@ -48,14 +48,14 @@ export default {
         verifyCode: [{ required: true, message: "请输入验证码", trigger: "blur" }],
       },
       // 验证码开关
-      captchaOnOff: true,
+      captchaFlag: true,
       codeUrl: 'api/captcha/verifyCode?type=char',
     };
   },
   methods: {
     onSubmit() {
-      if (this.captchaOnOff) {
-        this.loginFormRules.verifyCode['required'] = false;
+      if (!this.captchaFlag) {
+        this.loginFormRules.verifyCode[0]['required'] = false;
       }
       this.$refs.loginFormRef.validate((valid) => {
         if (valid) {
@@ -105,6 +105,16 @@ export default {
       this.$refs.loginFormRef.resetFields();
     },
   },
+  created() {
+    this.$http
+      .get("/api/captcha/verifyCodeFlag", {})
+      .then((res) => {
+        if (res.code == 0) {
+          this.captchaFlag = res.data;
+        }
+      })
+      .catch((err) => { });
+  }
 };
 </script>
 
