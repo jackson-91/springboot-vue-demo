@@ -11,12 +11,9 @@ import org.dev.basic.service.SysDicService;
 import org.dev.common.core.aop.OperLog;
 import org.dev.common.core.page.PaginAtion;
 import org.dev.common.core.result.ResponseResult;
-import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-
-import org.springframework.stereotype.Controller;
 
 import java.util.List;
 import java.util.stream.Collectors;

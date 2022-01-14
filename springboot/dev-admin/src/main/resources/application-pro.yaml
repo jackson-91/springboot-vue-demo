@@ -92,6 +92,7 @@ spring:
               # 表示数据库中相关表是QRTZ_开头的
               tablePrefix: QRTZ_
               useProperties: false
+              dataSource: qzdatasource
             # 线程池相关
             threadPool:
               class: org.quartz.simpl.SimpleThreadPool
