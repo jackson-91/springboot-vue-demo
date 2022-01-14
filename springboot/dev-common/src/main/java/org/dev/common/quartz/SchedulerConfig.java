@@ -20,9 +20,9 @@ public class SchedulerConfig implements ApplicationListener<ContextRefreshedEven
 
     @Autowired
     private JobFactory jobFactory;
-    @Autowired
-    @Qualifier("cmsBiosDataSource")
-    private DataSource primaryDataSource;
+    //@Autowired
+    //@Qualifier("cmsBiosDataSource")
+    //private DataSource primaryDataSource;
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
@@ -33,14 +33,14 @@ public class SchedulerConfig implements ApplicationListener<ContextRefreshedEven
     public SchedulerFactoryBean schedulerFactoryBean() throws IOException {
         //获取配置属性
         PropertiesFactoryBean propertiesFactoryBean = new PropertiesFactoryBean();
-        propertiesFactoryBean.setLocation(new ClassPathResource("/zbox-quartz.properties"));
+        //propertiesFactoryBean.setLocation(new ClassPathResource("/zbox-quartz.properties"));
         //在quartz.properties中的属性被读取并注入后再初始化对象
         propertiesFactoryBean.afterPropertiesSet();
         //创建SchedulerFactoryBean
         SchedulerFactoryBean factory = new SchedulerFactoryBean();
         factory.setQuartzProperties(propertiesFactoryBean.getObject());
         //使用数据源，自定义数据源
-        factory.setDataSource(this.primaryDataSource);
+        //factory.setDataSource(this.primaryDataSource);
         factory.setJobFactory(jobFactory);
         factory.setWaitForJobsToCompleteOnShutdown(true);//这样当spring关闭时，会等待所有已经启动的quartz job结束后spring才能完全shutdown。
         factory.setOverwriteExistingJobs(false);

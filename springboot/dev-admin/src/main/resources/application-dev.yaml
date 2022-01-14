@@ -80,12 +80,6 @@ spring:
     properties:
       org:
         quartz:
-          #
-          dataSource:
-            url: jdbc:mysql://127.0.0.1:3306/springboot_vue?autoReconnect=true&useUnicode=true&characterEncoding=utf8&serverTimezone=UTC&zeroDateTimeBehavior=convertToNull&useSSL=false&nullCatalogMeansCurrent=true
-            username: root
-            password: root
-            driver-class-name: com.mysql.jdbc.Driver #切换数据源，如果不写，会使用默认的
           # scheduler相关
           scheduler:
             # scheduler的实例名
@@ -98,7 +92,6 @@ spring:
             # 表示数据库中相关表是QRTZ_开头的
             tablePrefix: QRTZ_
             useProperties: false
-            dataSource: dataSource
           # 线程池相关
           threadPool:
             class: org.quartz.simpl.SimpleThreadPool
