@@ -41,6 +41,14 @@ export const store = new Vuex.Store({
       localStorage.removeItem('dicset')
       state.dicset = []
     },
+    set_user(state, userinfo) {
+      localStorage.setItem('userinfo', userinfo)
+      state.userinfo = userinfo
+    },
+    del_user(state) {
+      localStorage.removeItem('userinfo')
+      state.userinfo = []
+    },
     clear_state(state) {
       localStorage.clear(); state.token = null; state.menus = null; state = null
     }
@@ -66,6 +74,12 @@ export const store = new Vuex.Store({
     },
     del_dicset(context) {
       context.commit('del_dicset')
+    },
+    set_user(context, userinfo) {
+      context.commit('set_user', userinfo)
+    },
+    del_user(context) {
+      context.commit('del_user')
     },
     clear_state(context) {
       context.commit('clear_state')

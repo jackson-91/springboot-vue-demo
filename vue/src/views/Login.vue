@@ -73,6 +73,7 @@ export default {
                 const vue = this;
                 vue.$router.push("/home");
                 _this.loadDic();
+                _this.loadUserInfo();
               } else {
                 _this.$refs.verifyCodeImg.onclick();
                 _this.$message.error(res.msg);
@@ -90,6 +91,9 @@ export default {
         }
       });
     },
+    /**
+     * 加载数据字典
+     */
     loadDic() {
       const _this = this;
       this.$http
@@ -97,6 +101,20 @@ export default {
         .then((res) => {
           if (res.code == 0) {
             _this.$store.commit("set_dicset", res.data);
+          }
+        })
+        .catch((err) => { });
+    },
+    /**
+     * 加载用户信息
+     */
+    loadUserInfo() {
+      const _this = this;
+      this.$http
+        .post("/api/sysUser/user-info", {})
+        .then((res) => {
+          if (res.code == 0) {
+            _this.$store.commit("set_user", res.data);
           }
         })
         .catch((err) => { });

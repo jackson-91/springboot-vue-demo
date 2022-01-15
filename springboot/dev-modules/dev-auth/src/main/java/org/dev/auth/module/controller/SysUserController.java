@@ -7,8 +7,10 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.dev.auth.module.entity.SysUser;
 import org.dev.auth.module.service.SysUserService;
 import org.dev.common.core.aop.DuplicateSubmit;
+import org.dev.common.core.entity.CurrentUser;
 import org.dev.common.core.page.PaginAtion;
 import org.dev.common.core.result.ResponseResult;
+import org.dev.common.utils.SpringSecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -180,6 +182,16 @@ public class SysUserController {
             this.sysUserService.updateById(sysUser);
         }
         return ResponseResult.success();
+    }
+
+    /**
+     * 获取当前用户信息
+     *
+     * @return
+     */
+    @PostMapping("/user-info")
+    public ResponseResult<CurrentUser> userInfo() {
+        return ResponseResult.success(SpringSecurityUtils.CurrentUser());
     }
 }
 

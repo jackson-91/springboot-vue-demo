@@ -11,6 +11,7 @@
           <img src="~@/assets/img/avatar.png" :alt="userName" />{{ userName }}
         </span>
         <el-dropdown-menu slot="dropdown">
+          <el-dropdown-item @click.native="loadUserInfo()">个人信息</el-dropdown-item>
           <el-dropdown-item @click.native="updatePasswordHandle()">修改密码</el-dropdown-item>
           <el-dropdown-item @click.native="logout()">退出</el-dropdown-item>
         </el-dropdown-menu>
@@ -61,16 +62,44 @@
         </keep-alive>
       </el-main>
     </el-container>
+    <!--用户信息-->
+    <el-dialog title="用户信息" :visible="visible" :close-on-click-modal="false" append-to-body @close="hidUser">
+      <el-form label-width="80px">
+        <el-form-item label="登录账号">
+          <!-- 文本框 -->
+          <label>{{userInfo.loginName}}</label>
+        </el-form-item>
+        <el-form-item label="昵称">
+          <!-- 文本框 -->
+          <label>{{userInfo.nickName}}</label>
+        </el-form-item>
+        <el-form-item label="邮箱">
+          <!-- 文本框 -->
+          <label>{{userInfo.email}}</label>
+        </el-form-item>
+        <el-form-item label="手机号">
+          <!-- 文本框 -->
+          <label>{{userInfo.mobilePhone}}</label>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="hidUser()">取消</el-button>
+        <el-button @click="hidUser()" type="primary">提交</el-button>
+      </div>
+    </el-dialog>
   </el-container>
 </template>
 <script>
 // import Header from './Header.vue'
 import Menu from "./Menu.vue";
+import { mapState, mapActions, mapGetters } from "vuex";
 export default {
   data() {
     return {
       userName: "",
+      userInfo: {},
       isCollapse: false,
+      visible: false,
       BreadcrumbList: [],
       mainTabsActiveName: "/welcome",
       editableTabs: [
@@ -180,6 +209,14 @@ export default {
       this.$router.push({ path: "/welcome" });
       this.$refs.menu.defaultActive = "/welcome";
     },
+    loadUserInfo() {
+      //获取当前用户信息
+      this.userInfo = this.$store.state.userinfo;
+      this.visible = true;
+    },
+    hidUser() {
+      this.visible = false;
+    },
     // tabs, 关闭当前
     tabsCloseCurrentHandle() {
       this.removeTab(this.mainTabsActiveName)
@@ -230,6 +267,13 @@ export default {
       //   return { marginLeft: "0px" };
       // }
     },
+    //获取当前用户信息
+    ...mapState({
+      user: (state) => state.userinfo,
+    }),
+  },
+  created() {
+    console.log("mapState---" + JSON.stringify(this.user))
   },
   components: {
     Menu,
