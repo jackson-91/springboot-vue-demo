@@ -15,7 +15,10 @@ import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import javax.sql.DataSource;
 import java.io.IOException;
 
-@Configuration
+/**
+ * 作废 暂时用不到
+ */
+//@Configuration
 public class SchedulerConfig implements ApplicationListener<ContextRefreshedEvent> {
 
     @Autowired
