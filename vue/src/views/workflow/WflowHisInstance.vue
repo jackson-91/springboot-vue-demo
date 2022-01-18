@@ -55,7 +55,7 @@
 <script>
 import CustomTableCols from "../../components/CustomTableCols";
 import Search from "../../components/Search";
-import FlowBpmnViewer from "../../components/activiti/FlowBpmnViewer";
+import FlowBpmnViewer from "../../components/camunda/FlowBpmnViewer";
 export default {
   components: {
     CustomTableCols,

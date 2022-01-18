@@ -2093,30 +2093,6 @@ boolbase@^1.0.0, boolbase@~1.0.0:
   resolved "https://registry.yarnpkg.com/boolbase/-/boolbase-1.0.0.tgz#68dff5fbe60c51eb37725ea9e3ed310dcc1e776e"
   integrity sha1-aN/1++YMUes3cl6p4+0xDcwed24=
 
-bpmn-js-properties-panel-activiti-support@^0.32.1:
-  version "0.32.1"
-  resolved "https://registry.yarnpkg.com/bpmn-js-properties-panel-activiti-support/-/bpmn-js-properties-panel-activiti-support-0.32.1.tgz#46f797985a35d17cc389474e1e56f17915ed579a"
-  integrity sha512-KYYvNkA5vGIzMCMv4YMIvC6UNyxe9ZWMd1oqfKPZqR+Zevn891C4Qj40jsVlmCJuJ+Y4dbIxsqLA/GkAcJaccA==
-  dependencies:
-    ids "^1.0.0"
-    inherits "^2.0.1"
-    lodash "^4.17.15"
-    min-dom "^3.1.1"
-    scroll-tabs "^1.0.1"
-    selection-update "^0.1.2"
-
-bpmn-js-properties-panel-activiti@^0.33.1:
-  version "0.33.1"
-  resolved "https://registry.yarnpkg.com/bpmn-js-properties-panel-activiti/-/bpmn-js-properties-panel-activiti-0.33.1.tgz#95c23e28f7e4f77597ea026d845cea6da52b64b8"
-  integrity sha512-ZOw8COGBl6VHsiTkc0uDgnLSLvdfyQqSv36q/cl2IXda0cnf93Xhjb1+mMPBRjKx3+JU1ykh8aXz1vYsJ7rz5g==
-  dependencies:
-    ids "^1.0.0"
-    inherits "^2.0.1"
-    lodash "^4.17.15"
-    min-dom "^3.1.1"
-    scroll-tabs "^1.0.1"
-    selection-update "^0.1.2"
-
 bpmn-js-properties-panel@^0.38.1:
   version "0.38.1"
   resolved "https://registry.yarnpkg.com/bpmn-js-properties-panel/-/bpmn-js-properties-panel-0.38.1.tgz#a9178f868bfb18714db51332c35d05fdee8102fa"
@@ -5897,7 +5873,7 @@ min-dash@^3.0.0, min-dash@^3.1.0, min-dash@^3.5.2:
   resolved "https://registry.yarnpkg.com/min-dash/-/min-dash-3.5.2.tgz#23786fa289116ba3656038e16511577413d27200"
   integrity sha512-YVbJZUtnzT5QsgJUp9H9uyJTW6NJgswFqI27RI/+MSox860uIjaGMbSQBftEzbMXiJVRG24hpoIh3SG666SHgA==
 
-min-dom@^3.1.0, min-dom@^3.1.1, min-dom@^3.1.3:
+min-dom@^3.1.0, min-dom@^3.1.3:
   version "3.1.3"
   resolved "https://registry.yarnpkg.com/min-dom/-/min-dom-3.1.3.tgz#6d3f4092439c80d13df52ac98d6a7d5fe92bfdbd"
   integrity sha512-Lbi1NZjLV9Hg6/bEe2Lfk2Fzsv1MwheR61whqTLP+FxLndYo9TxpksEgM5Kr1khjfCtFTMr0waeEfwIpStkRdw==

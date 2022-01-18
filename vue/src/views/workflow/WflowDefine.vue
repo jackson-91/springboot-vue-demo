@@ -70,8 +70,8 @@
 import CustomForm from "../../components/CustomForm";
 import CustomTableCols from "../../components/CustomTableCols";
 import Search from "../../components/Search";
-import BpmnDesign from "../../components/activiti/BpmnDesignCustom";
-import BpmnViewer from "../../components/activiti/BpmnViewer";
+import BpmnDesign from "../../components/camunda/BpmnDesignCustom";
+import BpmnViewer from "../../components/camunda/BpmnViewer";
 export default {
   components: {
     CustomTableCols,

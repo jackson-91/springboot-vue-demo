@@ -27,13 +27,13 @@
 // 引入相关的依赖
 // import BpmnViewer from 'bpmn-js'
 import BpmnModeler from "bpmn-js/lib/Modeler";
-import propertiesPanelModule from "bpmn-js-properties-panel-activiti";
-//import propertiesPanelModule from 'bpmn-js-properties-panel'
+// import propertiesPanelModule from "bpmn-js-properties-panel-activiti";
+import propertiesPanelModule from 'bpmn-js-properties-panel'
 // import activitiModdleDescriptor from '../../plugins/activiti.json'
-import propertiesProviderModule from "bpmn-js-properties-panel-activiti/lib/provider/activiti";
-//import propertiesProviderModule from 'bpmn-js-properties-panel/lib/provider/camunda'
-import camundaModdleDescriptor from "activiti-bpmn-moddle/resources/activiti";
-//import camundaModdleDescriptor from 'camunda-bpmn-moddle/resources/camunda'
+// import propertiesProviderModule from "bpmn-js-properties-panel-activiti/lib/provider/activiti";
+import propertiesProviderModule from 'bpmn-js-properties-panel/lib/provider/camunda'
+// import camundaModdleDescriptor from "activiti-bpmn-moddle/resources/activiti";
+import camundaModdleDescriptor from 'camunda-bpmn-moddle/resources/camunda'
 import customTranslate from "../../plugins/translate/customTranslate";
 // import activitiExtensionModule from 'activiti-bpmn-moddle/lib'
 // import activitiModdle from 'activiti-bpmn-moddle/resources/activiti'
