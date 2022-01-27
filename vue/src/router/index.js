@@ -28,6 +28,7 @@ const routes = [
       { path: '/sysmenu', component: resolve => require(['../views/system/SysMenu.vue'], resolve), meta: { requestLogin: true, permissions: true, isTab: true } },
       { path: '/syslog', component: resolve => require(['../views/system/SysLog.vue'], resolve), meta: { requestLogin: true, permissions: true, isTab: true } },
       { path: '/sysdic', component: resolve => require(['../views/system/SysDic.vue'], resolve), meta: { requestLogin: true, permissions: true, isTab: true } },
+      { path: '/syssmtp', component: resolve => require(['../views/system/SysEmail.vue'], resolve), meta: { requestLogin: true, permissions: true, isTab: true } },
       { path: '/sysparameter', component: resolve => require(['../views/system/SysParameter.vue'], resolve), meta: { requestLogin: true, permissions: true, isTab: true } },
       { path: '/syssequence', component: resolve => require(['../views/system/SysSequence.vue'], resolve), meta: { requestLogin: true, permissions: true, isTab: true } },
       { path: '/sysdept', component: resolve => require(['../views/system/SysDept.vue'], resolve), meta: { requestLogin: true, permissions: true, isTab: true } },
