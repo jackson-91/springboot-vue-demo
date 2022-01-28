@@ -28,7 +28,6 @@ public class MailConfig {
             javaMailSender.setPort(Integer.valueOf(sysEmail.getSmtpPort()));
             javaMailSender.setUsername(sysEmail.getSmtpUsername());
             javaMailSender.setPassword(sysEmail.getSmtpPassword());
-
             // 认证相关
             Properties properties = new Properties();
             properties.setProperty("mail.host", sysEmail.getSmtpServer());

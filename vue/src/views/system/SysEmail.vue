@@ -42,7 +42,16 @@
     <!--查询条件-->
     <Search :show.sync="showSearch" :condition="searchCondition" :form="searchForm" @ok="setCondition" @hidden="hidCondition" />
     <!--新增编辑页面-->
-    <CustomForm :show.sync="showForm" title="邮件服务器编辑" :control="formControl" :model="formField" :rules="formRules" @ok="saveForm" @hidden="hidForm" />
+    <CustomForm :show.sync="showForm" title="服务器编辑" :control="formControl" :model="formField" :rules="formRules" @ok="saveForm" @hidden="hidForm" />
+
+    <el-dialog title="收件邮箱" :visible.sync="visible2" :close-on-click-modal="false" append-to-body @close="cancel2">
+      <el-input v-model="toEmail"></el-input>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="cancel2()">取消</el-button>
+        <el-button @click="reset2()">清空</el-button>
+        <el-button @click="ok2()" type="primary">确定</el-button>
+      </div>
+    </el-dialog>
   </div>
 
 </template>
@@ -66,85 +75,65 @@ export default {
       size: 10,
       total: 0,
       pageSizeOptions: [10, 20, 50, 100],
-      searchForm: { loginName: '', nickName: '', qq: '', email: '', isEnable: '' },
+      searchForm: { smtpServer: '', },
       searchCondition: [
-        { index: 0, label: '账号', field: 'loginName', type: 'input', show: true },
-        { index: 1, label: '昵称', field: 'nickName', type: 'input', show: true },
-        { index: 2, label: '手机', field: 'mobilePhone', type: 'input', show: true },
-        { index: 3, label: 'QQ', field: 'qq', type: 'input', show: true },
-        { index: 4, label: '邮箱', field: 'email', type: 'input', show: true },
-        { index: 5, label: '有效', field: 'isEnable', type: 'input', show: true }
+        { index: 0, label: '服务器', field: 'smtpServer', type: 'input', show: true },
       ],
       showSearch: false,
       buttonGroups: [
         { index: 0, label: '查询', method: 'showCondition', icon: 'el-icon-search' },
         { index: 1, label: '新建', method: 'addAndEdit', icon: 'el-icon-plus' },
-        { index: 2, label: '禁用', method: 'enableUser', params: false, icon: 'el-icon-delete' },
         { index: 5, label: '删除', method: 'delete', icon: 'el-icon-delete' },
+        { index: 5, label: '测试发送邮件', method: 'test', icon: 'el-icon-plus' },
         { index: 6, label: '刷新', method: 'searchData', icon: 'el-icon-refresh' }
       ],
       tableColumns: [],
       defaultColumns: [
-        { label: '账号', prop: 'loginName', show: true, fixed: false, sortable: false, width: 200 },
-        { label: '昵称', prop: 'nickName', show: true, fixed: false, sortable: false, width: 200 },
-        { label: '手机', prop: 'mobilePhone', show: true, fixed: false, sortable: false },
-        { label: '邮箱', prop: 'email', show: true, fixed: false, sortable: false },
-        { label: 'QQ', prop: 'qq', show: true, fixed: false, sortable: false },
-        { label: '是否有效', prop: 'isEnable', show: true, fixed: false, sortable: false },
-        { label: '到期时间', prop: 'expireTime', show: true, fixed: false, sortable: false }
+        { label: '服务器', prop: 'smtpServer', show: true, fixed: false, sortable: false, width: 200 },
+        { label: '端口', prop: 'smtpPort', show: true, fixed: false, sortable: false, width: 200 },
+        { label: '用户名', prop: 'smtpUsername', show: true, fixed: false, sortable: false },
+        { label: '密码', prop: 'smtpPassword', show: true, fixed: false, sortable: false },
+        { label: '发件邮箱', prop: 'smtpEmail', show: true, fixed: false, sortable: false },
       ],
       showForm: false,
-      formField: { id: '', loginName: '', nickName: '', passWord: '', cmfPassWord: '', mobilePhone: '', qq: '', email: '', isEnable: '' },
+      formField: { id: '', smtpServer: '', smtpPort: '', smtpUsername: '', smtpPassword: '' },
       formControl: [
         { label: 'ID', field: 'id', type: 'hidden', show: false, readonly: true },
-        { label: '账号', field: 'loginName', type: 'input', show: true, readonly: true },
-        { label: '昵称', field: 'nickName', type: 'input', show: true, readonly: false },
-        { label: '密码', field: 'passWord', type: 'password', show: true, readonly: false },
-        { label: '密码确认', field: 'cmfPassWord', type: 'password', show: true, readonly: false },
-        { label: '手机', field: 'mobilePhone', type: 'input', show: true, readonly: false },
-        { label: 'QQ', field: 'qq', type: 'input', show: true },
-        { label: '邮箱', field: 'email', type: 'input', show: true }
+        { label: '服务器', field: 'smtpServer', type: 'input', show: true, readonly: false },
+        { label: '端口', field: 'smtpPort', type: 'number', show: true, readonly: false },
+        { label: '用户名', field: 'smtpUsername', type: 'input', show: true, readonly: false },
+        { label: '密码', field: 'smtpPassword', type: 'password', show: true, readonly: false },
+        { label: '发件邮箱', field: 'smtpEmail', type: 'input', show: true, readonly: false },
       ],
       formRules: {
-        loginName: [
-          { required: true, message: '请输入账号', trigger: 'blur' },
-          { min: 3, max: 20, message: '长度在 3 到 20 个字符', trigger: 'blur' }
+        smtpServer: [
+          { required: true, message: '请输入服务器', trigger: 'blur' },
         ],
-        nickName: [
-          { required: true, message: '请输入昵称', trigger: 'blur' },
-          { min: 1, max: 50, message: '长度在 3 到 50 个字符', trigger: 'blur' }
+        smtpPort: [
+          { required: true, message: '请输入端口', trigger: 'blur' },
         ],
-        passWord: [
-          { required: true, message: '请输入密码', trigger: 'blur' },
-          { min: 3, max: 20, message: '长度在 3 到 20 个字符', trigger: 'blur' }
+        smtpUsername: [
+          { required: true, message: '请输入用户名', trigger: 'blur' },
+          { min: 3, max: 50, message: '长度在 3 到 50 个字符', trigger: 'blur' }
         ],
-        cmfPassWord: [
-          { required: true, message: '请输入密码', trigger: 'blur' },
-          { min: 3, max: 20, message: '长度在 3 到 20 个字符', trigger: 'blur' }
+        smtpPassword: [
+          { required: true, message: '请输入密码', trigger: 'blur' }
         ],
-        mobilePhone: [
-          { required: true, message: '请输入手机号', trigger: 'blur' }
-        ],
-        email: [
-          { required: true, message: '请输入邮箱', trigger: 'blur' }
+        smtpEmail: [
+          { required: true, message: '请输入发件邮箱', trigger: 'blur' }
         ]
       },
       multipleSelection: [],
       visible: false,
-      treeData: [],
-      treeProps: {
-        label: 'roleName'
-      },
-      checkedKeys: [],
-      userId: null,
-      showTree: false
+      visible2: false,
+      toEmail: '',
     }
   },
 
   methods: {
     searchData() {
       this.$http
-        .get('/api/sysUser/list', {
+        .get('/api/sysEmail/list', {
           params: this._handerParams()
         })
         .then(res => {
@@ -168,12 +157,7 @@ export default {
       const params = {
         current: this.current,
         size: this.size,
-        loginName: this.searchForm.loginName,
-        nickName: this.searchForm.nickName,
-        mobilePhone: this.searchForm.mobilePhone,
-        email: this.searchForm.email,
-        qq: this.searchForm.qq,
-        isEnable: this.searchForm.isEnable
+        smtpServer: this.searchForm.smtpServer,
       }
       return params
     },
@@ -185,7 +169,6 @@ export default {
       for (const item in this.formField) {
         this.formField[item] = ''
       }
-      this.formControl[1].readonly = false
       this.showForm = true
     },
 
@@ -228,25 +211,46 @@ export default {
       this.searchForm = newData
       this.searchData()
     },
-
-    /**
+    test() {
+      this.visible2 = true;
+    },
+    cancel2() { this.visible2 = false; },
+    reset2() { this.toEmail = ''; },
+    ok2() {
+      if (!this.toEmail) {
+        this.$message.error("请输入收件邮箱");
+        return;
+      }
+      let ids = this.toEmail.split(',');
+      this.$http.post('/api/sysEmail/test', ids).then(res => {
+        if (res.code == '0') {
+          this.$message.success(res.msg)
+        } else {
+          this.$message.error(res.msg)
+        }
+      }).catch(err => {
+        console.log(err.message)
+      })
+    },
+    /**,
      * 保存表单
      */
     saveForm(from) {
       const newData = JSON.parse(JSON.stringify(from))
       this.formField = newData
-      this.$http.post('/api/sysUser/save', this.formField).then(res => {
+      this.$http.post('/api/sysEmail/save', this.formField).then(res => {
         this.searchData()
+        this.showForm = false;
       }).catch(err => {
         console.log(err.message)
       })
     },
     /**
-     * 删除用户
+     * 删除服务器
      */
     handleDelClick(row) {
       // 设置账号栏位不可编辑
-      this.$confirm('此操作将永久删除该用户, 是否继续?', '提示', {
+      this.$confirm('此操作将永久删除该服务器, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -255,7 +259,7 @@ export default {
         this.$refs.multipleTable.selection.forEach(element => {
           idArray.push(element.id)
         })
-        this.$http.post('/api/sysUser/delete', idArray).then(res => {
+        this.$http.post('/api/sysEmail/delete', idArray).then(res => {
           if (res.code == '0') {
             this.$message.success(res.msg)
             this.searchData()
@@ -277,14 +281,14 @@ export default {
       for (const item in this.formField) {
         this.formField[item] = ''
       }
-      this.formControl[1].readonly = true
+      // this.formControl[1].readonly = true
       this.showForm = true
-      this.formField.loginName = row.loginName
-      this.formField.nickName = row.nickName
-      this.formField.qq = row.qq
-      this.formField.email = row.email
-      this.formField.mobilePhone = row.mobilePhone
       this.formField.id = row.id
+      this.formField.smtpServer = row.smtpServer
+      this.formField.smtpPort = row.smtpPort
+      this.formField.smtpUsername = row.smtpUsername
+      this.formField.smtpPassword = row.smtpPassword
+      this.formField.smtpEmail = row.smtpEmail
     },
     /**
      * 隐藏编辑表单
@@ -294,14 +298,14 @@ export default {
       this.showForm = val
     },
     /**
-     * 删除用户
+     * 删除服务器
      */
     delete() {
       if (this.$refs.multipleTable.selection.length <= 0) {
-        this.$message.warning('请选择要操作的用户')
+        this.$message.warning('请选择要操作的服务器')
         return
       }
-      this.$confirm('此操作将永久删除选择的用户, 是否继续?', '提示', {
+      this.$confirm('此操作将永久删除选择的服务器, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -310,7 +314,7 @@ export default {
         this.$refs.multipleTable.selection.forEach(element => {
           idArray.push(element.id)
         })
-        this.$http.post('/api/sysUser/delete', idArray).then(res => {
+        this.$http.post('/api/sysEmail/delete', idArray).then(res => {
           if (res.code == '0') {
             this.$message.success(res.msg)
             this.searchData()

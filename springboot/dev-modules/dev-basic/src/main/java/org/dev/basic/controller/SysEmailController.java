@@ -99,12 +99,13 @@ public class SysEmailController {
 
     /**
      * 测试发送邮件
+     *
      * @param ids
      * @return
      */
     @PostMapping("/test")
     @OperLog(description = "测试发送邮件")
-    public ResponseResult<String> test(@RequestBody List<String> ids) {
+    public ResponseResult<String> test(@RequestBody String[] ids) {
         try {
             SysEmail sysEmail = sysEmailService.getOne(new QueryWrapper<>());
             MimeMessage message = javaMailSender.createMimeMessage();
@@ -115,7 +116,7 @@ public class SysEmailController {
 
             helper.setSubject("你好");
 
-            helper.setTo("1152232809@qq.com");
+            helper.setTo(ids);
 
 
             helper.setText("<a href='http://www.baidu.com'>Thank you for ordering!</a>", true);
