@@ -43,5 +43,9 @@ public class SysEmail extends TenantEntity {
      */
     private String smtpPassword;
 
+    /**
+     * 发件人邮箱
+     */
+    private String smtpEmail;
 
 }
