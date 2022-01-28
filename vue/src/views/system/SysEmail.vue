@@ -239,8 +239,13 @@ export default {
       const newData = JSON.parse(JSON.stringify(from))
       this.formField = newData
       this.$http.post('/api/sysEmail/save', this.formField).then(res => {
-        this.searchData()
-        this.showForm = false;
+        if (res.code == '0') {
+          this.$message.success(res.msg)
+          this.searchData()
+          this.showForm = false;
+        } else {
+          this.$message.error(res.msg)
+        }
       }).catch(err => {
         console.log(err.message)
       })
