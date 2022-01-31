@@ -40,7 +40,7 @@ public class SysUploadController {
     @Autowired
     SysUploadService sysUploadService;
 
-    @Value("${springboot_vue.upload.local-upload-path}")
+    @Value("${springbootvue.upload.local-upload-path}")
     private String upload_path;
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 

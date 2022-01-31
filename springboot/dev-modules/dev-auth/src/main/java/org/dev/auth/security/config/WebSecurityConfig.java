@@ -6,6 +6,7 @@ import org.dev.auth.security.MySecurityMetadataSource;
 import org.dev.auth.security.filter.JWTAuthorizationFilter;
 import org.dev.common.kaptcha.VerifyCodeFilter;
 import org.dev.common.security.MyAccessDecisionManager;
+import org.dev.common.security.config.PermitAllConfig;
 import org.dev.common.security.filter.LoginAuthenticationFilter;
 import org.dev.common.security.handler.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 
+import java.util.Collection;
+
 
 @Configuration
 @EnableWebSecurity
@@ -44,6 +47,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     VerifyCodeFilter verifyCodeFilter;
+
+    @Autowired
+    PermitAllConfig permitAllConfig;
 
     @Bean
     protected UserDetailsService userDetailsService() {
@@ -141,8 +147,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Override
     public void configure(WebSecurity web) throws Exception {
+        String[] permits = new String[permitAllConfig.getPermitAll().size()];
+        permitAllConfig.getPermitAll().toArray(permits);
         web.ignoring().antMatchers("/wflowDefine/view", "/wflowChart/traceprocess", "/wflowChart/showImg", "/wflowDefine/export", "/captcha/verifyCodeFlag", "/captcha/verifyCode")
-                .antMatchers("/favicon.ico");
+                .antMatchers("/favicon.ico").antMatchers(permits);
     }
 
     /**

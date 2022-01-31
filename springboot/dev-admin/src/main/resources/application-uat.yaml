@@ -160,7 +160,11 @@ logging:
         org.dev.framework.modules.**.mapper: DEBUG
         org.dev.framework.modules: INFO
 # 自定义配置
-springboot_vue:
+springbootvue:
   upload:
     local-upload-path: E:\Temp\upload
     suffix: .jpg,.bmp,.jpeg,.png,.zip,.rar,.xls,.xlsx,.doc,.docx,.pdf,.txt,.ci,.vi,bpmn,xml
+  isPreview: false # 是否演示环境
+  verifyCode: true # 是否开启验证码
+  permitAll: #无需登录即可访问的URL
+    - /captcha/verifyCode

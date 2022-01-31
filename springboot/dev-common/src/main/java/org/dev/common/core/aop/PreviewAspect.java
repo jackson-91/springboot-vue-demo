@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 @Component
 public class PreviewAspect {
 
-    @Value("${springboot_vue.isPreview}")
+    @Value("${springbootvue.isPreview}")
     private boolean isPreview = false;
 
     /**

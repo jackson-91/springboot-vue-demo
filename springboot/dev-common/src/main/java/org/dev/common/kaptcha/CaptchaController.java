@@ -33,7 +33,7 @@ public class CaptchaController {
     @Autowired
     private Producer captchaProducerMath;
 
-    @Value("${springboot_vue.verifyCode}")
+    @Value("${springbootvue.verifyCode}")
     private boolean verifyFlag = true;
 
     /**

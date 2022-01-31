@@ -29,7 +29,7 @@ public class VerifyCodeFilter extends OncePerRequestFilter {
     @Autowired
     MyAuthenticationFailureHandler myAuthenticationFailureHandler;
 
-    @Value("${springboot_vue.verifyCode}")
+    @Value("${springbootvue.verifyCode}")
     private boolean verifyCode = true;
 
 

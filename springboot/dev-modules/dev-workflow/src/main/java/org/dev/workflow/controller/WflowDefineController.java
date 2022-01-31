@@ -44,7 +44,7 @@ import java.util.*;
 @RequestMapping("wflowDefine")
 @Slf4j
 public class WflowDefineController {
-    @Value("${springboot_vue.upload.local-upload-path}")
+    @Value("${springbootvue.upload.local-upload-path}")
     private String upload_path;
 
     @Autowired
