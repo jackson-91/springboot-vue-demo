@@ -407,12 +407,8 @@ export default {
         type: "warning",
       })
         .then(() => {
-          const idArray = [];
-          this.$refs.multipleTable.selection.forEach((element) => {
-            idArray.push(element.id);
-          });
           this.$http
-            .post("/api/sysEmploye/delete", idArray)
+            .post("/api/sysEmploye/delete", [row.id])
             .then((res) => {
               if (res.code == "0") {
                 this.$message.success(res.msg);

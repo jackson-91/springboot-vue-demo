@@ -313,11 +313,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        const idArray = []
-        this.$refs.multipleTable.selection.forEach(element => {
-          idArray.push(element.id)
-        })
-        this.$http.post('/api/sysUser/delete', idArray).then(res => {
+        this.$http.post('/api/sysUser/delete', [row.id]).then(res => {
           if (res.code == '0') {
             this.$message.success(res.msg)
             this.searchData()

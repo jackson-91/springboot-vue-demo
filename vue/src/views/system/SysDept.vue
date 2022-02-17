@@ -319,9 +319,7 @@ export default {
       })
         .then(() => {
           const idArray = [];
-          this.$refs.multipleTable.selection.forEach((element) => {
-            idArray.push(element.id);
-          });
+          idArray.push(row.id);
           this.$http
             .post("/api/sysDept/delete", idArray)
             .then((res) => {

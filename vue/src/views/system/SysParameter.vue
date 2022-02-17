@@ -236,12 +236,8 @@ export default {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
-      }).then(() => {
-        const idArray = []
-        this.$refs.multipleTable.selection.forEach(element => {
-          idArray.push(row.id)
-        })
-        this.$http.post('/api/sysParameter/delete', idArray).then(res => {
+      }).then(() => { 
+        this.$http.post('/api/sysParameter/delete', [row.id]).then(res => {
           if (res.code == '0') {
             this.$message.success('操作成功')
             this.$message.success(res.msg)

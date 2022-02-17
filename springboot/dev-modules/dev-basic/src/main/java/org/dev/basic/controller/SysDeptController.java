@@ -169,6 +169,12 @@ public class SysDeptController {
      */
     @PostMapping("/delete")
     public ResponseResult<String> delete(@RequestBody List<Long> ids) {
+        for (Long id : ids) {
+            SysDept sysDept = this.sysDeptService.getById(id);
+            if (sysDept.getParentId() == -1L) {
+                return ResponseResult.error("顶级结点不能删除");
+            }
+        }
         this.sysDeptService.removeByIds(ids);
         return ResponseResult.success();
     }

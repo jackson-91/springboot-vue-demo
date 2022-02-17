@@ -295,12 +295,8 @@ export default {
         type: "warning",
       })
         .then(() => {
-          const idArray = [];
-          this.$refs.multipleTable.selection.forEach((element) => {
-            idArray.push(element.deploymentId);
-          });
           this.$http
-            .post("/api/wflowDefine/delete", idArray)
+            .post("/api/wflowDefine/delete", [row.deploymentId])
             .then((res) => {
               if (res.code == "0") {
                 this.$message.success(res.msg);

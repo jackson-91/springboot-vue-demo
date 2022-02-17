@@ -283,11 +283,8 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        const idArray = []
-        this.$refs.multipleTable.selection.forEach(element => {
-          idArray.push(element.id)
-        })
-        this.$http.post('/api/sysJobs/delete', idArray).then(res => {
+        const idArray = [] 
+        this.$http.post('/api/sysJobs/delete', [row.id]).then(res => {
           if (res.code == '0') {
             this.$message.success(res.msg)
             this.searchData()
