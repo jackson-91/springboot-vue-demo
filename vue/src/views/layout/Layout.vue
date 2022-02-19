@@ -7,8 +7,8 @@
         <span>后台管理系统</span>
       </div>
       <el-dropdown :show-timeout="0" placement="bottom">
-        <span class="el-dropdown-link">
-          <img src="~@/assets/img/avatar.png" :alt="userName" />{{ userName }}
+        <span class="el-dropdown-link" style="color:white">
+          欢迎你 {{ user.nickName }} <img src="~@/assets/img/avatar.png" :alt="user.nickName" />
         </span>
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item @click.native="loadUserInfo()">个人信息</el-dropdown-item>
@@ -16,6 +16,7 @@
           <el-dropdown-item @click.native="logout()">退出</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
+      <!-- <span class="el-icon-setting" style="font-size: 14px; cursor: pointer" @click="drawerFlag = true"></span> -->
     </el-header>
 
     <el-container class="main-container">
