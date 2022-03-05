@@ -90,7 +90,7 @@ public class SysMenuController {
             }
         }
 
-        List<SysMenu> rootMenus = sysMenuList.stream().filter(x -> x.getParentId() == 1).sorted(Comparator.comparing(SysMenu::getSortNo)).collect(Collectors.toList());
+        List<SysMenu> rootMenus = sysMenuList.stream().filter(x -> x.getParentId().equals(1L)).sorted(Comparator.comparing(SysMenu::getSortNo)).collect(Collectors.toList());
         List<SysMenu> menus = new ArrayList<>();
         for (SysMenu sysMenu : rootMenus) {
             sysMenu.setType(PermissionsType.menu);

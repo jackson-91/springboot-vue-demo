@@ -177,3 +177,4 @@ springbootvue:
   permitAll: #无需登录即可访问的URL
     - /captcha/verifyCode
     - /sysLog/list
+    - /sysUpload/app-version

@@ -99,8 +99,8 @@ module.exports = {
     proxy: {
       // 配置多个跨域
       '/api': {
-        // target: 'http://127.0.0.1:8089',
-        target: 'http://47.104.140.48:8089',
+        target: 'http://127.0.0.1:8089',
+        // target: 'http://47.104.140.48:8089',
         changeOrigin: true,
         // ws: true,//websocket支持
         secure: false,
