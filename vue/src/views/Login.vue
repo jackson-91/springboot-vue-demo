@@ -71,7 +71,7 @@ export default {
                 _this.$store.commit("set_token", res.data);
                 _this.$message.success("登录成功");
                 const vue = this;
-                vue.$router.push("/home");
+                // vue.$router.push("/home");
                 _this.loadDic();
                 _this.loadUserInfo();
               } else {
@@ -110,12 +110,14 @@ export default {
      */
     loadUserInfo() {
       const _this = this;
+      const vue = this;
       this.$http
         .post("/api/sysUser/user-info", {})
         .then((res) => {
           if (res.code == 0) {
             _this.$store.commit("set_user", res.data);
           }
+          vue.$router.push("/home");
         })
         .catch((err) => { });
     },

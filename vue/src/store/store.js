@@ -50,7 +50,7 @@ export const store = new Vuex.Store({
       state.userinfo = []
     },
     clear_state(state) {
-      localStorage.clear(); state.token = null; state.menus = null; state = null
+      localStorage.clear(); state.token = null; state.menus = null; state.userinfo=null;state.dicset==null; state = null
     }
   },
   actions: {
