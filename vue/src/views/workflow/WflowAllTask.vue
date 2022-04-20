@@ -10,14 +10,12 @@
     <!--数据表格-->
     <el-row>
       <el-col :span="24">
-        <el-table :data="tableData" border stripe highlight-current-row ref="multipleTable" :height="tableHeight" @row-click="handleRowClick"
-          style="width: 100%">
+        <el-table :data="tableData" border stripe highlight-current-row ref="multipleTable" :height="tableHeight" @row-click="handleRowClick" style="width: 100%">
           <el-table-column type="selection" width="55">
           </el-table-column>
           <el-table-column type="index" width="65" label="序号" align="center" fixed :show-overflow-tooltip="true"></el-table-column>
-          <template v-for="(el,i) in tableColumns">
-            <el-table-column :label="el.label" header-align="center" v-if="el.show " :width="el.width || ''" :key="el.prop" :fixed="el.fixed"
-              :prop="el.prop" :sortable="el.sortable" show-overflow-tooltip>
+          <template v-for="(el) in tableColumns">
+            <el-table-column :label="el.label" header-align="center" v-if="el.show " :width="el.width || ''" :key="el.prop" :fixed="el.fixed" :prop="el.prop" :sortable="el.sortable" show-overflow-tooltip>
             </el-table-column>
           </template>
           <el-table-column fixed="right" label="操作" width="300">
@@ -33,8 +31,7 @@
     <!--分页插件-->
     <el-row>
       <el-col :span="24">
-        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="current" :page-sizes="pageSizeOptions"
-          :page-size="size" layout="total, sizes, prev, pager, next, jumper" :total="total">
+        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="current" :page-sizes="pageSizeOptions" :page-size="size" layout="total, sizes, prev, pager, next, jumper" :total="total">
         </el-pagination>
       </el-col>
     </el-row>

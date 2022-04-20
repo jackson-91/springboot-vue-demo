@@ -2,19 +2,13 @@
   <el-container class="home-container">
     <!--头部-->
     <el-header>
-      <div style="flex: 1px">
-        <span style="font-weight: 900; " v-if="!isCollapse">
-          <img src="~@/assets/logo.png" style="vertical-align: sub; width: 26px; height: 26px" />
-          <span style="margin-left: 5px">后台管理系统</span>
-        </span>
-        <span style="font-weight: 900; " v-else>VUE</span>
-        <i class="el-icon-s-operation" :style="{ marginLeft: isCollapse ? '30px' : '60px' }" style="margin-top: 4px; cursor: pointer; font-size: 24px" @click="toggleCollapse"></i>
+      <div>
+        <img src="../../assets/logo.png" alt />
+        <span>后台管理系统</span>
       </div>
-      <span class="el-icon-rank" style="font-size: 16px; transform: rotate(45deg); cursor: pointer" @click="doOpenAllScreen" v-if="!allScreenFlag"></span>
-      <span class="el-icon-rank" style="font-size: 16px; transform: rotate(45deg); cursor: pointer" @click="doCloseAllScreen" v-if="allScreenFlag"></span>
-      <el-dropdown :show-timeout="0" placement="bottom" style="margin-left: 15px;">
+      <el-dropdown :show-timeout="0" placement="bottom">
         <span class="el-dropdown-link" style="color:white">
-          欢迎你 {{ user.nickName }} <img src="~@/assets/img/avatar.png" :alt="user.nickName" style="margin-left: 10px;" />
+          欢迎你 {{ user.nickName }} <img src="~@/assets/img/avatar.png" :alt="user.nickName" />
         </span>
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item @click.native="loadUserInfo()">个人信息</el-dropdown-item>
@@ -22,16 +16,22 @@
           <el-dropdown-item @click.native="logout()">退出</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
-      <Skin></Skin>
+      <!-- <span class="el-icon-setting" style="font-size: 14px; cursor: pointer" @click="drawerFlag = true"></span> -->
     </el-header>
 
     <el-container class="main-container">
       <!--左侧菜单-->
-      <el-aside :width="isCollapse ? '64px' : '200px'" style="overflow-y: auto; overflow-x: hidden" :style="{ height: asideHeight + 'px' }">
+      <el-aside :width="isCollapse ? '64px' : '200px'">
         <Menu v-bind:isCollapse="isCollapse" :BreadcrumbList="BreadcrumbList" @changeBreadcrumb="changeBreadcrumb" ref="menu" />
+        <div class="toggle-button" @click="toggleCollapse">
+          <i :class="
+              isCollapse ? 'el-icon-d-arrow-right' : 'el-icon-d-arrow-left'
+            "></i>
+        </div>
       </el-aside>
       <!--右侧主体-->
       <el-main :style="setMarginLeft">
+
         <el-dropdown class="site-tabs__tools" :show-timeout="0">
           <i class="el-icon-arrow-down el-icon--right"></i>
           <el-dropdown-menu slot="dropdown">
@@ -43,18 +43,14 @@
         </el-dropdown>
         <keep-alive>
           <el-tabs v-model="mainTabsActiveName" type="border-card" @tab-click="tabClick" @tab-remove="removeTab">
-            <el-tab-pane :key="item.name" v-for="(item) in editableTabs" :label="item.title" :name="item.name" :closable="item.name == '/welcome' ? false : true">
+            <el-tab-pane :key="item.name" v-for="(item, index) in editableTabs" :label="item.title" :name="item.name"
+              :closable="item.name == '/welcome' ? false : true">
             </el-tab-pane>
             <el-card :body-style="siteContentViewHeight">
-              <!-- <el-breadcrumb separator-class="el-icon-arrow-right">
+              <el-breadcrumb separator-class="el-icon-arrow-right">
                 <el-breadcrumb-item @click="goHome">首页</el-breadcrumb-item>
-                <el-breadcrumb-item
-                  v-for="item in BreadcrumbList"
-                  :index="item.id"
-                  :key="item.id"
-                  >{{ item.menuName }}</el-breadcrumb-item
-                >
-              </el-breadcrumb> -->
+                <el-breadcrumb-item v-for="item in BreadcrumbList" :index="item.id" :key="item.id">{{ item.menuName }}</el-breadcrumb-item>
+              </el-breadcrumb>
               <!-- <keep-alive>
                 <router-view
                   v-if="item.name === mainTabsActiveName"
@@ -66,31 +62,45 @@
           </el-tabs>
         </keep-alive>
       </el-main>
-
     </el-container>
-
-    <el-dialog title="提示" :visible.sync="factoryFlag" width="50%">
-      <span slot="title"></span>
-      <div style="padding: 10%">
-        <img src="./../../assets/logo.png" alt style="width: 100%" />
-      </div>
-      <div>
-        深圳市中控美芯科技有限公司 版权所有 v0.0.1
-        <a href="www.mzrfid.com">www.mzrfid.com</a>
+    <!--用户信息-->
+    <el-dialog title="用户信息" :visible="visible" :close-on-click-modal="false" append-to-body @close="hidUser">
+      <el-form label-width="80px">
+        <el-form-item label="登录账号">
+          <!-- 文本框 -->
+          <label>{{userInfo.loginName}}</label>
+        </el-form-item>
+        <el-form-item label="昵称">
+          <!-- 文本框 -->
+          <label>{{userInfo.nickName}}</label>
+        </el-form-item>
+        <el-form-item label="邮箱">
+          <!-- 文本框 -->
+          <label>{{userInfo.email}}</label>
+        </el-form-item>
+        <el-form-item label="手机号">
+          <!-- 文本框 -->
+          <label>{{userInfo.mobilePhone}}</label>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="hidUser()">取消</el-button>
+        <el-button @click="hidUser()" type="primary">提交</el-button>
       </div>
     </el-dialog>
   </el-container>
 </template>
 <script>
 // import Header from './Header.vue'
-import { mapState, mapActions, mapGetters } from "vuex";
 import Menu from "./Menu.vue";
-import Skin from "../../components/Skin.vue";
+import { mapState, mapActions, mapGetters } from "vuex";
 export default {
   data() {
     return {
       userName: "",
+      userInfo: {},
       isCollapse: false,
+      visible: false,
       BreadcrumbList: [],
       mainTabsActiveName: "/welcome",
       editableTabs: [
@@ -99,15 +109,9 @@ export default {
           name: "/welcome",
         },
       ],
-      factoryFlag: false,
-
-      asideHeight: 600,
-      bAntiShike: false,
-      allScreenFlag: false,
     };
   },
   methods: {
-    updatePasswordHandle() { },
     toggleCollapse() {
       this.isCollapse = !this.isCollapse;
     },
@@ -206,16 +210,21 @@ export default {
       this.$router.push({ path: "/welcome" });
       this.$refs.menu.defaultActive = "/welcome";
     },
+    loadUserInfo() {
+      //获取当前用户信息
+      this.userInfo = this.$store.state.userinfo;
+      this.visible = true;
+    },
+    hidUser() {
+      this.visible = false;
+    },
     // tabs, 关闭当前
     tabsCloseCurrentHandle() {
-      this.removeTab(this.mainTabsActiveName);
+      this.removeTab(this.mainTabsActiveName)
     },
     // tabs, 关闭其它
     tabsCloseOtherHandle() {
-      this.editableTabs = this.editableTabs.filter(
-        (item) =>
-          item.name === this.mainTabsActiveName || item.name == "/welcome"
-      );
+      this.editableTabs = this.editableTabs.filter(item => item.name === this.mainTabsActiveName || item.name == '/welcome')
       let path = this.editableTabs[this.editableTabs.length - 1].name;
       this.mainTabsActiveName = path;
       this.$router.push({
@@ -225,9 +234,7 @@ export default {
     },
     // tabs, 关闭全部
     tabsCloseAllHandle() {
-      this.editableTabs = this.editableTabs.filter(
-        (item) => item.name === "/welcome"
-      );
+      this.editableTabs = this.editableTabs.filter(item => item.name === '/welcome')
       let path = this.editableTabs[this.editableTabs.length - 1].name;
       this.mainTabsActiveName = path;
       this.$router.push({
@@ -238,40 +245,15 @@ export default {
     // tabs, 刷新当前
     tabsRefreshCurrentHandle() {
       let path = this.mainTabsActiveName;
-      this.removeTab(this.mainTabsActiveName);
+      this.removeTab(this.mainTabsActiveName)
       this.$router.push({
         path: path,
       });
-    },
-    setAsideHeight() {
-      this.asideHeight = window.innerHeight - 50;
-    },
-    doOpenAllScreen() {
-      let element = document.body;
-      let requestMethod =
-        element.requestFullScreen ||
-        element.webkitRequestFullScreen ||
-        element.mozRequestFullScreen;
-      if (requestMethod) {
-        this.allScreenFlag = true;
-        requestMethod.call(element);
-      }
-    },
-    doCloseAllScreen() {
-      let element = document;
-      let cancle =
-        element.exitFullscreen ||
-        element.webkitExitFullscreen ||
-        element.mozCancelFullScreen;
-      if (cancle) {
-        this.allScreenFlag = false;
-        cancle.call(element);
-      }
-    },
+    }
   },
   computed: {
     siteContentViewHeight() {
-      var height = document.documentElement["clientHeight"] - 50 - 30 - 2 - 30;
+      var height = document.documentElement["clientHeight"] - 50 - 30 - 2;
       return { minHeight: height + "px" };
     },
     setMarginLeft() {
@@ -280,30 +262,22 @@ export default {
       } else {
         return { marginLeft: "200px" };
       }
+      // if (this.isCollapse) {
+      //   return { marginLeft: "0px" };
+      // } else {
+      //   return { marginLeft: "0px" };
+      // }
     },
     //获取当前用户信息
     ...mapState({
       user: (state) => state.userinfo,
     }),
   },
+  created() {
+    console.log("mapState---" + JSON.stringify(this.user))
+  },
   components: {
     Menu,
-    Skin,
-  },
-  mounted() {
-    this.setAsideHeight();
-    window.onresize = () => {
-      if (!this.bAntiShike) {
-        this.bAntiShike = true;
-        setTimeout(() => {
-          this.setAsideHeight();
-          this.bAntiShike = false;
-        }, 300);
-      }
-    };
-  },
-  beforeDestroy() {
-    window.onresize = null;
   },
 };
 </script>
@@ -312,7 +286,7 @@ export default {
   height: 100%;
 }
 .el-header {
-  background-color: #00223e;
+  background-color: #20a0ff !important;
   display: flex;
   justify-content: space-between;
   padding-left: 5px;
@@ -330,7 +304,7 @@ export default {
     display: flex;
     align-items: center;
     span {
-      // margin-left: 15px;
+      margin-left: 15px;
     }
     img {
       height: 100%;
@@ -351,7 +325,7 @@ export default {
   position: relative;
   top: 50px;
   .el-aside {
-    background-color: #ffffff;
+    background-color: white;
     position: fixed;
     max-width: 200px;
 

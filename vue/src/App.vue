@@ -20,6 +20,10 @@ export default {
     window.addEventListener('beforeunload', () => {
       localStorage.setItem('state', JSON.stringify(this.$store.state))
     })
+    let skin = localStorage.getItem("skin");
+    if (skin) {
+      document.body.setAttribute("class", skin);
+    }
   }
 }
 </script>

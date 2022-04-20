@@ -4,7 +4,7 @@ server:
 spring:
   #数据库配置
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/springboot_vue_2?autoReconnect=true&useUnicode=true&characterEncoding=utf8&serverTimezone=UTC&zeroDateTimeBehavior=convertToNull&useSSL=false&nullCatalogMeansCurrent=true&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://127.0.0.1:3306/springboot_vue?autoReconnect=true&useUnicode=true&characterEncoding=utf8&serverTimezone=UTC&zeroDateTimeBehavior=convertToNull&useSSL=false&nullCatalogMeansCurrent=true&allowPublicKeyRetrieval=true
     username: root
     password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -173,7 +173,7 @@ springbootvue:
     local-upload-path: E:\Temp\upload
     suffix: .jpg,.bmp,.jpeg,.png,.zip,.rar,.xls,.xlsx,.doc,.docx,.pdf,.txt,.ci,.vi,bpmn,xml
   isPreview: false # 是否演示环境
-  verifyCode: true # 是否开启验证码
+  verifyCode: false # 是否开启验证码
   permitAll: #无需登录即可访问的URL
     - /captcha/verifyCode
     - /sysLog/list

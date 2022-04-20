@@ -15,11 +15,9 @@
         </el-form-item>
         <!--密码-->
         <el-form-item prop="verifyCode">
-          <el-input v-model="loginForm.verifyCode" prefix-icon="el-icon-picture-outline" auto-complete="off" placeholder="验证码" style="width: 67%"
-            @keyup.enter.native="onSubmit" />
+          <el-input v-model="loginForm.verifyCode" prefix-icon="el-icon-picture-outline" auto-complete="off" placeholder="验证码" style="width: 67%" @keyup.enter.native="onSubmit" />
           <div class="login-code">
-            <img src="api/captcha/verifyCode?type=math" ref="verifyCodeImg" onclick="this.src='api/captcha/verifyCode?type=math&d='+new Date()*1"
-              class="login-code-img" />
+            <img src="api/captcha/verifyCode?type=math" ref="verifyCodeImg" onclick="this.src='api/captcha/verifyCode?type=math&d='+new Date()*1" class="login-code-img" />
           </div>
         </el-form-item>
         <!--按钮-->
@@ -141,6 +139,12 @@ export default {
 <style lang="less" scoped>
 .login_container {
   background-color: #2b4b6b;
+  // background-image: url(./../assets/bg1.jpg);
+  background-image: url(./../assets/background.svg);
+  background-repeat: repeat;
+  background-position: center;
+  background-attachment: fixed;
+  // background-size: cover;
   height: 100%;
 }
 .login_box {

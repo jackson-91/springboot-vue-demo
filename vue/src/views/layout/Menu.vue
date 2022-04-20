@@ -1,9 +1,8 @@
 
 <template>
   <el-menu
-    background-color="#FFFFFF"
-    text-color="#000000"
-    active-text-color="#409BFF"
+    background-color="#ffffff  "
+    text-color="#333333"
     :unique-opened="true"
     :collapse="isCollapse"
     :collapse-transition="true"
@@ -119,7 +118,8 @@ export default {
 </script> 
 <style lang="less" scoped>
 .el-menu-item.is-active {
-  color: #409eff;
-  border-right: #409eff solid 3px;
+  color: #f2f2f2;
+  border-right: #f2f2f2 solid 0;
+  background-color: #c2c2c2;
 }
 </style>

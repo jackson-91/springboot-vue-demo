@@ -8,6 +8,7 @@ import axios from './axios/http'
 import { store } from './store/store'
 import './plugins/dialog'
 import filters from './filter/index';
+import "./assets/css/style.css"
 
 Vue.use(Vuex)
 Vue.prototype.$http = axios
