@@ -1,72 +1,82 @@
 <template>
   <el-dialog :title="formTitle" :visible.sync="visible" :close-on-click-modal="false" append-to-body @close="cancel">
-    <el-form :inline="true" label-width="80px" :rules="formRules" :model="formModel" ref="formView">
-      <el-form-item v-for="(item,index) in controlArray" :key="index" v-show="item.show" :label="item.label" :prop="item.field">
+    <el-form :inline="true" label-width="140px" :rules="formRules" :model="formModel" ref="formView">
+      <el-form-item v-for="(item, index) in controlArray" :key="index" v-show="item.show" :label="item.label"
+        :prop="item.field">
         <!-- 文本框 -->
-        <el-input v-if="item.type==='input'" v-model="formModel[item.field]" :disabled="item.readonly"></el-input>
-        <el-input v-if="item.type===null" v-model="formModel[item.field]" :disabled="item.readonly"></el-input>
+        <el-input v-if="item.type === 'input'" v-model="formModel[item.field]" :disabled="item.readonly"></el-input>
+        <el-input v-if="item.type === null" v-model="formModel[item.field]" :disabled="item.readonly"></el-input>
         <!--密码框-->
-        <el-input v-if="item.type==='password'" v-model="formModel[item.field]" type="password" :disabled="item.readonly"></el-input>
+        <el-input v-if="item.type === 'password'" v-model="formModel[item.field]" type="password"
+          :disabled="item.readonly"></el-input>
         <!--多行文本框-->
-        <el-input v-if="item.type==='textarea'" v-model="formModel[item.field]" type="textarea" :disabled="item.readonly"></el-input>
+        <el-input v-if="item.type === 'textarea'" v-model="formModel[item.field]" type="textarea"
+          :disabled="item.readonly"></el-input>
         <!--隐藏域-->
-        <el-input v-if="item.type==='hidden'" v-model="formModel[item.field]" type="hidden" :disabled="item.readonly"></el-input>
+        <el-input v-if="item.type === 'hidden'" v-model="formModel[item.field]" type="hidden" :disabled="item.readonly">
+        </el-input>
         <!--数字输入框-->
-        <el-input-number v-if="item.type==='number'" v-model="formModel[item.field]" controls-position="right" :min="formModel[item.min]"
-          :max="formModel[item.max]"></el-input-number>
+        <el-input-number v-if="item.type === 'number'" v-model="formModel[item.field]" controls-position="right"
+          :min="formModel[item.min]" :max="formModel[item.max]"></el-input-number>
         <!--下拉框-->
-        <el-select v-if="item.type==='select'" v-model="formModel[item.field]" placeholder="请选择" :disabled="item.readonly" filterable>
-          <el-option v-for="option in item.options" :key="option.value" :label="option.label" :value="option.value" :disabled="option.disabled">
+        <el-select v-if="item.type === 'select'" v-model="formModel[item.field]" placeholder="请选择"
+          :disabled="item.readonly" filterable>
+          <el-option v-for="option in item.options" :key="option.value" :label="option.label" :value="option.value"
+            :disabled="option.disabled">
           </el-option>
         </el-select>
         <!--下拉树形选择-->
-        <SelectTree v-if="item.type==='tree-select'" v-model="formModel[item.field]" :props="item.props" :options="item.options"
-          :value="formModel[item.field]" :clearable="item.isClearable" :accordion="item.isAccordion" @getValue="getValue(item.field,$event)" />
+        <SelectTree v-if="item.type === 'tree-select'" v-model="formModel[item.field]" :props="item.props"
+          :options="item.options" :value="formModel[item.field]" :clearable="item.isClearable"
+          :accordion="item.isAccordion" @getValue="getValue(item.field, $event)" />
         <!--图表选择下拉框-->
-        <el-popover v-if="item.type==='icon-select'" placement="bottom" width="300" trigger="click">
-          <el-input slot="reference" v-model="formModel[item.field]" :disabled="item.readonly" readonly="readonly"></el-input>
+        <el-popover v-if="item.type === 'icon-select'" placement="bottom" width="300" trigger="click">
+          <el-input slot="reference" v-model="formModel[item.field]" :disabled="item.readonly" readonly="readonly">
+          </el-input>
           <div ref="iconSelect" class="icon-content">
-            <i class="el-icon-edit" @click="formModel[item.field]='el-icon-edit'"></i>
-            <i class="el-icon-share" @click="formModel[item.field]='el-icon-share'"></i>
-            <i class="el-icon-delete" @click="formModel[item.field]='el-icon-delete'"></i>
-            <i class="el-icon-s-tools" @click="formModel[item.field]='el-icon-s-tools'"></i>
-            <i class="el-icon-setting" @click="formModel[item.field]='el-icon-setting'"></i>
-            <i class="el-icon-user-solid" @click="formModel[item.field]='el-icon-user-solid'"></i>
-            <i class="el-icon-user" @click="formModel[item.field]='el-icon-user'"></i>
-            <i class="el-icon-phone-outline" @click="formModel[item.field]='el-icon-phone-outline'"></i>
-            <i class="el-icon-more-outline" @click="formModel[item.field]='el-icon-more-outline'"></i>
-            <i class="el-icon-star-off" @click="formModel[item.field]='el-icon-star-off'"></i>
-            <i class="el-icon-s-goods" @click="formModel[item.field]='el-icon-s-goods'"></i>
-            <i class="el-icon-warning" @click="formModel[item.field]='el-icon-warning'"></i>
-            <i class="el-icon-question" @click="formModel[item.field]='el-icon-question'"></i>
-            <i class="el-icon-info" @click="formModel[item.field]='el-icon-info'"></i>
-            <i class="el-icon-s-help" @click="formModel[item.field]='el-icon-s-help'"></i>
-            <i class="el-icon-picture" @click="formModel[item.field]='el-icon-picture'"></i>
-            <i class="el-icon-camera-solid" @click="formModel[item.field]='el-icon-camera-solid'"></i>
-            <i class="el-icon-upload" @click="formModel[item.field]='el-icon-upload'"></i>
-            <i class="el-icon-s-cooperation" @click="formModel[item.field]='el-icon-cooperation'"></i>
-            <i class="el-icon-s-promotion" @click="formModel[item.field]='el-icon-s-promotion'"></i>
-            <i class="el-icon-s-platform" @click="formModel[item.field]='el-icon-s-platform'"></i>
-            <i class="el-icon-s-order" @click="formModel[item.field]='el-icon-s-order'"></i>
-            <i class="el-icon-s-management" @click="formModel[item.field]='el-icon-s-management'"></i>
-            <i class="el-icon-s-release" @click="formModel[item.field]='el-icon-s-release'"></i>
-            <i class="el-icon-s-open" @click="formModel[item.field]='el-icon-s-open'"></i>
-            <i class="el-icon-s-check" @click="formModel[item.field]='el-icon-s-check'"></i>
-            <i class="el-icon-menu" @click="formModel[item.field]='el-icon-menu'"></i>
-            <i class="el-icon-s-flag" @click="formModel[item.field]='el-icon-s-flag'"></i>
-            <i class="el-icon-s-comment" @click="formModel[item.field]='el-icon-s-comment'"></i>
-            <i class="el-icon-s-claim" @click="formModel[item.field]='el-icon-s-claim'"></i>
+            <i class="el-icon-edit" @click="formModel[item.field] = 'el-icon-edit'"></i>
+            <i class="el-icon-share" @click="formModel[item.field] = 'el-icon-share'"></i>
+            <i class="el-icon-delete" @click="formModel[item.field] = 'el-icon-delete'"></i>
+            <i class="el-icon-s-tools" @click="formModel[item.field] = 'el-icon-s-tools'"></i>
+            <i class="el-icon-setting" @click="formModel[item.field] = 'el-icon-setting'"></i>
+            <i class="el-icon-user-solid" @click="formModel[item.field] = 'el-icon-user-solid'"></i>
+            <i class="el-icon-user" @click="formModel[item.field] = 'el-icon-user'"></i>
+            <i class="el-icon-phone-outline" @click="formModel[item.field] = 'el-icon-phone-outline'"></i>
+            <i class="el-icon-more-outline" @click="formModel[item.field] = 'el-icon-more-outline'"></i>
+            <i class="el-icon-star-off" @click="formModel[item.field] = 'el-icon-star-off'"></i>
+            <i class="el-icon-s-goods" @click="formModel[item.field] = 'el-icon-s-goods'"></i>
+            <i class="el-icon-warning" @click="formModel[item.field] = 'el-icon-warning'"></i>
+            <i class="el-icon-question" @click="formModel[item.field] = 'el-icon-question'"></i>
+            <i class="el-icon-info" @click="formModel[item.field] = 'el-icon-info'"></i>
+            <i class="el-icon-s-help" @click="formModel[item.field] = 'el-icon-s-help'"></i>
+            <i class="el-icon-picture" @click="formModel[item.field] = 'el-icon-picture'"></i>
+            <i class="el-icon-camera-solid" @click="formModel[item.field] = 'el-icon-camera-solid'"></i>
+            <i class="el-icon-upload" @click="formModel[item.field] = 'el-icon-upload'"></i>
+            <i class="el-icon-s-cooperation" @click="formModel[item.field] = 'el-icon-cooperation'"></i>
+            <i class="el-icon-s-promotion" @click="formModel[item.field] = 'el-icon-s-promotion'"></i>
+            <i class="el-icon-s-platform" @click="formModel[item.field] = 'el-icon-s-platform'"></i>
+            <i class="el-icon-s-order" @click="formModel[item.field] = 'el-icon-s-order'"></i>
+            <i class="el-icon-s-management" @click="formModel[item.field] = 'el-icon-s-management'"></i>
+            <i class="el-icon-s-release" @click="formModel[item.field] = 'el-icon-s-release'"></i>
+            <i class="el-icon-s-open" @click="formModel[item.field] = 'el-icon-s-open'"></i>
+            <i class="el-icon-s-check" @click="formModel[item.field] = 'el-icon-s-check'"></i>
+            <i class="el-icon-menu" @click="formModel[item.field] = 'el-icon-menu'"></i>
+            <i class="el-icon-s-flag" @click="formModel[item.field] = 'el-icon-s-flag'"></i>
+            <i class="el-icon-s-comment" @click="formModel[item.field] = 'el-icon-s-comment'"></i>
+            <i class="el-icon-s-claim" @click="formModel[item.field] = 'el-icon-s-claim'"></i>
           </div>
         </el-popover>
         <!--复选框-->
         <!--日期选择器-->
-        <el-date-picker v-if="item.type==='date'" v-model="formModel[item.field]" type="date" value-format="yyyy-MM-dd" placeholder="选择日期">
+        <el-date-picker v-if="item.type === 'date'" v-model="formModel[item.field]" type="date" value-format="yyyy-MM-dd"
+          placeholder="选择日期">
         </el-date-picker>
         <!--文件上传-->
-        <el-upload v-if="item.type==='upload'" :headers="importHeaders" action="/api/sysUpload/upload" name="multipartfiles" :id="item.field"
-          :on-change="handleChange" :on-success="handleSuccess" :data="setData(item)" :file-list="formModel[item.field]['fileList']">
+        <el-upload v-if="item.type === 'upload'" :headers="importHeaders" action="/api/sysUpload/upload"
+          name="multipartfiles" :id="item.field" :on-change="handleChange" :on-success="handleSuccess"
+          :data="setData(item)" :file-list="formModel[item.field]['fileList']">
           <el-button size="small" type="primary" name="flie">点击上传</el-button>
-          <div slot="tip" class="el-upload__tip">{{formModel[item.field]['acceptPrompt']}}</div>
+          <div slot="tip" class="el-upload__tip">{{ formModel[item.field]['acceptPrompt'] }}</div>
         </el-upload>
       </el-form-item>
     </el-form>
@@ -219,6 +229,7 @@ export default {
 .el-form--inline {
   text-align: left;
 }
+
 .icon-content {
   i {
     font-size: 25px;
@@ -226,25 +237,31 @@ export default {
     cursor: pointer;
   }
 }
+
 .el-date-editor.el-input,
 .el-date-editor.el-input__inner {
   width: 200px !important;
 }
+
 .el-select .el-select--small input {
   width: 200px !important;
 }
+
 .el-input--small .el-input__inner {
   width: 200px !important;
 }
+
 .el-input,
 .el-input--small {
   width: 200px !important;
 }
+
 .el-input-number,
 .el-input-number--small,
 .is-controls-right {
   width: 200px !important;
 }
+
 .el-select {
   width: 200px;
 }

@@ -70,7 +70,7 @@
 </template>
 
 <script>
-import CustomTableCols from '../../components/CustomTableCols'
+import CustomTableCols from '@/components/CustomTableCols'
 import Search from '../../components/Search'
 import CustomForm from '../../components/CustomForm'
 import treelist from '../../components/TreeList'

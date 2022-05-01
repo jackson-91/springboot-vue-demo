@@ -78,6 +78,15 @@ public class DevGenerator {
                 return config.getOutputDir() + "/" + path +"/controller/"+ tableInfo.getEntityName() + "Controller.java";
             }
         });
+        //生成vue文件
+        focList.add(new FileOutConfig("/templates/view.vue.vm") {
+            @Override
+            public String outputFile(TableInfo tableInfo) {
+                //输出的位置
+                String path = packageName.replace(".", "/");
+                return config.getOutputDir() + "/" + path +"/view/"+ tableInfo.getEntityName() + "View.vue";
+            }
+        });
         cfg.setFileOutConfigList(focList);
         new AutoGenerator().setGlobalConfig(config)
                 .setCfg(cfg)
