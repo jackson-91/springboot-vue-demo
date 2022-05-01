@@ -12,6 +12,9 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import java.util.Properties;
 
 
+/**
+ * 加载邮件服务器配置
+ */
 @Configuration
 public class MailConfig {
 
