@@ -290,11 +290,9 @@ export default {
   left: 0;
   right: 0;
   font-size: 14px;
-}
-
-.editor-tabs {
   text-align: left;
 }
+
 
 .left-editor {
   position: relative;
