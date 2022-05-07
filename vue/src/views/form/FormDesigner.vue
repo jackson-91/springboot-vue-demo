@@ -271,7 +271,7 @@ export default {
             const { dataType, method, url } = component.__config__
             if (dataType === 'dynamic' && method && url) {
                 this.setLoading(component, true)
-                this.$axios({
+                this.$http({
                     method,
                     url
                 }).then(resp => {

@@ -1,7 +1,8 @@
 <template>
   <el-dialog :title="formTitle" :visible.sync="visible" width="400px" :close-on-click-modal="false" @close="cancel">
-    <el-tree node-key="id" style="height:400px!important;overflow-y: auto;" :data="treeData" :props="treeProps" ref="tree" show-checkbox
-      :highlight-current="true" :default-checked-keys="checkedKeys" :default-expand-all="true"></el-tree>
+    <el-tree node-key="id" style="height:400px!important;overflow-y: auto;" :data="treeData" :props="treeProps"
+      ref="tree" show-checkbox :highlight-current="true" :default-checked-keys="checkedKeys" :default-expand-all="true">
+    </el-tree>
     <div slot="footer" class="dialog-footer">
       <el-button @click="cancel()">取消</el-button>
       <el-button @click="ok()" type="primary">确定</el-button>

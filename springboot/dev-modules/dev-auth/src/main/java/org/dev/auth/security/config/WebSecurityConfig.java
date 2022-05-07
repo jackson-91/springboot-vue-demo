@@ -131,11 +131,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-//        auth.inMemoryAuthentication()
-//                .passwordEncoder(passwordEncoder())
-//                .withUser("admin").password(passwordEncoder().encode("123456")).roles("ADMIN", "USER")
-//                .and()
-//                .withUser("user").password(passwordEncoder().encode("123456")).roles("USER");
+        //auth.inMemoryAuthentication()
+        //        .passwordEncoder(passwordEncoder())
+        //        .withUser("admin").password(passwordEncoder().encode("123456")).roles("ADMIN", "USER")
+        //        .and()
+        //        .withUser("user").password(passwordEncoder().encode("123456")).roles("USER");
         auth.userDetailsService(userDetailsService()).passwordEncoder(passwordEncoder());
     }
 
@@ -149,7 +149,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity web) throws Exception {
         String[] permits = new String[permitAllConfig.getPermitAll().size()];
         permitAllConfig.getPermitAll().toArray(permits);
-        web.ignoring().antMatchers("/wflowDefine/view", "/wflowChart/traceprocess", "/wflowChart/showImg", "/wflowDefine/export", "/captcha/verifyCodeFlag", "/captcha/verifyCode")
+        web.ignoring().antMatchers("/wflowDefine/view",
+                        "/wflowChart/traceprocess",
+                        "/wflowChart/showImg",
+                        "/wflowDefine/export",
+                        "/captcha/verifyCodeFlag",
+                        "/captcha/verifyCode")
                 .antMatchers("/favicon.ico").antMatchers(permits);
     }
 

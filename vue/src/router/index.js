@@ -44,7 +44,7 @@ const routes = [
       { path: '/wflowhistory', component: resolve => require(['../views/workflow/WflowHistory.vue'], resolve), meta: { requestLogin: true, permissions: true, isTab: true } },
       { path: '/wflowhisinstance', component: resolve => require(['../views/workflow/WflowHisInstance.vue'], resolve), meta: { requestLogin: true, permissions: true, isTab: true } },
       { path: '/formdemo', component: resolve => require(['../views/form/Template.vue'], resolve), meta: { requestLogin: false, permissions: false, isTab: true } },
-      { path: '/formDesigner', component: resolve => require(['../views/form/FormDesigner.vue'], resolve), meta: { requestLogin: false, permissions: false, isTab: true } },
+      { path: '/formdesigner', component: resolve => require(['../views/form/FormDesigner.vue'], resolve), meta: { requestLogin: false, permissions: false, isTab: true } },
       { path: '/401', component: resolve => require(['../views/error/401.vue'], resolve) },
       { path: '/404', name: 'notFound', component: resolve => require(['../views/error/404.vue'], resolve) },
       { path: '*', redirect: '/404' }

@@ -54,7 +54,8 @@ import {
   RadioButton,
   TimePicker,
   Rate,
-  Cascader
+  Cascader,
+  CheckboxGroup
 } from 'element-ui'
 
 Vue.use(Button)
@@ -111,6 +112,7 @@ Vue.use(OptionGroup)
 Vue.use(TimePicker)
 Vue.use(Rate)
 Vue.use(Cascader)
+Vue.use(CheckboxGroup)
 Vue.prototype.$loading = Loading.service
 Vue.prototype.$msgbox = MessageBox
 Vue.prototype.$alert = MessageBox.alert
