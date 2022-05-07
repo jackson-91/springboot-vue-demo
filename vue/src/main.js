@@ -9,6 +9,10 @@ import { store } from './store/store'
 import './plugins/dialog'
 import filters from './filter/index';
 import "./assets/css/style.css"
+import '@/assets/icons'
+import Tinymce from '@/components/form-designer/tinymce/index.vue'
+
+Vue.component('tinymce', Tinymce)
 
 Vue.use(Vuex)
 Vue.prototype.$http = axios

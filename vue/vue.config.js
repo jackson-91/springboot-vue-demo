@@ -31,6 +31,21 @@ module.exports = {
       .set('@views', resolve('src/views'))
       .set('@store', resolve('src/store'))
       .set('@plugins', resolve('src/plugins'))
+    config.module
+      .rule('svg')
+      .exclude.add(resolve('src/assets/icons'))
+      .end()
+    config.module
+      .rule('icons')
+      .test(/\.svg$/)
+      .include.add(resolve('src/assets/icons'))
+      .end()
+      .use('svg-sprite-loader')
+      .loader('svg-sprite-loader')
+      .options({
+        symbolId: 'icon-[name]'
+      })
+      .end()
     // 压缩图片
     // 需要 npm i -D image-webpack-loader
     // config.module

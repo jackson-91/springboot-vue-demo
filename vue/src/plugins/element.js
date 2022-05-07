@@ -44,7 +44,17 @@ import {
   DropdownMenu,
   Dropdown,
   DropdownItem,
-  ColorPicker
+  ColorPicker,
+  Scrollbar,
+  Radio,
+  Slider,
+  OptionGroup,
+  Divider,
+  RadioGroup,
+  RadioButton,
+  TimePicker,
+  Rate,
+  Cascader
 } from 'element-ui'
 
 Vue.use(Button)
@@ -91,6 +101,16 @@ Vue.use(DropdownMenu)
 Vue.use(Dropdown)
 Vue.use(DropdownItem)
 Vue.use(ColorPicker)
+Vue.use(Scrollbar)
+Vue.use(Radio)
+Vue.use(Slider)
+Vue.use(Divider)
+Vue.use(RadioGroup)
+Vue.use(RadioButton)
+Vue.use(OptionGroup)
+Vue.use(TimePicker)
+Vue.use(Rate)
+Vue.use(Cascader)
 Vue.prototype.$loading = Loading.service
 Vue.prototype.$msgbox = MessageBox
 Vue.prototype.$alert = MessageBox.alert

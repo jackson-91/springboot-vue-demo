@@ -3,18 +3,20 @@
     <div>
       <!--按钮列表-->
       <el-button-group class="toolBox">
-        <el-button size="small" v-for="(item, index) in buttonGroups" :key="index" @click="dynamicMethod(item.method, item.params)" :icon="item.icon">
+        <el-button size="small" v-for="(item, index) in buttonGroups" :key="index"
+          @click="dynamicMethod(item.method, item.params)" :icon="item.icon">
           {{ item.label }}</el-button>
       </el-button-group>
     </div>
     <!--数据表格-->
     <el-row>
       <el-col :span="24">
-        <el-table :data="tableData" border row-key="id" style="width: 100%; margin-bottom: 20px" default-expand-all highlight-current-row
-          ref="multipleTable" :height="tableHeight" @row-click="handleRowClick" :tree-props="{ children: 'children', hasChildren: 'hasChildren' }">
+        <el-table :data="tableData" border row-key="id" style="width: 100%; margin-bottom: 20px" default-expand-all
+          highlight-current-row ref="multipleTable" :height="tableHeight" @row-click="handleRowClick"
+          :tree-props="{ children: 'children', hasChildren: 'hasChildren' }">
           <template v-for="(el, i) in tableColumns">
-            <el-table-column :label="el.label" header-align="center" v-if="el.show" :width="el.width || ''" :key="el.prop" :fixed="el.fixed"
-              :prop="el.prop" :sortable="el.sortable" show-overflow-tooltip>
+            <el-table-column :label="el.label" header-align="center" v-if="el.show" :width="el.width || ''"
+              :key="el.prop" :fixed="el.fixed" :prop="el.prop" :sortable="el.sortable" show-overflow-tooltip>
             </el-table-column>
           </template>
           <el-table-column fixed="right" label="操作" width="300">
@@ -32,18 +34,20 @@
     <!--分页插件-->
     <el-row>
       <el-col :span="24">
-        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="current" :page-sizes="pageSizeOptions"
-          :page-size="size" layout="total, sizes, prev, pager, next, jumper" :total="total">
+        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="current"
+          :page-sizes="pageSizeOptions" :page-size="size" layout="total, sizes, prev, pager, next, jumper"
+          :total="total">
         </el-pagination>
       </el-col>
     </el-row>
     <!--列自定义-->
     <CustomTableCols :defaultCols="defaultColumns" customName="employe" @changeColumns="changeColumns" />
     <!--查询条件-->
-    <Search :show.sync="showSearch" :condition="searchCondition" :form="searchForm" @ok="setCondition" @hidden="showSearch = false" />
+    <Search :show.sync="showSearch" :condition="searchCondition" :form="searchForm" @ok="setCondition"
+      @hidden="showSearch = false" />
     <!--新增编辑页面-->
-    <CustomForm :show.sync="showForm" title="部门编辑" :control="formControl" :model="formField" :rules="formRules" @ok="saveForm"
-      @hidden="showForm = false" />
+    <CustomForm :show.sync="showForm" title="部门编辑" :control="formControl" :model="formField" :rules="formRules"
+      @ok="saveForm" @hidden="showForm = false" />
   </div>
 </template>
 
@@ -256,6 +260,7 @@ export default {
      * 设置查询条件
      */
     setCondition(from) {
+      this.current = 1;
       const newData = JSON.parse(JSON.stringify(from));
       this.searchForm = newData;
       this.searchData();

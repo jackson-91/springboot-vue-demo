@@ -250,6 +250,7 @@ export default {
      * 设置查询条件
      */
     setCondition(from) {
+      this.current = 1;
       const newData = JSON.parse(JSON.stringify(from))
       this.searchForm = newData
       this.searchData()
