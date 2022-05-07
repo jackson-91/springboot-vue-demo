@@ -15,9 +15,11 @@
         </el-form-item>
         <!--密码-->
         <el-form-item prop="verifyCode">
-          <el-input v-model="loginForm.verifyCode" prefix-icon="el-icon-picture-outline" auto-complete="off" placeholder="验证码" style="width: 67%" @keyup.enter.native="onSubmit" />
+          <el-input v-model="loginForm.verifyCode" prefix-icon="el-icon-picture-outline" auto-complete="off" placeholder="验证码" style="width: 67%"
+            @keyup.enter.native="onSubmit" />
           <div class="login-code">
-            <img src="api/captcha/verifyCode?type=math" ref="verifyCodeImg" onclick="this.src='api/captcha/verifyCode?type=math&d='+new Date()*1" class="login-code-img" />
+            <img src="api/captcha/verifyCode?type=math" ref="verifyCodeImg" onclick="this.src='api/captcha/verifyCode?type=math&d='+new Date()*1"
+              class="login-code-img" />
           </div>
         </el-form-item>
         <!--按钮-->
@@ -110,8 +112,9 @@ export default {
       const _this = this;
       const vue = this;
       this.$http
-        .post("/api/sysUser/user-info", {})
+        .get("/api/sysUser/user-info", {})
         .then((res) => {
+          debugger
           if (res.code == 0) {
             _this.$store.commit("set_user", res.data);
           }

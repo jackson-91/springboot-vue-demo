@@ -189,7 +189,7 @@ public class SysUserController {
      *
      * @return
      */
-    @PostMapping("/user-info")
+    @GetMapping("/user-info")
     public ResponseResult<CurrentUser> userInfo() {
         return ResponseResult.success(SpringSecurityUtils.CurrentUser());
     }
