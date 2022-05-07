@@ -5,6 +5,7 @@ springboot+vue+mysql+redis 前后分离快速开发框架(目前系统初具雏�
 系统已完成功能：
     系统管理：用户管理、角色管理、菜单管理、日志查询、流水码管理、数据字典管理、定时任务   
     流程管理: 流程设计、流程定义、流程签核、签核历史（尚不完善后续会逐渐完善）   
+    业务管理：表单设计（代码来自开源项目https://gitee.com/mrhj/form-generator）
 #### 软件架构
 软件架构说明   
 此为前后分离项目   
@@ -34,7 +35,7 @@ vue                       // 前端框架
   data.sql   是部分数据   
   quartz.sql 是定时任务quarzt的表   
   activiti.sql 是工作流activiti7的表   
-注：activiti7 也可采用自动生成表格 首次启动时需要在配置文件里面设置 database-schema-update: true 改为true即可   
+注：activiti7 也可采用自动生成表格 首次启动时需要在配置文件里面设置 database-schema-update: true 改为true即可    建议自动生成
 2、springboot直接用idea打开即可
 注：
 3、vue 需要执行以下node指令   
@@ -50,8 +51,6 @@ vue                       // 前端框架
     yarn         安装依赖   
     yarn dev     运行项目   
     yarn build   发布项目   
-注：运行时可能会报缺少image-webpack-loader依赖包异常 这个是用需要先删除一下这个依赖包 再用cnpm 安装一下   
-   cnpm install image-webpack-loader --save -dev 之后重新启用一下即可   
 
 #### 使用说明
 1.  先启动springboot程序 之后启动vue项目 访问http://localhost:8080/即可 默认用户密码 admin/000000   
