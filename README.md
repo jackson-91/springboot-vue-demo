@@ -1,5 +1,7 @@
 # springbootvue
 
+#### 注意：本项目来源码云，原项目路径：https://gitee.com/devframework/springbootvue
+
 #### 介绍
 springboot+vue+mysql+redis 前后分离快速开发框架(目前系统初具雏形，尚未完善，后续会不断改进完善)
 以前一直时做net的，后来机缘巧合来做java，但是以前没有做过java，工作过程中磕磕碰碰。后来决定自己做一套权限管理系统，希望在做系统的过程中来不断学习知识来提高自己的能力。顺便将其开源出来供初学者一起学习进步。
